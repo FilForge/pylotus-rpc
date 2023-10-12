@@ -1,8 +1,7 @@
 
 import json
-import requests
 
-def get_chain_head(self, connector):
+def _get_chain_head(connector):
     """
     Gets the chain head from the server.
     :return: The chain head.
@@ -11,7 +10,6 @@ def get_chain_head(self, connector):
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.ChainHead",
-        "id": 1
     }
 
     response = connector.exec_method(payload)

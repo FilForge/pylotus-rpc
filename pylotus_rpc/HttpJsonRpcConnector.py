@@ -1,5 +1,6 @@
 import requests
 import json
+from datetime import datetime
 
 class HttpJsonRpcConnector:
     """
@@ -41,6 +42,14 @@ class HttpJsonRpcConnector:
         :param payload: The payload.
         :return: The response.
         """
+        payload["id"] = self._generate_RPC_id()
         response = requests.post(self.get_rpc_endpoint(), data=json.dumps(payload), headers=self.get_request_headers())
         return response
-
+    
+    def _generate_RPC_id(self):
+        # Get current datetime
+        now = datetime.now()
+        # Format the datetime as a string with milliseconds
+        timestamp_with_milliseconds = now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        return timestamp_with_milliseconds
+    
