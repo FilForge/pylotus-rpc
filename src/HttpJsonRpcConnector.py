@@ -17,35 +17,30 @@ class HttpJsonRpcConnector:
         self.port = port
         self.api_token = api_token
 
-    def getChainHead(self):
-        """
-        Gets the chain head from the server.
-        :return: The chain head.
-        """
 
-        # Lotus JSON-RPC endpoint
-        URL = f"http://{self.host}:{self.port}/rpc/v0"
-
-        # Headers
-        HEADERS = {
+    def get_request_headers(self):
+        """
+        Gets the request headers.
+        :return: The request headers.
+        """
+        return {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_token}"
         }
+    
+    def get_rpc_endpoint(self):
+        """
+        Gets the RPC endpoint.
+        :return: The RPC endpoint.
+        """
+        return f"http://{self.host}:{self.port}/rpc/v0"
+    
+    def exec_method(self, payload):
+        """
+        Executes the method.
+        :param payload: The payload.
+        :return: The response.
+        """
+        response = requests.post(self.get_rpc_endpoint(), data=json.dumps(payload), headers=self.get_request_headers())
+        return response
 
-        # JSON-RPC payload
-        payload = {
-            "jsonrpc": "2.0",
-            "method": "Filecoin.ChainHead",
-            "id": 1
-        }
-
-        # Make the request
-        response = requests.post(URL, headers=HEADERS, data=json.dumps(payload))
-
-        # Check if the request was successful
-        if response.status_code == 200:
-            # Parse the JSON response
-            data = response.json()
-            print(json.dumps(data, indent=4))
-        else:
-            print(f"Request failed with status code {response.status_code}: {response.text}")
