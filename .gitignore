@@ -4,3 +4,4 @@ pyvenv.cfg
 .vscode
 main.py
 **/__pycache__
+pylotus_rpc.egg-info/
