@@ -1,15 +1,6 @@
 from typing import List, Dict, Union
-import json
-
-class Cid:
-    # Assuming CIDs always have a single key "/", but this can be extended if needed
-    def __init__(self, cid_value: str):
-        self.cid_value = cid_value
-
-class Signature:
-    def __init__(self, type_: int, data: str):
-        self.type = type_
-        self.data = data
+from .Cid import Cid
+from .Signature import Signature
 
 class BlockHeader:
     def __init__(self, 
