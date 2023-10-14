@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="pylotus_rpc",              # Replace with your package name
+    name="pylotus-rpc",              # Replace with your package name
     version="0.1.0",                # Replace with your package version
     description="Python client for interacting with the Lotus JSON-RPC API.",
     long_description="",  # Optional
