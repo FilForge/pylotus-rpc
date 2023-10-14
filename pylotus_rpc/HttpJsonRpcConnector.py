@@ -1,55 +1,72 @@
 import requests
-import json
 from datetime import datetime
+import json
 
 class HttpJsonRpcConnector:
     """
-    This class is responsible for the connection to the server via HTTP.
+    Connector class for HTTP-based JSON RPC communication.
+
+    Attributes:
+    - host: Host address of the RPC server.
+    - port: Port on which the RPC server is listening.
+    - api_token: Token for authenticating with the RPC server.
     """
 
     def __init__(self, host='localhost', port=1234, api_token=None):
         """
-        Constructor of the class.
-        :param host: The host of the server (default: 'localhost').
-        :param port: The port of the server (default: 1234).
-        :param api_token: The api token of the server (default: None).
+        Initializes an instance of the HttpJsonRpcConnector class.
+
+        :param host: The server's hostname or IP address (default is 'localhost').
+        :param port: The server's port (default is 1234).
+        :param api_token: The API token for authentication (default is None).
         """
         self.host = host
         self.port = port
         self.api_token = api_token
 
-
-    def get_request_headers(self):
+    def get_request_headers(self) -> dict:
         """
-        Gets the request headers.
-        :return: The request headers.
+        Constructs the headers required for the JSON RPC request.
+
+        :return: Dictionary containing the request headers.
         """
         return {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_token}"
         }
-    
-    def get_rpc_endpoint(self):
+
+    def get_rpc_endpoint(self) -> str:
         """
-        Gets the RPC endpoint.
-        :return: The RPC endpoint.
+        Constructs the RPC endpoint URL.
+
+        :return: The full RPC endpoint URL.
         """
         return f"http://{self.host}:{self.port}/rpc/v0"
-    
-    def exec_method(self, payload):
+
+    def exec_method(self, payload: dict) -> requests.Response:
         """
-        Executes the method.
-        :param payload: The payload.
-        :return: The response.
+        Sends a JSON RPC request to the server with the provided payload.
+
+        :param payload: Dictionary containing the RPC request details.
+        :return: The server's response as a `requests.Response` object.
         """
         payload["id"] = self._generate_RPC_id()
-        response = requests.post(self.get_rpc_endpoint(), data=json.dumps(payload), headers=self.get_request_headers())
+        response = requests.post(
+            self.get_rpc_endpoint(), 
+            data=json.dumps(payload), 
+            headers=self.get_request_headers()
+        )
         return response
-    
-    def _generate_RPC_id(self):
+
+    def _generate_RPC_id(self) -> str:
+        """
+        Generates a unique RPC ID based on the current timestamp.
+
+        :return: A string representation of the current timestamp.
+        """
         # Get current datetime
         now = datetime.now()
-        # Format the datetime as a string with milliseconds
+        # Format the datetime to a string, including milliseconds
         timestamp_with_milliseconds = now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
         return timestamp_with_milliseconds
     

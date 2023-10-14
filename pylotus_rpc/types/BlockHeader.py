@@ -3,6 +3,28 @@ from .Cid import Cid
 from .Signature import Signature
 
 class BlockHeader:
+    """
+    Represents the block header in the blockchain.
+    
+    Attributes:
+    - miner: The address of the block miner.
+    - ticket: Lottery ticket for leader election.
+    - election_proof: Proof of leader election.
+    - beacon_entries: Randomness beacon for the block.
+    - win_post_proof: Winning post proof.
+    - parents: CIDs of the block's parent blocks.
+    - parent_weight: Parent weight of the block.
+    - height: Height of the block in the blockchain.
+    - parent_state_root: CID for the state tree of this block's parent.
+    - parent_message_receipts: CID of the receipt tree for the parent.
+    - messages: CID of the message list for this block.
+    - bls_aggregate: Aggregated BLS signature.
+    - timestamp: Block creation time.
+    - block_sig: Block signature.
+    - fork_signaling: Fork signaling number.
+    - parent_base_fee: Parent base fee.
+    """
+
     def __init__(self, 
                  miner: str,
                  ticket: Dict[str, str],
@@ -37,9 +59,13 @@ class BlockHeader:
         self.fork_signaling = fork_signaling
         self.parent_base_fee = parent_base_fee
 
-
 def dict_to_blockheader(data: Dict) -> BlockHeader:
-    
+    """
+    Converts a dictionary representation of a block header to a BlockHeader object.
+
+    :param data: Dictionary containing block header details.
+    :return: An instance of the BlockHeader class.
+    """
     parents = [Cid(item["/"]) for item in data["Parents"]]
     parent_state_root = Cid(data["ParentStateRoot"]["/"])
     parent_message_receipts = Cid(data["ParentMessageReceipts"]["/"])
@@ -66,4 +92,3 @@ def dict_to_blockheader(data: Dict) -> BlockHeader:
         fork_signaling=data["ForkSignaling"],
         parent_base_fee=data["ParentBaseFee"]
     )
-
