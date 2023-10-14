@@ -25,7 +25,10 @@ def _get_chain_head(connector):
         "method": "Filecoin.ChainHead",
     }
 
-    response = connector.exec_method(payload)
+    try:
+        response = connector.exec_method(payload)
+    except Exception as e:
+        raise ChainHeadRetrievalError(0, str(e))
 
     # Check if the request was successful
     if response.status_code == 200:
@@ -39,11 +42,7 @@ def _get_chain_head(connector):
         lst_block_headers = [dict_to_blockheader(dct) for dct in data["result"]["Blocks"]]
 
         height = data["result"]["Height"]
-
-        print(f"read {len(lst_cids)} cids")
-        print(f"read {len(lst_block_headers)} block headers")
-        print(f"height: {height}")
-
+        
         return Tipset(height, lst_cids, lst_block_headers)
     else:
         raise ChainHeadRetrievalError(response.status_code, response.text)
