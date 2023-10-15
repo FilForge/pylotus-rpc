@@ -1,17 +1,19 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="pylotus-rpc",              # Replace with your package name
-    version="0.1.0",                # Replace with your package version
+    name="pylotus-rpc",
+    version="0.1.0",
     description="Python client for interacting with the Lotus JSON-RPC API.",
-    long_description="",  # Optional
-    url="https://github.com/your_username/your_package",    # Replace with your package's URL
+    url="https://github.com/jasonhudgins/pylotus-rpc",
     author="Jason Hudgins",
     author_email="jason@reallybadapps.com",
-    license="MIT",                  # Replace with your package's license
-    packages=find_packages(),       # Automatically discover and include all packages in the project
-    install_requires=[],            # List of package dependencies (if any)
-    classifiers=[                   # Optional classifiers to categorize your package on PyPI
+    license="MIT",
+    packages=find_packages(),
+    install_requires=[
+        "pytest",
+        "requests==2.31.0",
+    ],
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
