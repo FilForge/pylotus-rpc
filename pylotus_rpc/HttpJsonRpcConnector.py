@@ -64,9 +64,5 @@ class HttpJsonRpcConnector:
 
         :return: A string representation of the current timestamp.
         """
-        # Get current datetime
-        now = datetime.now()
-        # Format the datetime to a string, including milliseconds
-        timestamp_with_milliseconds = now.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-        return timestamp_with_milliseconds
+        return int(time.time() * 1000)
     
