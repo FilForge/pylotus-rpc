@@ -25,3 +25,10 @@ class Tipset:
         self.height = height
         self.cids = cids
         self.blocks = blocks
+
+
+    def dct_cids(self):
+        """
+        Returns a dictionary representation of the Tipset's CIDs for JSON serialization.
+        """
+        return [{"/": cid.id} for cid in self.cids]
