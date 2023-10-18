@@ -3,13 +3,17 @@ class Cid:
     Represents a Content Identifier (CID)
 
     Attributes:
-    - cid_value: A string representing the value of the CID.
+    - cid_id: A string representing the value of the CID.
     """
 
-    def __init__(self, cid_value: str):
+    def __init__(self, cid_id: str):
         """
         Initializes a new Cid object.
 
-        :param cid_value: A string representing the value of the CID.
+        :param cid_id: A string representing the value of the CID.
         """
-        self.cid_value = cid_value
+        self.id = cid_id
+
+
+    def __str__(self) -> str:
+        return self.id
