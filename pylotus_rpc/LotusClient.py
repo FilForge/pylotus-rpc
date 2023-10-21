@@ -11,6 +11,9 @@ class LotusClient:
         def __init__(self, connector):
             self.connector = connector
 
+        def account_key(self, address, tipset=None):
+            return state._account_key(self.connector, address, tipset)
+        
         def get_chain_head(self):
             return state._get_chain_head(self.connector)
         
@@ -19,4 +22,6 @@ class LotusClient:
         
         def get_actor(self, actor_id, tipset=None):
             return state._get_actor(self.connector, actor_id, tipset)
+        
+
                                     

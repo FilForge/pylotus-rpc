@@ -1,7 +1,7 @@
 import pytest
 import os
 from decimal import Decimal
-from pylotus_rpc.methods.state import _get_chain_head, _get_actor, ApiCallError
+from pylotus_rpc.methods.state import _get_chain_head, _get_actor, ApiCallError, _account_key
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
 
@@ -12,6 +12,29 @@ def setup_connector():
     port = dct_node_info["port"]
     api_token = dct_node_info["jwt_token"]
     return HttpJsonRpcConnector(host, port, api_token)
+
+def test_get_account_key_success_with_tipset(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    address = _account_key(setup_connector, "f047684", tipset=tipset)
+    
+    # Basic checks to see if the returned object is correctly formed
+    assert isinstance(address, Cid)
+    assert len(address.id) > 0
+
+def test_get_account_key_success(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    address = _account_key(setup_connector, "f047684", tipset=None)
+    
+    # Basic checks to see if the returned object is correctly formed
+    assert isinstance(address, Cid)
+    assert len(address.id) > 0
+
+def test_get_account_key_failure():
+# Let's use wrong port or token to force an error
+    faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
+    
+    with pytest.raises(ApiCallError):
+        _account_key(faulty_connector, "f047684")
 
 def test_get_actor_success(setup_connector):
     actor = _get_actor(setup_connector, "f05")

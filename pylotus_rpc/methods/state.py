@@ -15,6 +15,43 @@ class ApiCallError(Exception):
         self.message = message
 
 
+def _account_key(connector, address, tipset=None):
+    """
+    Retrieves the account key for the given address.
+
+    :param connector: The HTTP JSON-RPC connector object to communicate with the server.
+    :param address: The address to retrieve the account key for.
+    :param tipset: The tipset to retrieve the account key at. If None, the chain head is used.
+    :return: The account key for the given address.
+    :raises ApiCallError: If there's an error during the API call.
+    """
+    # JSON-RPC payload for requesting the account key
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateAccountKey",
+        "params": [
+            address,
+            tipset.dct_cids() if tipset else None,
+        ]
+    }
+
+    try:
+        response = connector.exec_method(payload)
+    except Exception as e:
+        raise ApiCallError("Filecoin.StateAccountKey", 0, str(e))
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        # Parse the account key
+        address = Cid(data["result"])
+
+        return address
+    else:
+        raise ApiCallError("Filecoin.StateAccountKey", response.status_code, response.text)
+    
+
 def _get_actor(connector, actor_id, tipset=None):
 
     cids = None
