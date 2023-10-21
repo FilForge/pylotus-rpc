@@ -1,6 +1,8 @@
 import pytest
 import os
-from pylotus_rpc.methods.state import _get_chain_head, ChainHeadRetrievalError
+from decimal import Decimal
+from pylotus_rpc.methods.state import _get_chain_head, _get_actor, ApiCallError
+from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
 
 @pytest.fixture
@@ -10,6 +12,22 @@ def setup_connector():
     port = dct_node_info["port"]
     api_token = dct_node_info["jwt_token"]
     return HttpJsonRpcConnector(host, port, api_token)
+
+def test_get_actor_success(setup_connector):
+    actor = _get_actor(setup_connector, "f05")
+    
+    # Basic checks to see if the returned object is correctly formed
+    assert isinstance(actor.Code, Cid)
+    assert isinstance(actor.Head, Cid)
+    assert isinstance(actor.Nonce, int)
+    assert isinstance(actor.Balance, Decimal)
+
+def test_get_actor_failure():
+    # Let's use wrong port or token to force an error
+    faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
+    
+    with pytest.raises(ApiCallError):
+        _get_actor(faulty_connector, "f05")
 
 def test_get_chain_head_success(setup_connector):
     tipset = _get_chain_head(setup_connector)
@@ -23,7 +41,7 @@ def test_get_chain_head_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
-    with pytest.raises(ChainHeadRetrievalError):
+    with pytest.raises(ApiCallError):
         _get_chain_head(faulty_connector)
 
 def parse_fullnode_api_info():
