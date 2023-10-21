@@ -13,3 +13,10 @@ class LotusClient:
 
         def get_chain_head(self):
             return state._get_chain_head(self.connector)
+        
+        def list_actors(self, tipset):
+            return state._list_state_actors(self.connector, tipset)
+        
+        def get_actor(self, actor_id, tipset=None):
+            return state._get_actor(self.connector, actor_id, tipset)
+                                    
