@@ -23,5 +23,8 @@ class LotusClient:
         def get_actor(self, actor_id, tipset=None):
             return state._get_actor(self.connector, actor_id, tipset)
         
+        def state_call(self, message, tipset=None)
+            return state._state_call(self.connector, message, tipset)
+        
 
                                     

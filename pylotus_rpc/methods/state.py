@@ -1,5 +1,8 @@
+from typing import Optional
+import HttpJsonRpcConnector
 from ..types.BlockHeader import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
+from ..types.Message import Message
 from ..types.TipSet import Tipset
 from ..types.Actor import Actor
 import json
@@ -14,6 +17,11 @@ class ApiCallError(Exception):
         self.status_code = status_code
         self.message = message
 
+
+def _state_call(connector: HttpJsonRpcConnector, 
+                message: Message, 
+                tipset: Optional[Tipset] = None) -> ReturnType:  # Replace ReturnType with the actual type
+    pass
 
 def _account_key(connector, address, tipset=None):
     """
