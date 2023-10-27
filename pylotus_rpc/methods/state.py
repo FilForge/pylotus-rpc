@@ -1,10 +1,11 @@
 from typing import Optional
-import HttpJsonRpcConnector
+from ..HttpJsonRpcConnector import HttpJsonRpcConnector
 from ..types.BlockHeader import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
 from ..types.Message import Message
 from ..types.TipSet import Tipset
 from ..types.Actor import Actor
+from ..types.InvocationResult import InvocationResult
 import json
 
 class ApiCallError(Exception):
@@ -20,9 +21,37 @@ class ApiCallError(Exception):
 
 def _state_call(connector: HttpJsonRpcConnector, 
                 message: Message, 
-                tipset: Optional[Tipset] = None) -> ReturnType:  # Replace ReturnType with the actual type
-    pass
+                tipset: Optional[Tipset] = None) -> InvocationResult:  
 
+    # JSON-RPC payload for requesting the account key
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateCall",
+        "params": [
+            message.to_json(),
+            tipset.dct_cids() if tipset else None,
+        ]
+    }
+
+    pretty_json = json.dumps(payload, indent=4, sort_keys=True)
+    print(pretty_json)
+    
+    try:
+        response = connector.exec_method(payload)
+    except Exception as e:
+        raise ApiCallError("Filecoin.StateAccountKey", 0, str(e))
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+        # Parse the account key
+        print(data)
+    else:
+        raise ApiCallError("Filecoin.StateAccountKey", response.status_code, response.text)
+
+
+     
 def _account_key(connector, address, tipset=None):
     """
     Retrieves the account key for the given address.

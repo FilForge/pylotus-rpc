@@ -1,7 +1,6 @@
 from dataclasses import dataclass
-from decimal import Decimal
 from typing import List, Any
-from Loc import Loc
+from .Loc import Loc
 
 @dataclass
 class GasTrace:
@@ -24,12 +23,12 @@ class GasTrace:
 
     Name: str
     Location: List[Loc]
-    TotalGas: Decimal
-    ComputeGas: Decimal
-    StorageGas: Decimal
-    TotalVirtualGas: Decimal
-    VirtualComputeGas: Decimal
-    VirtualStorageGas: Decimal
-    TimeTaken: Decimal
+    TotalGas: int
+    ComputeGas: int
+    StorageGas: int
+    TotalVirtualGas: int
+    VirtualComputeGas: int
+    VirtualStorageGas: int
+    TimeTaken: int
     Extra: Any
     Callers: List[int]

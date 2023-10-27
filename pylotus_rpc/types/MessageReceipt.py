@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any
-from decimal import Decimal
 
 @dataclass
 class MessageReceipt:
@@ -15,4 +14,4 @@ class MessageReceipt:
     
     ExitCode: int
     Return: Any
-    GasUsed: Decimal
+    GasUsed: int

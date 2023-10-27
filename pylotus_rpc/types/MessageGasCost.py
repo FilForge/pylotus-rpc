@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from decimal import Decimal
 
 @dataclass
 class MessageGasCost:
@@ -18,10 +17,10 @@ class MessageGasCost:
     """
     
     Message: str
-    GasUsed: Decimal
-    BaseFeeBurn: Decimal
-    OverEstimationBurn: Decimal
-    MinerPenalty: Decimal
-    MinerTip: Decimal
-    Refund: Decimal
-    TotalCost: Decimal
+    GasUsed: int
+    BaseFeeBurn: int
+    OverEstimationBurn: int
+    MinerPenalty: int
+    MinerTip: int
+    Refund: int
+    TotalCost: int

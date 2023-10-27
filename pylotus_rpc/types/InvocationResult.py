@@ -18,10 +18,13 @@ class InvocationResult:
     invocation, any errors encountered, and the total duration of the invocation.
     """
 
+    # Attributes without default values
     MsgCid: Cid  # The CID (Content Identifier) of the message
     Msg: Message  # The actual message associated with this invocation
     MsgRct: MessageReceipt  # The receipt of the message providing details of the message's outcome
     GasCost: MessageGasCost  # The gas cost details associated with this invocation
     ExecutionTrace: ExecutionTrace  # Trace that provides insight into the internal steps taken during the invocation
-    Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
     Duration: int  # The total duration (likely in milliseconds) of the invocation.
+    
+    # Attributes with default values
+    Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.

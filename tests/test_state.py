@@ -1,6 +1,5 @@
 import pytest
 import os
-from decimal import Decimal
 from pylotus_rpc.methods.state import _get_chain_head, _get_actor, ApiCallError, _account_key
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
@@ -43,7 +42,7 @@ def test_get_actor_success(setup_connector):
     assert isinstance(actor.Code, Cid)
     assert isinstance(actor.Head, Cid)
     assert isinstance(actor.Nonce, int)
-    assert isinstance(actor.Balance, Decimal)
+    assert isinstance(actor.Balance, int)
 
 def test_get_actor_failure():
     # Let's use wrong port or token to force an error
