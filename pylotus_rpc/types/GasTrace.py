@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Any
+from typing import List, Any, Dict, Union, Optional
 from .Loc import Loc
 
 @dataclass
@@ -32,3 +32,37 @@ class GasTrace:
     TimeTaken: int
     Extra: Any
     Callers: List[int]
+
+    @staticmethod
+    def from_json(data: Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]) -> 'GasTrace':
+        """
+        Deserialize a dictionary (from parsed JSON) into a GasTrace object.
+
+        Args:
+        - data: A dictionary representation of the GasTrace object.
+
+        Returns:
+        An instance of the GasTrace class.
+        """
+        # Treating Location as optional; if not present, it defaults to an empty list
+        location_data = data.get("Location", [])
+        locations = [Loc.from_json(loc) for loc in location_data]
+
+        # Treating Callers as optional; if not present or not a list, it defaults to an empty list
+        callers = data.get("Callers", [])
+        if not isinstance(callers, list):
+            callers = []
+
+        return GasTrace(
+            Name=data["Name"],
+            Location=locations,
+            TotalGas=data.get("tg", 0),
+            ComputeGas=data.get("cg", 0),
+            StorageGas=data.get("sg", 0),
+            TotalVirtualGas=data.get("TotalVirtualGas", 0),
+            VirtualComputeGas=data.get("VirtualComputeGas", 0),
+            VirtualStorageGas=data.get("VirtualStorageGas", 0),
+            TimeTaken=data.get("tt", 0),
+            Extra=data.get("Extra", 0),
+            Callers=callers
+        )

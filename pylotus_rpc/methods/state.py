@@ -39,14 +39,13 @@ def _state_call(connector: HttpJsonRpcConnector,
     try:
         response = connector.exec_method(payload)
     except Exception as e:
-        raise ApiCallError("Filecoin.StateAccountKey", 0, str(e))
+        raise ApiCallError("Filecoin.StateCall", 0, str(e))
 
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the JSON response
-        data = response.json()
-        # Parse the account key
-        print(data)
+        invocation_result = InvocationResult.from_json(response.json())
+        return invocation_result
     else:
         raise ApiCallError("Filecoin.StateAccountKey", response.status_code, response.text)
 

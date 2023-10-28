@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Union, Dict
 
 @dataclass
 class Message:
@@ -49,4 +49,29 @@ class Message:
             "Method": self.Method,
             "Params": self.Params
         }
+
+
+    @staticmethod
+    def from_json(data: Dict[str, Union[str, int]]) -> 'Message':
+        """
+        Deserialize a dictionary (from parsed JSON) into a Message object.
+
+        Args:
+        - data: A dictionary representation of the Message object.
+
+        Returns:
+        An instance of the Message class.
+        """
+        return Message(
+            To=data["To"],
+            From=data["From"],
+            Value=int(data["Value"]),
+            GasFeeCap=int(data.get("GasFeeCap", 0)),  # Treat GasFeeCap as optional with a default value of 0            GasPremium=int(data["GasPremium"]),
+            GasPremium=int(data.get("GasPremium",0)),  # Added GasPremium as optional with a default value of 0
+            Version=data.get("Version", 0),  # Using .get() to provide default values
+            Nonce=data.get("Nonce", 0),
+            GasLimit=data.get("GasLimit", 1000),
+            Method=data.get("Method", 0),
+            Params=data.get("Params", "")
+        )
 

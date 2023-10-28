@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Dict, Any, Optional
 from .Cid import Cid
 from .Message import Message
 from .MessageReceipt import MessageReceipt
@@ -28,3 +28,28 @@ class InvocationResult:
     
     # Attributes with default values
     Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
+
+    @staticmethod
+    def from_json(data: Dict[str, Any]) -> 'InvocationResult':
+        # Extracting the relevant information from the JSON data
+        result_data = data["result"]
+
+        # Initialize each component from the dictionary
+        msg_cid = Cid(result_data["MsgCid"])
+        msg = Message.from_json(result_data["Msg"])
+        msg_rct = MessageReceipt.from_json(result_data["MsgRct"])
+        gas_cost = MessageGasCost.from_json(result_data["GasCost"])
+        execution_trace = ExecutionTrace.from_json(result_data["ExecutionTrace"])
+        duration = result_data["Duration"]
+        error = result_data.get("Error", None)  # It's optional so we provide a default value
+
+        # Create and return the InvocationResult instance
+        return InvocationResult(
+            MsgCid=msg_cid,
+            Msg=msg,
+            MsgRct=msg_rct,
+            GasCost=gas_cost,
+            ExecutionTrace=execution_trace,
+            Duration=duration,
+            Error=error
+        )
