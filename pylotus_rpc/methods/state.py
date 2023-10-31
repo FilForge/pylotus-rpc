@@ -32,9 +32,6 @@ def _state_call(connector: HttpJsonRpcConnector,
             tipset.dct_cids() if tipset else None,
         ]
     }
-
-    pretty_json = json.dumps(payload, indent=4, sort_keys=True)
-    print(pretty_json)
     
     try:
         response = connector.exec_method(payload)
