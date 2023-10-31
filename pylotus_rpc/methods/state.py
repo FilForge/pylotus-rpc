@@ -21,9 +21,28 @@ class ApiCallError(Exception):
 
 def _state_call(connector: HttpJsonRpcConnector, 
                 message: Message, 
-                tipset: Optional[Tipset] = None) -> InvocationResult:  
+                tipset: Optional[Tipset] = None) -> InvocationResult:
+    """
+    Sends a message for dry-run execution using Filecoin's `StateCall` method.
+    This allows users to see what would happen if they sent a message without 
+    actually sending it to the network. Useful for verifying the behavior 
+    of a message without any on-chain effects.
 
-    # JSON-RPC payload for requesting the account key
+    Args:
+        connector (HttpJsonRpcConnector): The connector object that manages 
+                                          the connection to the Filecoin node.
+        message (Message): The message object to simulate sending.
+        tipset (Optional[Tipset]): The tipset at which the simulation should occur.
+                                   If None, uses the latest chain head.
+    
+    Returns:
+        InvocationResult: Result of the dry-run message execution, 
+                          indicating any returns or errors.
+    
+    Raises:
+        ApiCallError: If the API call to `Filecoin.StateCall` fails.
+    """
+    
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.StateCall",
