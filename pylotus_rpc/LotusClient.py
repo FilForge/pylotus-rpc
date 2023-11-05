@@ -1,10 +1,20 @@
 from pylotus_rpc.methods import state
+from pylotus_rpc.methods import chain
 
 class LotusClient:
 
     def __init__(self, connector):
         self.connector = connector
         self.State = self.State(connector)
+        self.Chain = self.Chain(connector)
+
+    class Chain:
+        
+        def __init__(self, connector):
+            self.connector = connector
+
+        def get_block(self, cid):
+            return chain._get_block(self.connector, cid)
 
     class State:
 
@@ -25,6 +35,9 @@ class LotusClient:
         
         def state_call(self, message, tipset=None):
             return state._state_call(self.connector, message, tipset)
+        
+        def changed_actors(self, cid1, cid2):
+            return state._changed_actors(self.connector, cid1, cid2)
         
 
                                     

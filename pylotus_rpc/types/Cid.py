@@ -17,3 +17,11 @@ class Cid:
 
     def __str__(self) -> str:
         return self.id
+
+
+    @staticmethod
+    def dct_cids(lst_cids):
+        """
+        Returns a dictionary representation of the CIDs for JSON serialization.
+        """
+        return [{"/": cid} for cid in lst_cids]

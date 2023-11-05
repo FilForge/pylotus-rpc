@@ -19,6 +19,37 @@ class ApiCallError(Exception):
         self.message = message
 
 
+def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateChangedActors",
+        "params": Cid.dct_cids([cid1, cid2])
+    }
+    
+    result = _execute(connector, payload, debug=True)
+    
+
+def _execute(connector: HttpJsonRpcConnector, payload: dict, debug=False):
+
+    if debug:
+        print(json.dumps(payload, indent=4))
+
+    try:
+        response = connector.exec_method(payload)
+    except Exception as e:
+        raise ApiCallError("Filecoin.StateCall", 0, str(e))
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        if debug:
+            print(json.dumps(response.json(), indent=4))
+
+        return response.json()
+    else:
+        raise ApiCallError(payload['method'], response.status_code, response.text)
+
+
 def _state_call(connector: HttpJsonRpcConnector, 
                 message: Message, 
                 tipset: Optional[Tipset] = None) -> InvocationResult:
