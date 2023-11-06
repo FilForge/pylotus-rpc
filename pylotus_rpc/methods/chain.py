@@ -36,5 +36,5 @@ def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
         "params": Cid.dct_cids([cid])
     }
 
-    result = HttpJsonRpcConnector.execute(connector, payload, debug=False)["result"]
+    result = connector.execute(connector, payload, debug=False)["result"]
     return dict_to_blockheader(result)

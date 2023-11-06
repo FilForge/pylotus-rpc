@@ -30,7 +30,7 @@ class InvocationResult:
     Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
 
     @staticmethod
-    def from_json(data: Dict[str, Any]) -> 'InvocationResult':
+    def from_dict(data: Dict[str, Any]) -> 'InvocationResult':
         # Extracting the relevant information from the JSON data
         result_data = data["result"]
 
