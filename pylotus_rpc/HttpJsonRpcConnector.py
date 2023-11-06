@@ -76,45 +76,13 @@ class HttpJsonRpcConnector:
         """
         return int(time.time() * 1000)
     
-    @staticmethod
-    def execute(connector: 'HttpJsonRpcConnector', payload: dict, debug=False) -> dict:
-        """
-        Execute a JSON RPC call using the given connector.
-
-        This static method takes a connector instance, a payload for the RPC call, and an optional
-        debug flag to output the request and response information. It sends the request and returns
-        the parsed JSON response.
-
-        Args:
-            connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector, which holds
-                                            the connection settings and methods to interact with
-                                            the JSON RPC server.
-            payload (dict): A dictionary representing the JSON RPC request payload.
-            debug (bool, optional): If set to True, the method will print the payload and the response
-                                    for debugging purposes. Defaults to False.
-
-        Returns:
-            dict: A dictionary parsed from the JSON response.
-
-        Raises:
-            ApiCallError: If there is any exception during the API call or if the response status
-                        code is not 200.
-
-        Example:
-            >>> connector = HttpJsonRpcConnector('localhost', 1234, 'api_token_here')
-            >>> payload = {"jsonrpc": "2.0", "method": "Filecoin.ChainHead", "params": []}
-            >>> response = HttpJsonRpcConnector.execute(connector, payload)
-            >>> print(response)
-
-        Note:
-            This method should be used with caution in production environments, especially when
-            the debug flag is set to True, as it may expose sensitive information in the logs.
-        """
+    def execute(self, payload: dict, debug=False) -> dict:
+        # TODO - add comments here
         if debug:
             print(json.dumps(payload, indent=4))
 
         try:
-            response = connector.exec_method(payload)
+            response = self.exec_method(payload)
         except Exception as e:
             raise HttpJsonRpcConnector.ApiCallError(payload["method"], 0, str(e))
 

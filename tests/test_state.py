@@ -1,6 +1,6 @@
 import pytest
 import os
-from pylotus_rpc.methods.state import _get_chain_head, _get_actor, ApiCallError, _account_key, _state_call
+from pylotus_rpc.methods.state import _get_chain_head, _get_actor, _account_key, _state_call
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.types.Message import Message
@@ -39,7 +39,7 @@ def test_state_call_execution_error(setup_connector):
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
 
-    with pytest.raises(ApiCallError):
+    with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _state_call(faulty_connector, good_msg, tipset=None)
 
 
@@ -91,7 +91,7 @@ def test_get_account_key_failure():
 # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
-    with pytest.raises(ApiCallError):
+    with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _account_key(faulty_connector, "f047684")
 
 def test_get_actor_success(setup_connector):
@@ -107,7 +107,7 @@ def test_get_actor_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
-    with pytest.raises(ApiCallError):
+    with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _get_actor(faulty_connector, "f05")
 
 def test_get_chain_head_success(setup_connector):
@@ -122,7 +122,7 @@ def test_get_chain_head_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
-    with pytest.raises(ApiCallError):
+    with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _get_chain_head(faulty_connector)
 
 def parse_fullnode_api_info():
