@@ -1,7 +1,6 @@
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector
 from ..types.Cid import Cid
 from ..types.BlockHeader import BlockHeader, dict_to_blockheader
-import os
 
 def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
     """
@@ -36,5 +35,5 @@ def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
         "params": Cid.dct_cids([cid])
     }
 
-    result = connector.execute(connector, payload, debug=False)["result"]
+    result = connector.execute(payload, debug=False)["result"]
     return dict_to_blockheader(result)
