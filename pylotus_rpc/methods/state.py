@@ -12,32 +12,25 @@ def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.StateChangedActors",
-        "params": Cid.dct_cids([cid1, cid2])
+        "params": Cid.dct_cids([cid1.id, cid2.id])
     }
     
     # TODO - this is a work in progress
-    result = connector.execute(connector, payload, debug=True)
+    data = connector.execute(payload)
+
+    actors = []
+    results = data.get("result", {})
+
+    for actor_id, actor_data in results.items():
+        code_cid = Cid(actor_data["Code"]["/"])
+        head_cid = Cid(actor_data["Head"]["/"])
+        nonce = actor_data["Nonce"]
+        balance = int(actor_data["Balance"])
+        actor = Actor(Code=code_cid, Head=head_cid, Nonce=nonce, Balance=balance)
+        actors.append(actor)
+
+    return actors
     
-
-def _state_call(connector: HttpJsonRpcConnector, 
-                message: Message, 
-                tipset: Optional[Tipset] = None) -> InvocationResult:
-    """
-    Performs a state call to a Filecoin Lotus node via JSON RPC. This method simulates sending a message
-    without actually sending it or causing any state change. It's useful for debugging and for calling smart contracts.
-
-    Parameters:
-        connector (HttpJsonRpcConnector): The connector instance to interface with the JSON RPC API.
-        message (Message): The message to simulate. This contains the information necessary to call a method on a smart contract.
-        tipset (Optional[Tipset], optional): The tipset to use for the call context. If not provided, the latest tipset will be used.
-
-    Returns:
-        InvocationResult: An object representing the result of the call. This includes the return value and any error if occurred.
-
-    Raises:
-        ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
-    """
-    # ... Function implementation ...
 def _state_call(connector: HttpJsonRpcConnector, 
                 message: Message, 
                 tipset: Optional[Tipset] = None) -> InvocationResult:
