@@ -1,28 +1,37 @@
 import requests
 import time
 import json
+from urllib.parse import urlparse
 
 class HttpJsonRpcConnector:
-    """
-    Connector class for HTTP-based JSON RPC communication.
-
-    Attributes:
-    - host: Host address of the RPC server.
-    - port: Port on which the RPC server is listening.
-    - api_token: Token for authenticating with the RPC server.
-    """
-
-    def __init__(self, host='localhost', port=1234, api_token=None):
+    def __init__(self, host='http://localhost/rpc/v0', port=None, api_token=None):
         """
         Initializes an instance of the HttpJsonRpcConnector class.
 
         :param host: The server's hostname or IP address (default is 'localhost').
-        :param port: The server's port (default is 1234).
+        :param port: The server's port (default is None).
         :param api_token: The API token for authentication (default is None).
         """
-        self.host = host
-        self.port = port
+        # Parse the host to get the scheme and path
+        parsed_url = urlparse(host)
+        
+        self.scheme = parsed_url.scheme
+        self.path = parsed_url.path
+
+        # If the port is not specified, we will try to use the one from the parsed URL.
+        # If the parsed URL doesn't have one either, we will default to None.
+        self.port = port if port is not None else parsed_url.port
+
+        # If the host includes a netloc (network location part), use it.
+        # Otherwise, fall back to the host parameter.
+        self.host = parsed_url.netloc.split(':')[0] if parsed_url.netloc else host
+
         self.api_token = api_token
+
+        # Ensure that the path starts with '/' if it's not empty.
+        if self.path and not self.path.startswith('/'):
+            self.path = '/' + self.path
+
 
     class ApiCallError(Exception):
         """
@@ -34,26 +43,37 @@ class HttpJsonRpcConnector:
             self.status_code = status_code
             self.message = message
 
+    
     def get_request_headers(self) -> dict:
         """
         Constructs the headers required for the JSON RPC request.
 
         :return: Dictionary containing the request headers.
         """
-        return {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_token}"
-        }
+        headers = {"Content-Type": "application/json"}
+        if self.api_token:
+            headers["Authorization"] = f"Bearer {self.api_token}"
+        return headers
+
 
     def get_rpc_endpoint(self) -> str:
         """
         Constructs the RPC endpoint URL.
 
+        If a port is defined, it includes the port number in the endpoint URL,
+        otherwise, it only uses the host for the URL.
+
         :return: The full RPC endpoint URL.
         """
-        return f"http://{self.host}:{self.port}/rpc/v0"
+        endpoint = f"{self.scheme}://{self.host}"
+        if self.port:
+            endpoint += f":{self.port}"
+        endpoint += self.path
 
-    def exec_method(self, payload: dict) -> requests.Response:
+        return endpoint
+
+
+    def exec_method(self, payload: dict, debug=False) -> requests.Response:
         """
         Sends a JSON RPC request to the server with the provided payload.
 
@@ -61,10 +81,15 @@ class HttpJsonRpcConnector:
         :return: The server's response as a `requests.Response` object.
         """
         payload["id"] = self._generate_RPC_id()
+
+        if debug:
+            print(f"using endpoint {self.get_rpc_endpoint()}")
+
         response = requests.post(
             self.get_rpc_endpoint(), 
             data=json.dumps(payload), 
-            headers=self.get_request_headers()
+            headers=self.get_request_headers(),
+            timeout=300
         )
         return response
 
@@ -82,7 +107,7 @@ class HttpJsonRpcConnector:
             print(json.dumps(payload, indent=4))
 
         try:
-            response = self.exec_method(payload)
+            response = self.exec_method(payload, debug=True)
         except Exception as e:
             raise HttpJsonRpcConnector.ApiCallError(payload["method"], 0, str(e))
 
