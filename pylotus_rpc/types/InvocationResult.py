@@ -18,23 +18,30 @@ class InvocationResult:
     invocation, any errors encountered, and the total duration of the invocation.
     """
 
-    # Attributes without default values
-    MsgCid: Cid  # The CID (Content Identifier) of the message
-    Msg: Message  # The actual message associated with this invocation
-    MsgRct: MessageReceipt  # The receipt of the message providing details of the message's outcome
-    GasCost: MessageGasCost  # The gas cost details associated with this invocation
-    ExecutionTrace: ExecutionTrace  # Trace that provides insight into the internal steps taken during the invocation
-    Duration: int  # The total duration (likely in milliseconds) of the invocation.
-    
     # Attributes with default values
+    Msg: Message  # The actual message associated with this invocation
+    MsgCid: Optional[Cid] = None  # The CID (Content Identifier) of the message
+    MsgRct: Optional[MessageReceipt] = None  # The receipt of the message providing details of the message's outcome
+    GasCost: Optional[MessageGasCost] = None  # The gas cost details associated with this invocation
+    ExecutionTrace: Optional[ExecutionTrace] = None  # Trace that provides insight into the internal steps taken during the invocation
+    Duration: Optional[int] = None  # The total duration (likely in milliseconds) of the invocation.
     Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
 
     @staticmethod
     def from_dict(data: Dict[str, Any]) -> 'InvocationResult':
+        # api error handling
+        if 'error' in data:
+            code = data["error"]["code"]
+            msg = str(code) + ": " + data["error"]["message"]
+
+            return InvocationResult(
+                Msg=msg,
+                Duration=0,
+                Error=msg
+            )
+        
         # Extracting the relevant information from the JSON data
         result_data = data["result"]
-
-        # Initialize each component from the dictionary
         msg_cid = Cid(result_data["MsgCid"])
         msg = Message.from_json(result_data["Msg"])
         msg_rct = MessageReceipt.from_json(result_data["MsgRct"])

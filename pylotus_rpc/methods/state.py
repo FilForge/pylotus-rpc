@@ -58,7 +58,7 @@ def _state_call(connector: HttpJsonRpcConnector,
         ]
     }
     
-    dct_result = connector.execute(payload)
+    dct_result = connector.execute(payload, debug=True)
     invocation_result = InvocationResult.from_dict(dct_result)
     return invocation_result
 
