@@ -7,15 +7,79 @@ from ..types.TipSet import Tipset
 from ..types.Actor import Actor
 from ..types.InvocationResult import InvocationResult
 
+def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset]) -> int:
+    """
+    Retrieves the circulating supply of Filecoin at a given tipset.
+
+    This function makes a JSON-RPC call to the Filecoin network to obtain the 
+    circulating supply of Filecoin tokens. The circulating supply is the number 
+    of tokens that are actively circulating in the market and in the general 
+    public's hands. It excludes tokens that are locked, reserved, or not yet 
+    released into circulation.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector 
+                                          used for making the JSON-RPC call.
+        tipset (Optional[Tipset]): The tipset at which the circulating supply 
+                                   is to be checked. If None, the latest 
+                                   circulating supply is fetched.
+
+    Returns:
+        int: The circulating supply of Filecoin at the specified tipset, 
+             represented in attoFIL (1 FIL = 10^18 attoFIL).
+
+    Example:
+        >>> connector = HttpJsonRpcConnector('http://localhost:1234', 'my_api_token')
+        >>> tipset = Tipset(...)
+        >>> circulating_supply = _circulating_supply(connector, tipset)
+        >>> print(circulating_supply)
+
+    Note:
+        Ensure to handle any potential exceptions that may occur due to network 
+        issues or unexpected responses from the Filecoin node.
+    """
+    cids = None
+    if tipset:
+        cids = tipset.dct_cids()
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateCirculatingSupply",
+        "params": [cids]
+    }
+
+    data = connector.execute(payload)
+    return int(data["result"])
+
 
 def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
+    """
+    Retrieve a list of actors that have changed between two specified CIDs.
+
+    This function sends a JSON RPC request to the Filecoin/Lotus node to fetch a list
+    of actors that have changed between the two specified CIDs. The actors are represented
+    as a list of `Actor` objects containing information such as their code CID, head CID,
+    nonce, and balance.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of the HTTP-based JSON RPC connector.
+        cid1 (str): The first CID to compare.
+        cid2 (str): The second CID to compare.
+
+    Returns:
+        List[Actor]: A list of `Actor` objects representing actors that have changed.
+
+    Example:
+        actors = _changed_actors(connector_instance, "cid1_value", "cid2_value")
+    
+    """
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.StateChangedActors",
         "params": Cid.dct_cids([cid1.id, cid2.id])
     }
     
-    # TODO - this is a work in progress
+    # execute the method, capture the result
     data = connector.execute(payload)
 
     actors = []

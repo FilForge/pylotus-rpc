@@ -39,5 +39,8 @@ class LotusClient:
         def changed_actors(self, cid1, cid2):
             return state._changed_actors(self.connector, cid1, cid2)
         
+        def circulating_supply(self, tipset=None):
+            return state._circulating_supply(self.connector, tipset)
+
 
                                     

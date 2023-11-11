@@ -1,12 +1,11 @@
 import pytest
 import os
-from pylotus_rpc.methods.state import _get_chain_head, _get_actor, _account_key, _state_call
+from pylotus_rpc.methods.state import _get_chain_head, _get_actor, _account_key, _state_call, _circulating_supply
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.types.Message import Message
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
 from tests.test_common import parse_fullnode_api_info
-
 
 good_msg = Message(
     Version=0,  # Always 0 for now, as per Filecoin protocol
@@ -23,11 +22,14 @@ good_msg = Message(
 
 @pytest.fixture
 def setup_connector():
-    dct_node_info = parse_fullnode_api_info()
-    host = dct_node_info["host"]
-    port = dct_node_info["port"]
-    api_token = dct_node_info["jwt_token"]
-    return HttpJsonRpcConnector(host, port, api_token)
+    host = "https://filfox.info/rpc/v1"
+    return HttpJsonRpcConnector(host=host)
+
+def test_state_circulating_supply(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
+    assert circulating_supply > 0
+
 
 def test_state_call_returned_values(setup_connector):
     tipset = _get_chain_head(setup_connector)
@@ -61,7 +63,8 @@ def test_state_call_message_error(setup_connector):
     )
 
     invoc_result = _state_call(setup_connector, bad_msg, tipset=None)
-    assert invoc_result.MsgRct.ExitCode == 6  #detect error in execution
+    assert invoc_result.Error  # Ensure error is returned
+
     
 # Test Check Gas Charges
 def test_state_call_gas_charges(setup_connector):

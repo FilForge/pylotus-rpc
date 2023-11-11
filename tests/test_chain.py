@@ -7,11 +7,8 @@ from tests.test_common import parse_fullnode_api_info
 
 @pytest.fixture
 def setup_connector():
-    dct_node_info = parse_fullnode_api_info()
-    host = dct_node_info["host"]
-    port = dct_node_info["port"]
-    api_token = dct_node_info["jwt_token"]
-    return HttpJsonRpcConnector(host, port, api_token)
+    host = "https://filfox.info/rpc/v1"
+    return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture(scope="module")
 def block_cid():
