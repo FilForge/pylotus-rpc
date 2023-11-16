@@ -107,7 +107,7 @@ class HttpJsonRpcConnector:
             print(json.dumps(payload, indent=4))
 
         try:
-            response = self.exec_method(payload, debug=True)
+            response = self.exec_method(payload, debug=debug)
         except Exception as e:
             raise HttpJsonRpcConnector.ApiCallError(payload["method"], 0, str(e))
 
