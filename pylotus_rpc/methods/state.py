@@ -1,11 +1,35 @@
-from typing import Optional
+from typing import Optional, List
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector
 from ..types.BlockHeader import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
 from ..types.Message import Message
 from ..types.TipSet import Tipset
 from ..types.Actor import Actor
+from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
+import json
+
+def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
+    cids = None
+    if tipset:
+        cids = tipset.dct_cids()
+
+    lst_messages = [message.to_json() for message in messages]
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateCompute",
+        "params": [
+            epoch,
+            lst_messages,
+            cids 
+        ] 
+    }
+
+    # TODO - test me
+    dct_data = connector.execute(payload, debug=False)
+    state_compute_output = StateComputeOutput.from_dict(dct_data['result'])
+    return state_compute_output
 
 def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset]) -> int:
     """

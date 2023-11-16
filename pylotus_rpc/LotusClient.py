@@ -41,6 +41,9 @@ class LotusClient:
         
         def circulating_supply(self, tipset=None):
             return state._circulating_supply(self.connector, tipset)
+        
+        def state_compute(self, epoch, messages, tipset=None):
+            return state._state_compute(self.connector, epoch, messages, tipset)
 
 
                                     
