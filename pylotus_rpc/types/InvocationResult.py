@@ -41,7 +41,11 @@ class InvocationResult:
             )
         
         # Extracting the relevant information from the JSON data
-        result_data = data["result"]
+        if "result" in data:
+            result_data = data["result"]
+        else:
+            result_data = data
+
         msg_cid = Cid(result_data["MsgCid"])
         msg = Message.from_json(result_data["Msg"])
         msg_rct = MessageReceipt.from_json(result_data["MsgRct"])
