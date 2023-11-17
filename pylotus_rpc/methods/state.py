@@ -10,26 +10,47 @@ from ..types.InvocationResult import InvocationResult
 import json
 
 def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
+    """
+    Calls the Filecoin StateCompute API to apply a set of messages on a specific tipset at a given epoch.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making the API call.
+        epoch (int): The epoch number at which to compute the state. Represents the blockchain height.
+        messages (List[Message]): A list of messages to be applied to the state.
+        tipset (Optional[Tipset]): The tipset on which the state will be computed. Default is None.
+
+    Returns:
+        StateComputeOutput: An object representing the output of the state computation.
+
+    This function constructs a request payload with the specified epoch, messages, and optional tipset.
+    It then sends this request to the Filecoin node via the provided HttpJsonRpcConnector instance.
+    The response is parsed into a StateComputeOutput object which contains details of the computation result.
+    """
+
+    # Extract CIDs from the tipset if provided
     cids = None
     if tipset:
         cids = tipset.dct_cids()
 
+    # Convert the list of Message objects to their JSON representation
     lst_messages = [message.to_json() for message in messages]
 
+    # Construct the request payload
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.StateCompute",
         "params": [
             epoch,
             lst_messages,
-            cids 
+            cids  # Tipset CIDs, if provided
         ] 
     }
 
-    # TODO - test me
-    dct_data = connector.execute(payload, debug=False)
+    # Execute the API call and parse the result
+    dct_data = connector.execute(payload)
     state_compute_output = StateComputeOutput.from_dict(dct_data['result'])
     return state_compute_output
+
 
 def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset]) -> int:
     """
