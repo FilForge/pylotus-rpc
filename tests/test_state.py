@@ -1,6 +1,6 @@
 import pytest
 import os
-from pylotus_rpc.methods.state import _state_compute, _get_chain_head, _get_actor, _account_key, _state_call, _circulating_supply
+from pylotus_rpc.methods.state import _state_compute, _get_chain_head, _get_actor, _account_key, _state_call, _circulating_supply, _deal_provider_collateral_bounds
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.types.StateComputeOutput import StateComputeOutput
@@ -40,6 +40,11 @@ def setup_connector():
     host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
+@pytest.mark.integration
+def test_deal_provider_collateral_bounds(setup_connector):
+    [min, max] = _deal_provider_collateral_bounds(setup_connector, 34359738368, False, tipset=None)
+    assert min > 0
+    assert max > 0
 
 @pytest.mark.integration
 def test_state_compute(setup_connector):
