@@ -44,6 +44,9 @@ class LotusClient:
         
         def state_compute(self, epoch, messages, tipset=None):
             return state._state_compute(self.connector, epoch, messages, tipset)
+        
+        def deal_provider_collateral_bounds(self, padded_piece_size, is_verified, tipset=None):
+            return state._deal_provider_collateral_bounds(self.connector, padded_piece_size, is_verified, tipset)
 
 
                                     

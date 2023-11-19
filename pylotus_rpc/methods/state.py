@@ -9,6 +9,48 @@ from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
 import json
 
+def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_piece_size : int, is_verified : bool, tipset: Optional[Tipset]):
+    """
+    Retrieves the minimum and maximum collateral bounds for a storage provider based on the given piece size and verification status.
+
+    This function queries the Filecoin network using the StateDealProviderCollateralBounds method to determine the range of collateral a storage provider is expected to lock for a given deal size.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        padded_piece_size (int): The size of the piece in bytes, after padding. This is the size of data that will be stored in a deal.
+        is_verified (bool): A boolean indicating if the deal is verified. Verified deals typically require less collateral.
+        tipset (Optional[Tipset]): The tipset at which to check the collateral bounds. If None, the latest tipset is used.
+
+    Returns:
+        tuple: A tuple containing two integers (min_value, max_value). 
+               'min_value' is the minimum collateral amount required, 
+               and 'max_value' is the maximum collateral amount that could be required.
+               Returns (None, None) if either 'Min' or 'Max' values are not found in the response.
+    """
+    cids = None
+    if tipset:
+        cids = tipset.dct_cids()
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateDealProviderCollateralBounds",
+        "params": [
+            padded_piece_size,
+            is_verified,
+            cids
+        ]
+    }
+
+    dct_data = connector.execute(payload)
+    result = dct_data.get("result", {})
+    min_value = result.get("Min")
+    max_value = result.get("Max")
+
+    # Converting to integers and returning them as a tuple
+    return (int(min_value), int(max_value)) if min_value and max_value else (None, None)
+
+    
+
 def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
     """
     Calls the Filecoin StateCompute API to apply a set of messages on a specific tipset at a given epoch.
