@@ -56,13 +56,13 @@ def test_state_compute(setup_connector):
     assert result.root is not None
     assert len(result.trace) > 1
 
-
+@pytest.mark.integration
 def test_state_circulating_supply(setup_connector):
     tipset = _get_chain_head(setup_connector)
     circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
     assert circulating_supply > 0
 
-
+@pytest.mark.integration
 def test_state_call_returned_values(setup_connector):
     tipset = _get_chain_head(setup_connector)
     invocation_result = _state_call(setup_connector, good_msg, tipset=tipset)
@@ -71,6 +71,7 @@ def test_state_call_returned_values(setup_connector):
     assert invocation_result.MsgRct.ExitCode == 0  # No error in execution
     assert invocation_result.Duration > 0  # Duration should be greater than zero for any call
 
+@pytest.mark.integration
 def test_state_call_execution_error(setup_connector):
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
@@ -78,7 +79,7 @@ def test_state_call_execution_error(setup_connector):
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _state_call(faulty_connector, good_msg, tipset=None)
 
-
+@pytest.mark.integration
 def test_state_call_message_error(setup_connector):
     # Create a message that you expect will fail when executed
     bad_msg = Message(
@@ -97,8 +98,7 @@ def test_state_call_message_error(setup_connector):
     invoc_result = _state_call(setup_connector, bad_msg, tipset=None)
     assert invoc_result.Error  # Ensure error is returned
 
-    
-# Test Check Gas Charges
+@pytest.mark.integration
 def test_state_call_gas_charges(setup_connector):
     tipset = _get_chain_head(setup_connector)
     invocation_result = _state_call(setup_connector, good_msg, tipset=tipset)
@@ -108,6 +108,7 @@ def test_state_call_gas_charges(setup_connector):
         assert gas_charge.ComputeGas >= 0
         assert gas_charge.StorageGas >= 0
 
+@pytest.mark.integration
 def test_get_account_key_success_with_tipset(setup_connector):
     tipset = _get_chain_head(setup_connector)
     address = _account_key(setup_connector, "f047684", tipset=tipset)
@@ -116,6 +117,7 @@ def test_get_account_key_success_with_tipset(setup_connector):
     assert isinstance(address, Cid)
     assert len(address.id) > 0
 
+@pytest.mark.integration
 def test_get_account_key_success(setup_connector):
     tipset = _get_chain_head(setup_connector)
     address = _account_key(setup_connector, "f047684", tipset=None)
@@ -124,6 +126,7 @@ def test_get_account_key_success(setup_connector):
     assert isinstance(address, Cid)
     assert len(address.id) > 0
 
+@pytest.mark.integration
 def test_get_account_key_failure():
 # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
@@ -131,6 +134,7 @@ def test_get_account_key_failure():
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _account_key(faulty_connector, "f047684")
 
+@pytest.mark.integration
 def test_get_actor_success(setup_connector):
     actor = _get_actor(setup_connector, "f05")
     
@@ -140,6 +144,7 @@ def test_get_actor_success(setup_connector):
     assert isinstance(actor.Nonce, int)
     assert isinstance(actor.Balance, str)
 
+@pytest.mark.integration
 def test_get_actor_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
@@ -147,6 +152,7 @@ def test_get_actor_failure():
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _get_actor(faulty_connector, "f05")
 
+@pytest.mark.integration
 def test_get_chain_head_success(setup_connector):
     tipset = _get_chain_head(setup_connector)
     
@@ -155,11 +161,10 @@ def test_get_chain_head_success(setup_connector):
     assert len(tipset.cids) > 0
     assert len(tipset.blocks) > 0
 
+@pytest.mark.integration
 def test_get_chain_head_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _get_chain_head(faulty_connector)
-
-
