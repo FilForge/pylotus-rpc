@@ -8,7 +8,8 @@ from pylotus_rpc.methods.state import (
     _account_key,
     _state_call,
     _circulating_supply,
-    _deal_provider_collateral_bounds
+    _deal_provider_collateral_bounds,
+    _decode_params
 )
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
@@ -55,6 +56,14 @@ def test_deal_provider_collateral_bounds(setup_connector):
     [min, max] = _deal_provider_collateral_bounds(setup_connector, 34359738368, False, tipset=None)
     assert min > 0
     assert max > 0
+
+
+@pytest.mark.integration
+def test_decode_params(setup_connector):
+    data = _decode_params(setup_connector, "f05", 6, "goEaA5wJ/BoASmsX", tipset=None)
+    assert data is not None
+    assert len(data) > 0
+
 
 @pytest.mark.integration
 def test_state_compute(setup_connector):
