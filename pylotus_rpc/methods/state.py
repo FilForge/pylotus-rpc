@@ -9,6 +9,37 @@ from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
 import json
 
+
+def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int, params: str, tipset: Optional[Tipset] = None):
+    """
+    Decodes the parameters of a message for a given actor and method into a human-readable format.
+
+    This function is useful for understanding the data passed in transactions, especially those interacting with smart contracts.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to send the JSON-RPC request.
+        actor_cid (str): The CID (Content Identifier) of the actor (smart contract) for which the message was intended.
+        method (int): The method number on the actor the message is calling.
+        params (str): The encoded parameters to be decoded. This is usually a base64 encoded string.
+        tipset (Optional[Tipset]): The tipset at which to perform the decoding. If None, the latest tipset is used.
+
+    Returns:
+        A dictionary representing the decoded parameters in a human-readable format. If the decoding fails, an empty dictionary is returned.
+
+    """
+
+    cids = tipset.dct_cids() if tipset else None
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateDecodeParams",
+        "params": [actor_cid, method, params, cids]
+    }
+
+    response = connector.execute(payload)
+    return response.get("result", {})
+
+
 def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_piece_size : int, is_verified : bool, tipset: Optional[Tipset]):
     """
     Retrieves the minimum and maximum collateral bounds for a storage provider based on the given piece size and verification status.

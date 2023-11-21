@@ -48,5 +48,6 @@ class LotusClient:
         def deal_provider_collateral_bounds(self, padded_piece_size, is_verified, tipset=None):
             return state._deal_provider_collateral_bounds(self.connector, padded_piece_size, is_verified, tipset)
 
-
+        def decode_params(self, actor_id, method_num, params, tipset=None):
+            return state._decode_params(self.connector, actor_id, method_num, params, tipset)
                                     
