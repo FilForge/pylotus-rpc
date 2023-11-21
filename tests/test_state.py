@@ -1,12 +1,22 @@
 import pytest
 import os
-from pylotus_rpc.methods.state import _state_compute, _get_chain_head, _get_actor, _account_key, _state_call, _circulating_supply, _deal_provider_collateral_bounds
+
+from pylotus_rpc.methods.state import (
+    _state_compute,
+    _get_chain_head,
+    _get_actor,
+    _account_key,
+    _state_call,
+    _circulating_supply,
+    _deal_provider_collateral_bounds
+)
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.types.StateComputeOutput import StateComputeOutput
 from pylotus_rpc.types.Message import Message
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
 from tests.test_common import parse_fullnode_api_info
+
 
 good_msg = Message(
     Version=0,  # Always 0 for now, as per Filecoin protocol
