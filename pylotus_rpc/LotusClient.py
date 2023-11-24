@@ -51,3 +51,5 @@ class LotusClient:
         def decode_params(self, actor_id, method_num, params, tipset=None):
             return state._decode_params(self.connector, actor_id, method_num, params, tipset)
                                     
+        def get_randomness_from_beacon(self, domain_tag, epoch, random_bytes, tipset=None):
+            return state._get_randomness_from_beacon(self.connector, domain_tag, epoch, random_bytes, tipset)
