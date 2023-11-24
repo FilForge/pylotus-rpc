@@ -9,8 +9,10 @@ from pylotus_rpc.methods.state import (
     _state_call,
     _circulating_supply,
     _deal_provider_collateral_bounds,
-    _decode_params
+    _decode_params,
+    _get_randomness_from_beacon
 )
+
 from pylotus_rpc.types.InvocationResult import InvocationResult
 from pylotus_rpc.types.Cid import Cid
 from pylotus_rpc.types.StateComputeOutput import StateComputeOutput
@@ -48,8 +50,16 @@ good_msg2 = Message(
 
 @pytest.fixture
 def setup_connector():
-    host = "https://filfox.info/rpc/v1"
+    # TODO - use environment variable for host
+    host = "http://lotus.filforge.io:1234/rpc/v0"
+    # host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
+
+def test_get_randomness_from_beacon(setup_connector):
+    result = _get_randomness_from_beacon(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
+    assert result is not None
+    assert len(result) > 0
+    assert result == "Qg+/Ia8AQK+6Wf6rdET3tO3DYjZdDxMYAND/Mazu6Pc="
 
 @pytest.mark.integration
 def test_deal_provider_collateral_bounds(setup_connector):
