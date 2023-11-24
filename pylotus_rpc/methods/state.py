@@ -7,7 +7,56 @@ from ..types.TipSet import Tipset
 from ..types.Actor import Actor
 from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
-import json
+
+
+def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
+    """
+    Constructs a JSON-RPC payload for a given method and parameters.
+
+    Args:
+        method (str): The name of the JSON-RPC method to call.
+        params (List): A list of parameters to pass to the method.
+        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the latest tipset is used.
+
+    Returns:
+        dict: A dictionary containing the JSON-RPC payload.
+
+    """
+    cids = None
+    if tipset:
+        cids = tipset.dct_cids()
+
+    params.append(cids)
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": method,
+        "params": params
+    }
+
+    return payload
+
+
+def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int, epoch: int, entropy_base64: str, tipset: Optional[Tipset] = None):
+    """
+    Retrieves randomness from the Filecoin network's randomness beacon for a specific epoch.
+
+    This function sends a request to the Filecoin network to obtain randomness for a given epoch. 
+    The randomness is derived from the network's randomness beacon, which provides unpredictable and unbiased random values.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to send the JSON-RPC request.
+        domain_tag (int): The domain separation tag (DST) to uniquely identify the use case for the randomness.
+        epoch (int): The epoch number for which the randomness is requested.
+        entropy_base64 (str): A base64 encoded string of bytes used as additional entropy in the randomness generation process.
+        tipset (Optional[Tipset]): The tipset key for specifying a particular chain context. If None, the latest tipset is used.
+
+    Returns:
+        str: A base64 encoded string representing the random value obtained from the beacon.
+    """
+    payload=_make_payload("Filecoin.StateGetRandomnessFromBeacon", [domain_tag, epoch, entropy_base64], tipset)
+    response = connector.execute(payload, debug=True)
+    return response['result']
 
 
 def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int, params: str, tipset: Optional[Tipset] = None):
@@ -27,7 +76,6 @@ def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int,
         A dictionary representing the decoded parameters in a human-readable format. If the decoding fails, an empty dictionary is returned.
 
     """
-
     cids = tipset.dct_cids() if tipset else None
 
     payload = {
