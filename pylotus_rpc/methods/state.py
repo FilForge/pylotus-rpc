@@ -26,13 +26,21 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     if tipset:
         cids = tipset.dct_cids()
 
-    params.append(cids)
+    # if params exists (including if it's an empty list), append the cids
+    if params is not None:
+        params.append(cids)
 
-    payload = {
-        "jsonrpc": "2.0",
-        "method": method,
-        "params": params
-    }
+    if params: 
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params
+        }
+    else:
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method
+        }
 
     return payload
 
@@ -76,14 +84,7 @@ def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int,
         A dictionary representing the decoded parameters in a human-readable format. If the decoding fails, an empty dictionary is returned.
 
     """
-    cids = tipset.dct_cids() if tipset else None
-
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateDecodeParams",
-        "params": [actor_cid, method, params, cids]
-    }
-
+    payload=_make_payload("Filecoin.StateDecodeParams", [actor_cid, method, params], tipset)
     response = connector.execute(payload)
     return response.get("result", {})
 
@@ -106,20 +107,7 @@ def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_pie
                and 'max_value' is the maximum collateral amount that could be required.
                Returns (None, None) if either 'Min' or 'Max' values are not found in the response.
     """
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateDealProviderCollateralBounds",
-        "params": [
-            padded_piece_size,
-            is_verified,
-            cids
-        ]
-    }
-
+    payload = _make_payload("Filecoin.StateDealProviderCollateralBounds", [padded_piece_size, is_verified], tipset)
     dct_data = connector.execute(payload)
     result = dct_data.get("result", {})
     min_value = result.get("Min")
@@ -127,7 +115,6 @@ def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_pie
 
     # Converting to integers and returning them as a tuple
     return (int(min_value), int(max_value)) if min_value and max_value else (None, None)
-
     
 
 def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
@@ -148,25 +135,9 @@ def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[M
     The response is parsed into a StateComputeOutput object which contains details of the computation result.
     """
 
-    # Extract CIDs from the tipset if provided
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
     # Convert the list of Message objects to their JSON representation
     lst_messages = [message.to_json() for message in messages]
-
-    # Construct the request payload
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateCompute",
-        "params": [
-            epoch,
-            lst_messages,
-            cids  # Tipset CIDs, if provided
-        ] 
-    }
-
+    payload = _make_payload("Filecoin.StateCompute", [epoch, lst_messages], tipset)
     # Execute the API call and parse the result
     dct_data = connector.execute(payload)
     state_compute_output = StateComputeOutput.from_dict(dct_data['result'])
@@ -204,16 +175,7 @@ def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset
         Ensure to handle any potential exceptions that may occur due to network 
         issues or unexpected responses from the Filecoin node.
     """
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateCirculatingSupply",
-        "params": [cids]
-    }
-
+    payload = _make_payload("Filecoin.StateCirculatingSupply", [], tipset)
     data = connector.execute(payload)
     return int(data["result"])
 
@@ -239,12 +201,7 @@ def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
         actors = _changed_actors(connector_instance, "cid1_value", "cid2_value")
     
     """
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateChangedActors",
-        "params": Cid.dct_cids([cid1.id, cid2.id])
-    }
-    
+    payload = _make_payload("Filecoin.StateChangedActors", Cid.dct_cids([cid1.id, cid2.id], None))
     # execute the method, capture the result
     data = connector.execute(payload)
 
@@ -279,15 +236,7 @@ def _state_call(connector: HttpJsonRpcConnector,
     Raises:
         ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
     """
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateCall",
-        "params": [
-            message.to_json(),
-            tipset.dct_cids() if tipset else None,
-        ]
-    }
-    
+    payload = _make_payload("Filecoin.StateCall", [message.to_json()], tipset)
     dct_result = connector.execute(payload, debug=True)
     invocation_result = InvocationResult.from_dict(dct_result)
     return invocation_result
@@ -308,15 +257,7 @@ def _account_key(connector: HttpJsonRpcConnector, address: str, tipset: Optional
     Raises:
         ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
     """
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateAccountKey",
-        "params": [
-            address,
-            tipset.dct_cids() if tipset else None,
-        ]
-    }
-
+    payload = _make_payload("Filecoin.StateAccountKey", [address], tipset)
     dct_result = connector.execute(payload)
     # Parse the account key
     address = Cid(dct_result["result"])
@@ -344,19 +285,7 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
         >>> print(actor_details.Code)
         >>> print(actor_details.Balance)
     """
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateGetActor",
-        "params": [
-            actor_id,
-            cids,
-        ],
-    }
-
+    payload = _make_payload("Filecoin.StateGetActor", [actor_id], tipset)
     dct_result = connector.execute(payload)
     actor_data = dct_result['result']
 
@@ -372,16 +301,10 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
 
 # WARNING: This method takes an exceptionally long time to complete.
 def _list_state_actors(connector, tipset):
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.StateListActors",
-        "params": [
-            tipset.dct_cids(),
-        ]
-    }
-
+    payload = _make_payload("Filecoin.StateListActors", [], tipset)
     # TODO - unfinished
     dct_result = connector.execute(payload)
+
 
 def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
     """
@@ -406,11 +329,7 @@ def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
         ...     print(header.miner)
     """
     # JSON-RPC payload for requesting the chain head
-    payload = {
-        "jsonrpc": "2.0",
-        "method": "Filecoin.ChainHead",
-    }
-
+    payload = _make_payload("Filecoin.ChainHead", None)
     dct_result = connector.execute(payload)
 
     # Parse the CIDs
