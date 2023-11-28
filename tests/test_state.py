@@ -3,7 +3,6 @@ import os
 
 from pylotus_rpc.methods.state import (
     _state_compute,
-    _get_chain_head,
     _get_actor,
     _account_key,
     _state_call,
@@ -11,6 +10,10 @@ from pylotus_rpc.methods.state import (
     _deal_provider_collateral_bounds,
     _decode_params,
     _get_randomness_from_beacon
+)
+
+from pylotus_rpc.methods.chain import (
+    _get_chain_head
 )
 
 from pylotus_rpc.types.InvocationResult import InvocationResult
@@ -186,19 +189,3 @@ def test_get_actor_failure():
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
         _get_actor(faulty_connector, "f05")
 
-@pytest.mark.integration
-def test_get_chain_head_success(setup_connector):
-    tipset = _get_chain_head(setup_connector)
-    
-    # Basic checks to see if the returned object is correctly formed
-    assert isinstance(tipset.height, int)
-    assert len(tipset.cids) > 0
-    assert len(tipset.blocks) > 0
-
-@pytest.mark.integration
-def test_get_chain_head_failure():
-    # Let's use wrong port or token to force an error
-    faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
-    
-    with pytest.raises(HttpJsonRpcConnector.ApiCallError):
-        _get_chain_head(faulty_connector)

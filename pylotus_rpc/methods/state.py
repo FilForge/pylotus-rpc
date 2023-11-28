@@ -1,5 +1,5 @@
 from typing import Optional, List
-from ..HttpJsonRpcConnector import HttpJsonRpcConnector
+from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
 from ..types.BlockHeader import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
 from ..types.Message import Message
@@ -7,43 +7,6 @@ from ..types.TipSet import Tipset
 from ..types.Actor import Actor
 from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
-
-
-def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
-    """
-    Constructs a JSON-RPC payload for a given method and parameters.
-
-    Args:
-        method (str): The name of the JSON-RPC method to call.
-        params (List): A list of parameters to pass to the method.
-        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the latest tipset is used.
-
-    Returns:
-        dict: A dictionary containing the JSON-RPC payload.
-
-    """
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
-    # if params exists (including if it's an empty list), append the cids
-    if params is not None:
-        params.append(cids)
-
-    if params: 
-        payload = {
-            "jsonrpc": "2.0",
-            "method": method,
-            "params": params
-        }
-    else:
-        payload = {
-            "jsonrpc": "2.0",
-            "method": method
-        }
-
-    return payload
-
 
 def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int, epoch: int, entropy_base64: str, tipset: Optional[Tipset] = None):
     """
@@ -306,39 +269,4 @@ def _list_state_actors(connector, tipset):
     dct_result = connector.execute(payload)
 
 
-def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
-    """
-    Retrieves the latest chain head from a Filecoin Lotus node.
-
-    This method queries the Filecoin node for the latest head of the blockchain, which is a Tipset object that 
-    contains the CIDs of the block headers at the current chain height.
-
-    Parameters:
-        connector (HttpJsonRpcConnector): The connector instance used to interface with the JSON RPC API of the Filecoin Lotus node.
-
-    Returns:
-        Tipset: An object representing the latest Tipset on the chain, which includes its height and the block headers.
-
-    Raises:
-        ApiCallError: If the RPC call fails, an ApiCallError is raised containing the error details.
-
-    Examples:
-        >>> current_chain_head = _get_chain_head(connector)
-        >>> print(current_chain_head.height)
-        >>> for header in current_chain_head.block_headers:
-        ...     print(header.miner)
-    """
-    # JSON-RPC payload for requesting the chain head
-    payload = _make_payload("Filecoin.ChainHead", None)
-    dct_result = connector.execute(payload)
-
-    # Parse the CIDs
-    lst_cids = [Cid(cid["/"]) for cid in dct_result["result"]["Cids"]]
-
-    # Parse block headers into BlockHeader objects
-    lst_block_headers = [dict_to_blockheader(dct) for dct in dct_result["result"]["Blocks"]]
-    height = dct_result["result"]["Height"]
-
-    # construct and return a Tipset        
-    return Tipset(height, lst_cids, lst_block_headers)
 

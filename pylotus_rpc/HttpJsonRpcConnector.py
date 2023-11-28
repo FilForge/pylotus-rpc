@@ -1,7 +1,10 @@
 import requests
 import time
 import json
+from typing import List, Optional
+from .types.TipSet import Tipset
 from urllib.parse import urlparse
+
 
 class HttpJsonRpcConnector:
     def __init__(self, host='http://localhost/rpc/v0', port=None, api_token=None):
@@ -120,3 +123,42 @@ class HttpJsonRpcConnector:
             return response.json()
         else:
             raise HttpJsonRpcConnector.ApiCallError(payload['method'], response.status_code, response.text)
+
+
+
+def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
+    """
+    Constructs a JSON-RPC payload for a given method and parameters.
+
+    Args:
+        method (str): The name of the JSON-RPC method to call.
+        params (List): A list of parameters to pass to the method.
+        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the latest tipset is used.
+
+    Returns:
+        dict: A dictionary containing the JSON-RPC payload.
+
+    """
+    cids = None
+    if tipset:
+        cids = tipset.dct_cids()
+
+    # if params exists (including if it's an empty list), append the cids
+    if params is not None:
+        params.append(cids)
+
+    if params: 
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params
+        }
+    else:
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method
+        }
+
+    return payload
+
+
