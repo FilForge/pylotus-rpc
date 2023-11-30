@@ -5,7 +5,7 @@ from ..types.cid import Cid
 from ..types.message import Message
 from ..types.TipSet import Tipset
 from ..types.actor import Actor
-from ..types.StateComputeOutput import StateComputeOutput
+from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
 
 def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int, epoch: int, entropy_base64: str, tipset: Optional[Tipset] = None):

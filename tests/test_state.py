@@ -18,7 +18,7 @@ from pylotus_rpc.methods.chain import (
 
 from pylotus_rpc.types.invocation_result import InvocationResult
 from pylotus_rpc.types.cid import Cid
-from pylotus_rpc.types.StateComputeOutput import StateComputeOutput
+from pylotus_rpc.types.state_compute_output import StateComputeOutput
 from pylotus_rpc.types.message import Message
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
 from tests.test_common import parse_fullnode_api_info
