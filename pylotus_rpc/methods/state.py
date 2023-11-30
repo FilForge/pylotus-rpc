@@ -4,7 +4,7 @@ from ..types.BlockHeader import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
 from ..types.Message import Message
 from ..types.TipSet import Tipset
-from ..types.Actor import Actor
+from ..types.actor import Actor
 from ..types.StateComputeOutput import StateComputeOutput
 from ..types.InvocationResult import InvocationResult
 

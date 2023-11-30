@@ -1,4 +1,4 @@
-# Actor.py
+# actor.py
 
 from .Cid import Cid
 
