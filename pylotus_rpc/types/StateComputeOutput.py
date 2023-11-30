@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 from .cid import Cid
-from .InvocationResult import InvocationResult
+from .invocation_result import InvocationResult
 
 @dataclass
 class StateComputeOutput:

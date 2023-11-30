@@ -16,7 +16,7 @@ from pylotus_rpc.methods.chain import (
     _get_chain_head
 )
 
-from pylotus_rpc.types.InvocationResult import InvocationResult
+from pylotus_rpc.types.invocation_result import InvocationResult
 from pylotus_rpc.types.cid import Cid
 from pylotus_rpc.types.StateComputeOutput import StateComputeOutput
 from pylotus_rpc.types.Message import Message
