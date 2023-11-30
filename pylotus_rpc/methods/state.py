@@ -1,5 +1,5 @@
 from typing import Optional, List
-from ..http_json_rpc_connector import HttpJsonRpcConnector, _make_payload
+from ..http_json_rpc_connector import HttpJsonRpcConnector, make_payload
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
 from ..types.message import Message
@@ -25,7 +25,7 @@ def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int
     Returns:
         str: A base64 encoded string representing the random value obtained from the beacon.
     """
-    payload=_make_payload("Filecoin.StateGetRandomnessFromBeacon", [domain_tag, epoch, entropy_base64], tipset)
+    payload=make_payload("Filecoin.StateGetRandomnessFromBeacon", [domain_tag, epoch, entropy_base64], tipset)
     response = connector.execute(payload, debug=True)
     return response['result']
 
@@ -47,7 +47,7 @@ def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int,
         A dictionary representing the decoded parameters in a human-readable format. If the decoding fails, an empty dictionary is returned.
 
     """
-    payload=_make_payload("Filecoin.StateDecodeParams", [actor_cid, method, params], tipset)
+    payload=make_payload("Filecoin.StateDecodeParams", [actor_cid, method, params], tipset)
     response = connector.execute(payload)
     return response.get("result", {})
 
@@ -70,7 +70,7 @@ def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_pie
                and 'max_value' is the maximum collateral amount that could be required.
                Returns (None, None) if either 'Min' or 'Max' values are not found in the response.
     """
-    payload = _make_payload("Filecoin.StateDealProviderCollateralBounds", [padded_piece_size, is_verified], tipset)
+    payload = make_payload("Filecoin.StateDealProviderCollateralBounds", [padded_piece_size, is_verified], tipset)
     dct_data = connector.execute(payload)
     result = dct_data.get("result", {})
     min_value = result.get("Min")
@@ -100,7 +100,7 @@ def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[M
 
     # Convert the list of Message objects to their JSON representation
     lst_messages = [message.to_json() for message in messages]
-    payload = _make_payload("Filecoin.StateCompute", [epoch, lst_messages], tipset)
+    payload = make_payload("Filecoin.StateCompute", [epoch, lst_messages], tipset)
     # Execute the API call and parse the result
     dct_data = connector.execute(payload)
     state_compute_output = StateComputeOutput.from_dict(dct_data['result'])
@@ -138,7 +138,7 @@ def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset
         Ensure to handle any potential exceptions that may occur due to network 
         issues or unexpected responses from the Filecoin node.
     """
-    payload = _make_payload("Filecoin.StateCirculatingSupply", [], tipset)
+    payload = make_payload("Filecoin.StateCirculatingSupply", [], tipset)
     data = connector.execute(payload)
     return int(data["result"])
 
@@ -164,7 +164,7 @@ def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
         actors = _changed_actors(connector_instance, "cid1_value", "cid2_value")
     
     """
-    payload = _make_payload("Filecoin.StateChangedActors", Cid.dct_cids([cid1.id, cid2.id], None))
+    payload = make_payload("Filecoin.StateChangedActors", Cid.dct_cids([cid1.id, cid2.id], None))
     # execute the method, capture the result
     data = connector.execute(payload)
 
@@ -199,7 +199,7 @@ def _state_call(connector: HttpJsonRpcConnector,
     Raises:
         ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
     """
-    payload = _make_payload("Filecoin.StateCall", [message.to_json()], tipset)
+    payload = make_payload("Filecoin.StateCall", [message.to_json()], tipset)
     dct_result = connector.execute(payload, debug=True)
     invocation_result = InvocationResult.from_dict(dct_result)
     return invocation_result
@@ -220,7 +220,7 @@ def _account_key(connector: HttpJsonRpcConnector, address: str, tipset: Optional
     Raises:
         ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
     """
-    payload = _make_payload("Filecoin.StateAccountKey", [address], tipset)
+    payload = make_payload("Filecoin.StateAccountKey", [address], tipset)
     dct_result = connector.execute(payload)
     # Parse the account key
     address = Cid(dct_result["result"])
@@ -248,7 +248,7 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
         >>> print(actor_details.Code)
         >>> print(actor_details.Balance)
     """
-    payload = _make_payload("Filecoin.StateGetActor", [actor_id], tipset)
+    payload = make_payload("Filecoin.StateGetActor", [actor_id], tipset)
     dct_result = connector.execute(payload)
     actor_data = dct_result['result']
 
@@ -264,7 +264,7 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
 
 # WARNING: This method takes an exceptionally long time to complete.
 def _list_state_actors(connector, tipset):
-    payload = _make_payload("Filecoin.StateListActors", [], tipset)
+    payload = make_payload("Filecoin.StateListActors", [], tipset)
     # TODO - unfinished
     dct_result = connector.execute(payload)
 

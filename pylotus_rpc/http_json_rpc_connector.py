@@ -126,7 +126,7 @@ class HttpJsonRpcConnector:
 
 
 
-def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
+def make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
     Constructs a JSON-RPC payload for a given method and parameters.
 
