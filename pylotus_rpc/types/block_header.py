@@ -1,6 +1,6 @@
 from typing import List, Dict, Union
 from .cid import Cid
-from .Signature import Signature
+from .signature import Signature
 
 class BlockHeader:
     """
