@@ -2,7 +2,7 @@ import requests
 import time
 import json
 from typing import List, Optional
-from .types.TipSet import Tipset
+from .types.tip_set import Tipset
 from urllib.parse import urlparse
 
 

@@ -1,4 +1,4 @@
 # include imports
 from .LotusClient import LotusClient
-from .HttpJsonRpcConnector import HttpJsonRpcConnector
+from .http_json_rpc_connector import HttpJsonRpcConnector
 

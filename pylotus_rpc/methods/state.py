@@ -1,9 +1,9 @@
 from typing import Optional, List
-from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
+from ..http_json_rpc_connector import HttpJsonRpcConnector, _make_payload
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
 from ..types.message import Message
-from ..types.TipSet import Tipset
+from ..types.tip_set import Tipset
 from ..types.actor import Actor
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult

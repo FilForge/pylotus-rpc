@@ -1,6 +1,6 @@
-from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
+from ..http_json_rpc_connector import HttpJsonRpcConnector, _make_payload
 from ..types.cid import Cid
-from ..types.TipSet import Tipset
+from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader, dict_to_blockheader
 
 
