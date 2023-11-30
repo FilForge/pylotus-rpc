@@ -1,6 +1,6 @@
 from typing import List
 from .Cid import Cid
-from .BlockHeader import BlockHeader
+from .block_header import BlockHeader
 
 class Tipset:
     """

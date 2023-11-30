@@ -1,7 +1,7 @@
 import pytest
 from pylotus_rpc.methods.chain import _get_block
 from pylotus_rpc.HttpJsonRpcConnector import HttpJsonRpcConnector
-from pylotus_rpc.types.BlockHeader import BlockHeader, dict_to_blockheader
+from pylotus_rpc.types.block_header import BlockHeader, dict_to_blockheader
 from tests.test_common import parse_fullnode_api_info
 from pylotus_rpc.methods.chain import (
     _get_chain_head

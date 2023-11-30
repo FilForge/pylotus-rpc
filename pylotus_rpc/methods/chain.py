@@ -1,7 +1,7 @@
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
 from ..types.Cid import Cid
 from ..types.TipSet import Tipset
-from ..types.BlockHeader import BlockHeader, dict_to_blockheader
+from ..types.block_header import BlockHeader, dict_to_blockheader
 
 
 def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:

@@ -1,6 +1,6 @@
 from typing import Optional, List
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
-from ..types.BlockHeader import BlockHeader, dict_to_blockheader
+from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.Cid import Cid
 from ..types.Message import Message
 from ..types.TipSet import Tipset
