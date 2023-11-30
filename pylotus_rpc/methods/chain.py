@@ -1,5 +1,5 @@
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
-from ..types.Cid import Cid
+from ..types.cid import Cid
 from ..types.TipSet import Tipset
 from ..types.block_header import BlockHeader, dict_to_blockheader
 

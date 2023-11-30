@@ -1,6 +1,6 @@
 # actor.py
 
-from .Cid import Cid
+from .cid import Cid
 
 class Actor:
     """

@@ -1,5 +1,5 @@
 from typing import List
-from .Cid import Cid
+from .cid import Cid
 from .block_header import BlockHeader
 
 class Tipset:

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from .Cid import Cid
+from .cid import Cid
 from .InvocationResult import InvocationResult
 
 @dataclass

@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import Dict, Any, Optional
-from .Cid import Cid
+from .cid import Cid
 from .Message import Message
 from .MessageReceipt import MessageReceipt
 from .MessageGasCost import MessageGasCost
-from .ExecutionTrace import ExecutionTrace
+from .execution_trace import ExecutionTrace
 
 @dataclass
 class InvocationResult:
