@@ -3,7 +3,7 @@ from typing import Dict, Any, Optional
 from .cid import Cid
 from .message import Message
 from .MessageReceipt import MessageReceipt
-from .MessageGasCost import MessageGasCost
+from .message_gas_cost import MessageGasCost
 from .execution_trace import ExecutionTrace
 
 @dataclass
