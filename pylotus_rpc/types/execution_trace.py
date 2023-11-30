@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Union
 from .Message import Message
 from .MessageReceipt import MessageReceipt
-from .GasTrace import GasTrace
+from .gas_trace import GasTrace
 
 @dataclass
 class ExecutionTrace:
