@@ -2,7 +2,7 @@ from typing import Optional, List
 from ..HttpJsonRpcConnector import HttpJsonRpcConnector, _make_payload
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
-from ..types.Message import Message
+from ..types.message import Message
 from ..types.TipSet import Tipset
 from ..types.actor import Actor
 from ..types.StateComputeOutput import StateComputeOutput
