@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Union
 from .message import Message
-from .MessageReceipt import MessageReceipt
+from .message_receipt import MessageReceipt
 from .gas_trace import GasTrace
 
 @dataclass

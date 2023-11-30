@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, Any, Optional
 from .cid import Cid
 from .message import Message
-from .MessageReceipt import MessageReceipt
+from .message_receipt import MessageReceipt
 from .message_gas_cost import MessageGasCost
 from .execution_trace import ExecutionTrace
 
