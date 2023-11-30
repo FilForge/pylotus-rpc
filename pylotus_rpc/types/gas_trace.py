@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List, Any, Dict, Union, Optional
-from .Loc import Loc
+from .loc import Loc
 
 @dataclass
 class GasTrace:
