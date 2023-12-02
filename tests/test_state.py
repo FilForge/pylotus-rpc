@@ -9,7 +9,8 @@ from pylotus_rpc.methods.state import (
     _circulating_supply,
     _deal_provider_collateral_bounds,
     _decode_params,
-    _get_randomness_from_beacon
+    _get_randomness_from_beacon,
+    _list_actors
 )
 
 from pylotus_rpc.methods.chain import (
@@ -50,6 +51,10 @@ good_msg2 = Message(
     Params=""  # No params needed for simple transfers
 )    
 
+@pytest.fixture
+def setup_filfox_connector():
+    host = "https://filfox.info/rpc/v1"
+    return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture
 def setup_connector():
@@ -58,6 +63,14 @@ def setup_connector():
     # host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
+
+@pytest.mark.integration
+def test_state_list_actors(setup_filfox_connector):
+    result = _list_actors(setup_filfox_connector, tipset=None)
+    assert result is not None
+    assert len(result) > 0
+
+@pytest.mark.integration
 def test_get_randomness_from_beacon(setup_connector):
     result = _get_randomness_from_beacon(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
     assert result is not None

@@ -28,7 +28,7 @@ class LotusClient:
             return state._account_key(self.connector, address, tipset)
                 
         def list_actors(self, tipset):
-            return state._list_state_actors(self.connector, tipset)
+            return state._list_actors(self.connector, tipset)
         
         def get_actor(self, actor_id, tipset=None):
             return state._get_actor(self.connector, actor_id, tipset)

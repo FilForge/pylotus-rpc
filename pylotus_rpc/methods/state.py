@@ -262,11 +262,29 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
     return actor
 
 
-# WARNING: This method takes an exceptionally long time to complete.
-def _list_state_actors(connector, tipset):
+def _list_actors(connector, tipset):
+    """
+    Retrieves a list of all actors in a specified tipset.
+
+    This function sends a request to the Filecoin node via the provided connector,
+    invoking the `StateListActors` method to fetch all actors present in the state
+    tree of the specified tipset.
+
+    Args:
+        connector: An object to interface with the Filecoin node. It should provide
+                   an `execute` method for sending requests to the node.
+        tipset: An optional tipset key indicating the state at which to list actors.
+                If `None`, the latest state will be used.
+
+    Returns:
+        list: A list of actor addresses (as strings) present in the specified tipset.
+    """
     payload = make_payload("Filecoin.StateListActors", [], tipset)
-    # TODO - unfinished
     dct_result = connector.execute(payload)
+    lst_actors = dct_result.get("result", [])
+
+    return lst_actors
+
 
 
 
