@@ -2,11 +2,35 @@ from typing import Optional, List
 from ..http_json_rpc_connector import HttpJsonRpcConnector, make_payload
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
+from ..types.actor_state import ActorState
 from ..types.message import Message
 from ..types.tip_set import Tipset
 from ..types.actor import Actor
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
+
+def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[Tipset] = None):
+    """
+    Reads the state of an actor at a specified tipset in the Filecoin network.
+
+    This function queries the state of a given actor (identified by `actor_id`) from the Filecoin network
+    using the provided HTTP JSON-RPC connector. It can target the state at a specific tipset if provided;
+    otherwise, it uses the latest state.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector object used for communicating with the Filecoin node.
+                                          It must implement an `execute` method for sending the RPC request.
+        actor_id (str): The identifier (address) of the actor whose state is to be read.
+        tipset (Optional[Tipset]): The tipset key at which to read the state. If `None`, the latest state is used.
+
+    Returns:
+        ActorState: An object representing the state of the actor at the specified tipset. This includes
+                    various details like balance, nonce, etc., depending on the actor type.
+    """
+    payload = make_payload("Filecoin.StateReadState", [actor_id], tipset)
+    response = connector.execute(payload)
+    return ActorState.from_dict(response['result'])
+
 
 def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int, epoch: int, entropy_base64: str, tipset: Optional[Tipset] = None):
     """

@@ -24,6 +24,9 @@ class LotusClient:
         def __init__(self, connector):
             self.connector = connector
 
+        def read_state(self, actor_id, tipset=None):
+            return state._read_state(self.connector, actor_id, tipset)
+        
         def account_key(self, address, tipset=None):
             return state._account_key(self.connector, address, tipset)
                 
