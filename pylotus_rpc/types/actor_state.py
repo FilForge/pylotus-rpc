@@ -6,11 +6,11 @@ from .cid import Cid
 class ActorState:
     balance: int
     code: Cid
-    dct_state: Dict
+    state: Dict
 
     @staticmethod
     def from_dict(dct):
         return ActorState(
-            balance=dct.get('Balance', None),
+            balance=int(dct.get('Balance', None)),
             code=Cid.from_dict(dct.get('Code', None)),
-            dct_state=dct.get('State', None))
+            state=dct.get('State', None))
