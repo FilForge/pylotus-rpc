@@ -71,8 +71,8 @@ def test_state_list_actors(setup_filfox_connector):
     assert len(result) > 0
 
 @pytest.mark.integration
-def test_get_randomness_from_beacon(setup_connector):
-    result = _get_randomness_from_beacon(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
+def test_get_randomness_from_beacon(setup_filfox_connector):
+    result = _get_randomness_from_beacon(setup_filfox_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
     assert result is not None
     assert len(result) > 0
     assert result == "Qg+/Ia8AQK+6Wf6rdET3tO3DYjZdDxMYAND/Mazu6Pc="
