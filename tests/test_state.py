@@ -10,7 +10,8 @@ from pylotus_rpc.methods.state import (
     _deal_provider_collateral_bounds,
     _decode_params,
     _get_randomness_from_beacon,
-    _list_actors
+    _list_actors,
+    _read_state
 )
 
 from pylotus_rpc.methods.chain import (
@@ -19,6 +20,7 @@ from pylotus_rpc.methods.chain import (
 
 from pylotus_rpc.types.invocation_result import InvocationResult
 from pylotus_rpc.types.cid import Cid
+from pylotus_rpc.types.actor_state import ActorState
 from pylotus_rpc.types.state_compute_output import StateComputeOutput
 from pylotus_rpc.types.message import Message
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
@@ -62,6 +64,16 @@ def setup_connector():
     host = "http://lotus.filforge.io:1234/rpc/v0"
     # host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
+
+
+@pytest.mark.integration
+def test_read_state(setup_connector):
+    result = _read_state(setup_connector, "f05")
+    assert result is not None
+    assert isinstance(result, ActorState)
+    assert result.balance > 0
+    assert result.code is not None
+    assert result.state is not None
 
 
 @pytest.mark.integration
