@@ -20,6 +20,16 @@ class Cid:
 
 
     @staticmethod
+    def from_dict(dct):
+        """
+        Returns a Cid object from a dictionary representation.
+
+        :param dct: A dictionary representing a Cid object.
+        """
+        return Cid(dct.get('/'))
+
+
+    @staticmethod
     def dct_cids(lst_cids):
         """
         Returns a dictionary representation of the CIDs for JSON serialization.
