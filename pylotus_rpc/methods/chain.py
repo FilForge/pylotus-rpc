@@ -1,7 +1,52 @@
+from typing import List
 from ..http_json_rpc_connector import HttpJsonRpcConnector, make_payload
 from ..types.cid import Cid
 from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader, dict_to_blockheader
+
+def _make_payload(method: str, params: List):
+    """
+    Internal utility method to generate a JSON-RPC payload for a given method and parameters.
+    """
+    if params: 
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method,
+            "params": params
+        }
+    else:
+        payload = {
+            "jsonrpc": "2.0",
+            "method": method
+        }
+
+    return payload
+
+
+def _read_obj(connector: HttpJsonRpcConnector, cid: str):
+    """
+    Retrieves the raw data associated with a given CID from the Filecoin blockchain.
+
+    This function sends a request to the Filecoin network to fetch the raw data (in CBOR format) 
+    represented by a specific CID (Content Identifier). The function is useful for accessing 
+    various data structures on the Filecoin blockchain, such as actor states, messages, 
+    block headers, etc.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` which handles 
+                                          the communication with the Filecoin node via JSON-RPC.
+        cid (str): The CID (Content Identifier) of the object to be retrieved. CIDs are unique 
+                   identifiers for data in the Filecoin network.
+
+    Returns:
+        A string containing the raw data associated with the given CID. The data is 
+        typically in CBOR (Concise Binary Object Representation) format and may require 
+        further decoding and interpretation depending on its structure and context.
+    """
+    payload = _make_payload("Filecoin.ChainReadObj", Cid.dct_cids([cid]))
+    result = connector.execute(payload)
+    return result['result']
+
 
 
 def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:

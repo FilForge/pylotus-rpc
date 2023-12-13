@@ -3,8 +3,14 @@ from pylotus_rpc.methods.chain import _get_block
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 from pylotus_rpc.types.block_header import BlockHeader, dict_to_blockheader
 from tests.test_common import parse_fullnode_api_info
+from pylotus_rpc.types.cid import Cid
 from pylotus_rpc.methods.chain import (
-    _get_chain_head
+    _get_chain_head,
+    _read_obj
+)
+
+from pylotus_rpc.methods.state import (
+    _read_state
 )
 
 @pytest.fixture
@@ -16,6 +22,16 @@ def setup_connector():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_read_obj(setup_connector):
+    # test with the locked table data from the market actor at the current tipset
+    result = _read_state(setup_connector, "f05")
+    lt_cid = Cid.from_dict(result.state['LockedTable'])
+    cbor_obj = _read_obj(setup_connector, lt_cid.id)
+    assert cbor_obj is not None
+
 
 @pytest.mark.integration
 def test_get_chain_head_failure():

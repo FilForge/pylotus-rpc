@@ -18,6 +18,10 @@ class LotusClient:
 
         def get_block(self, cid):
             return chain._get_block(self.connector, cid)
+        
+        def read_obj(self, cid):
+            return chain._read_obj(self.connector, cid)
+                                   
 
     class State:
 
