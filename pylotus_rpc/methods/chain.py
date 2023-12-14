@@ -1,5 +1,5 @@
 from typing import List
-from ..http_json_rpc_connector import HttpJsonRpcConnector, make_payload
+from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.cid import Cid
 from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader, dict_to_blockheader
@@ -72,7 +72,7 @@ def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
         ...     print(header.miner)
     """
     # JSON-RPC payload for requesting the chain head
-    payload = make_payload("Filecoin.ChainHead", None)
+    payload = _make_payload("Filecoin.ChainHead", None)
     dct_result = connector.execute(payload)
 
     # Parse the CIDs

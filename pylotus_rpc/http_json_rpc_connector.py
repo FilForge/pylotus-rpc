@@ -126,39 +126,5 @@ class HttpJsonRpcConnector:
 
 
 
-def make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
-    """
-    Constructs a JSON-RPC payload for a given method and parameters.
-
-    Args:
-        method (str): The name of the JSON-RPC method to call.
-        params (List): A list of parameters to pass to the method.
-        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the latest tipset is used.
-
-    Returns:
-        dict: A dictionary containing the JSON-RPC payload.
-
-    """
-    cids = None
-    if tipset:
-        cids = tipset.dct_cids()
-
-    # if params exists (including if it's an empty list), append the cids
-    if params is not None:
-        params.append(cids)
-
-    if params: 
-        payload = {
-            "jsonrpc": "2.0",
-            "method": method,
-            "params": params
-        }
-    else:
-        payload = {
-            "jsonrpc": "2.0",
-            "method": method
-        }
-
-    return payload
 
 
