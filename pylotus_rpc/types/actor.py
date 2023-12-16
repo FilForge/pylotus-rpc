@@ -7,25 +7,25 @@ class Actor:
     Represents an Actor in the Filecoin network.
 
     Attributes:
-    - Code: A Cid representing the code of the Actor.
-    - Head: A Cid representing the head of the Actor.
-    - Nonce: An integer representing the nonce of the Actor.
-    - Balance: An int representing the balance of the Actor.
+    - code: A Cid representing the code of the Actor.
+    - head: A Cid representing the head of the Actor.
+    - nonce: An integer representing the nonce of the Actor.
+    - balance: An int representing the balance of the Actor.
     """
 
-    def __init__(self, Code: Cid, Head: Cid, Nonce: int, Balance: int):
+    def __init__(self, code: Cid, head: Cid, nonce: int, balance: int):
         """
         Initializes a new Actor object.
 
-        :param Code: A Cid representing the code of the Actor.
-        :param Head: A Cid representing the head of the Actor.
-        :param Nonce: An integer representing the nonce of the Actor.
-        :param Balance: An int representing the balance of the Actor.
+        :param code: A Cid representing the code of the Actor.
+        :param head: A Cid representing the head of the Actor.
+        :param nonce: An integer representing the nonce of the Actor.
+        :param balance: An int representing the balance of the Actor.
         """
-        self.Code = Code
-        self.Head = Head
-        self.Nonce = Nonce
-        self.Balance = Balance
+        self.code = code
+        self.head = head
+        self.nonce = nonce
+        self.balance = balance
 
     def __str__(self) -> str:
-        return f"Code: {self.Code}, Head: {self.Head}, Nonce: {self.Nonce}, Balance: {self.Balance}"
+        return f"Code: {self.code}, Head: {self.head}, Nonce: {self.nonce}, Balance: {self.balance}"

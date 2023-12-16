@@ -8,30 +8,30 @@ class GasTrace:
     Represents detailed gas tracing information for a given call or operation.
 
     Attributes:
-    - Name: The name or identifier of the trace.
-    - Location: A list of locations (files, line numbers, functions) representing the trace's origin.
-    - TotalGas: Total gas used.
-    - ComputeGas: Gas used for computation.
-    - StorageGas: Gas used for storage operations.
-    - TotalVirtualGas: Total virtual gas used.
-    - VirtualComputeGas: Virtual gas used for computation.
-    - VirtualStorageGas: Virtual gas used for storage operations.
-    - TimeTaken: Time taken for the operations, typically in nanoseconds.
-    - Extra: Additional data or context associated with the trace.
-    - Callers: List of caller identifiers.
+    - name: The name or identifier of the trace.
+    - location: A list of locations (files, line numbers, functions) representing the trace's origin.
+    - total_gas: Total gas used.
+    - compute_gas: Gas used for computation.
+    - storage_gas: Gas used for storage operations.
+    - total_virtual_gas: Total virtual gas used.
+    - virtual_compute_gas: Virtual gas used for computation.
+    - virtual_storage_gas: Virtual gas used for storage operations.
+    - time_taken: Time taken for the operations, typically in nanoseconds.
+    - extra: Additional data or context associated with the trace.
+    - callers: List of caller identifiers.
     """
 
-    Name: str
-    Location: List[Loc]
-    TotalGas: int
-    ComputeGas: int
-    StorageGas: int
-    TotalVirtualGas: int
-    VirtualComputeGas: int
-    VirtualStorageGas: int
-    TimeTaken: int
-    Extra: Any
-    Callers: List[int]
+    name: str
+    location: List[Loc]
+    total_gas: int
+    compute_gas: int
+    storage_gas: int
+    total_virtual_gas: int
+    virtual_compute_gas: int
+    virtual_storage_gas: int
+    time_taken: int
+    extra: Any
+    callers: List[int]
 
     @staticmethod
     def from_json(data: Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]) -> 'GasTrace':
@@ -54,15 +54,15 @@ class GasTrace:
             callers = []
 
         return GasTrace(
-            Name=data["Name"],
-            Location=locations,
-            TotalGas=data.get("tg", 0),
-            ComputeGas=data.get("cg", 0),
-            StorageGas=data.get("sg", 0),
-            TotalVirtualGas=data.get("TotalVirtualGas", 0),
-            VirtualComputeGas=data.get("VirtualComputeGas", 0),
-            VirtualStorageGas=data.get("VirtualStorageGas", 0),
-            TimeTaken=data.get("tt", 0),
-            Extra=data.get("Extra", 0),
-            Callers=callers
+            name=data["Name"],
+            location=locations,
+            total_gas=data.get("tg", 0),
+            compute_gas=data.get("cg", 0),
+            storage_gas=data.get("sg", 0),
+            total_virtual_gas=data.get("TotalVirtualGas", 0),
+            virtual_compute_gas=data.get("VirtualComputeGas", 0),
+            virtual_storage_gas=data.get("VirtualStorageGas", 0),
+            time_taken=data.get("tt", 0),
+            extra=data.get("Extra", 0),
+            callers=callers
         )

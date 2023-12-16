@@ -10,20 +10,20 @@ class ExecutionTrace:
     Represents the execution trace for a message in Filecoin/Lotus.
     
     Attributes:
-    - Msg: The original message that was executed.
-    - MsgRct: The receipt of the message execution.
-    - Duration: Duration of the execution.
-    - Error: Any error that occurred during execution, if any.
-    - GasCharges: A list of gas traces for the execution.
-    - Subcalls: Any subcalls made during the execution.
+    - msg: The original message that was executed.
+    - message_receipt: The receipt of the message execution.
+    - duration: Duration of the execution.
+    - error: Any error that occurred during execution, if any.
+    - gas_charges: A list of gas traces for the execution.
+    - sub_calls: Any subcalls made during the execution.
     """
     
-    Msg: Message
-    MsgRct: MessageReceipt
-    Duration: int
-    Error: Optional[str] = None
-    GasCharges: List[GasTrace] = field(default_factory=list)
-    Subcalls: List["ExecutionTrace"] = field(default_factory=list)
+    msg: Message
+    msg_receipt: MessageReceipt
+    duration: int
+    error: Optional[str] = None
+    gas_charges: List[GasTrace] = field(default_factory=list)
+    sub_calls: List["ExecutionTrace"] = field(default_factory=list)
 
     @staticmethod
     def from_json(data: Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]) -> 'ExecutionTrace':
@@ -43,19 +43,19 @@ class ExecutionTrace:
         else:
             gas_charges = [GasTrace.from_json(gas_charge) for gas_charge in gas_charges]
 
-        subcalls = data.get("Subcalls")
-        if subcalls is None:
-            subcalls = []
+        sub_calls = data.get("Subcalls")
+        if sub_calls is None:
+            sub_calls = []
         else:
-            subcalls = [ExecutionTrace.from_json(subcall) for subcall in subcalls]
+            sub_calls = [ExecutionTrace.from_json(subcall) for subcall in sub_calls]
 
         return ExecutionTrace(
-            Msg=Message.from_json(data["Msg"]),
-            MsgRct=MessageReceipt.from_json(data["MsgRct"]),
-            Duration=int(data.get("Duration", 0)),
-            Error=data.get("Error", None),
-            GasCharges=gas_charges,
-            Subcalls=subcalls
+            msg=Message.from_json(data["Msg"]),
+            msg_receipt=MessageReceipt.from_json(data["MsgRct"]),
+            duration=int(data.get("Duration", 0)),
+            error=data.get("Error", None),
+            gas_charges=gas_charges,
+            sub_calls=sub_calls
         )
 
 

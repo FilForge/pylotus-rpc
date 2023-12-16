@@ -315,10 +315,10 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
 
     # Create Actor object using parsed data
     actor = Actor(
-        Code=Cid(actor_data['Code']['/']),
-        Head=Cid(actor_data['Head']['/']),
-        Nonce=actor_data['Nonce'],
-        Balance=actor_data['Balance'])
+        code=Cid(actor_data['Code']['/']),
+        head=Cid(actor_data['Head']['/']),
+        nonce=actor_data['Nonce'],
+        balance=actor_data['Balance'])
 
     return actor
 

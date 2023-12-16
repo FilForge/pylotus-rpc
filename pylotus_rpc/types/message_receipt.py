@@ -1,23 +1,4 @@
 from dataclasses import dataclass
-from typing import Any
-
-@dataclass
-class MessageReceipt:
-    """
-    Represents a receipt for a Filecoin message.
-    
-    Attributes:
-    - ExitCode: The exit code after the message was processed.
-    - Return: Any return value from the message execution.
-    - GasUsed: The amount of gas used to process the message.
-    """
-    
-    ExitCode: int
-    Return: Any
-    GasUsed: int
-
-
-from dataclasses import dataclass
 from typing import Any, Dict, Union
 
 @dataclass
@@ -26,14 +7,14 @@ class MessageReceipt:
     Represents a receipt for a Filecoin message.
     
     Attributes:
-    - ExitCode: The exit code after the message was processed.
-    - Return: Any return value from the message execution.
-    - GasUsed: The amount of gas used to process the message.
+    - exit_code: The exit code after the message was processed.
+    - return_value: Any return value from the message execution.
+    - gas_used: The amount of gas used to process the message.
     """
     
-    ExitCode: int
-    Return: Any
-    GasUsed: int
+    exit_code: int
+    return_value: Any
+    gas_used: int
 
     @staticmethod
     def from_json(data: Dict[str, Union[int, Any]]) -> 'MessageReceipt':
@@ -47,7 +28,7 @@ class MessageReceipt:
         An instance of the MessageReceipt class.
         """
         return MessageReceipt(
-            ExitCode=data["ExitCode"],
-            Return=data["Return"],
-            GasUsed=data.get("GasUsed",0)
+            exit_code=data["ExitCode"],
+            return_value=data["Return"],
+            gas_used=data.get("GasUsed",0)
         )

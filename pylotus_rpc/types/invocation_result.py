@@ -19,13 +19,13 @@ class InvocationResult:
     """
 
     # Attributes with default values
-    Msg: Message  # The actual message associated with this invocation
-    MsgCid: Optional[Cid] = None  # The CID (Content Identifier) of the message
-    MsgRct: Optional[MessageReceipt] = None  # The receipt of the message providing details of the message's outcome
-    GasCost: Optional[MessageGasCost] = None  # The gas cost details associated with this invocation
-    ExecutionTrace: Optional[ExecutionTrace] = None  # Trace that provides insight into the internal steps taken during the invocation
-    Duration: Optional[int] = None  # The total duration (likely in milliseconds) of the invocation.
-    Error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
+    msg: Message  # The actual message associated with this invocation
+    msg_cid: Optional[Cid] = None  # The CID (Content Identifier) of the message
+    msg_receipt: Optional[MessageReceipt] = None  # The receipt of the message providing details of the message's outcome
+    gas_cost: Optional[MessageGasCost] = None  # The gas cost details associated with this invocation
+    execution_trace: Optional[ExecutionTrace] = None  # Trace that provides insight into the internal steps taken during the invocation
+    duration: Optional[int] = None  # The total duration (likely in milliseconds) of the invocation.
+    error: Optional[str] = None  # Any error encountered during the invocation. None if no errors were encountered.
 
     @staticmethod
     def from_dict(data: Dict[str, Any]) -> 'InvocationResult':
@@ -35,9 +35,9 @@ class InvocationResult:
             msg = str(code) + ": " + data["error"]["message"]
 
             return InvocationResult(
-                Msg=msg,
-                Duration=0,
-                Error=msg
+                msg=msg,
+                duration=0,
+                error=msg
             )
         
         # Extracting the relevant information from the JSON data
@@ -56,11 +56,11 @@ class InvocationResult:
 
         # Create and return the InvocationResult instance
         return InvocationResult(
-            MsgCid=msg_cid,
-            Msg=msg,
-            MsgRct=msg_rct,
-            GasCost=gas_cost,
-            ExecutionTrace=execution_trace,
-            Duration=duration,
-            Error=error
+            msg_cid=msg_cid,
+            msg=msg,
+            msg_receipt=msg_rct,
+            gas_cost=gas_cost,
+            execution_trace=execution_trace,
+            duration=duration,
+            error=error
         )
