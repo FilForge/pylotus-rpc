@@ -1,12 +1,11 @@
+from dataclasses import dataclass
+
+@dataclass
 class Address:
     """
     Represents an address in the Filecoin network.
+
+    Attributes:
+    - address_value: A string representing the value of the address.
     """
-
-    def __init__(self, address: str):
-        """
-        Initializes a new Address object.
-
-        :param address: A string representing the value of the address.
-        """
-        self.address_value = address
+    address_value: str

@@ -1,3 +1,6 @@
+from dataclasses import dataclass
+
+@dataclass
 class Cid:
     """
     Represents a Content Identifier (CID)
@@ -5,15 +8,7 @@ class Cid:
     Attributes:
     - cid_id: A string representing the value of the CID.
     """
-
-    def __init__(self, cid_id: str):
-        """
-        Initializes a new Cid object.
-
-        :param cid_id: A string representing the value of the CID.
-        """
-        self.id = cid_id
-
+    id: str
 
     def __str__(self) -> str:
         return self.id

@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from typing import List, Dict, Union
 from .cid import Cid
 from .signature import Signature
 
+@dataclass
 class BlockHeader:
     """
     Represents the block header in the blockchain.
@@ -24,40 +26,22 @@ class BlockHeader:
     - fork_signaling: Fork signaling number.
     - parent_base_fee: Parent base fee.
     """
-
-    def __init__(self, 
-                 miner: str,
-                 ticket: Dict[str, str],
-                 election_proof: Dict[str, Union[int, str]],
-                 beacon_entries: List[Dict[str, Union[int, str]]],
-                 win_post_proof: List[Dict[str, Union[int, str]]],
-                 parents: List[Cid],
-                 parent_weight: str,
-                 height: int,
-                 parent_state_root: Cid,
-                 parent_message_receipts: Cid,
-                 messages: Cid,
-                 bls_aggregate: Signature,
-                 timestamp: int,
-                 block_sig: Signature,
-                 fork_signaling: int,
-                 parent_base_fee: str):
-        self.miner = miner
-        self.ticket = ticket
-        self.election_proof = election_proof
-        self.beacon_entries = beacon_entries
-        self.win_post_proof = win_post_proof
-        self.parents = parents
-        self.parent_weight = parent_weight
-        self.height = height
-        self.parent_state_root = parent_state_root
-        self.parent_message_receipts = parent_message_receipts
-        self.messages = messages
-        self.bls_aggregate = bls_aggregate
-        self.timestamp = timestamp
-        self.block_sig = block_sig
-        self.fork_signaling = fork_signaling
-        self.parent_base_fee = parent_base_fee
+    miner: str
+    ticket: Dict[str, str]
+    election_proof: Dict[str, Union[int, str]]
+    beacon_entries: List[Dict[str, Union[int, str]]]
+    win_post_proof: List[Dict[str, Union[int, str]]]
+    parents: List[Cid]
+    parent_weight: str
+    height: int
+    parent_state_root: Cid
+    parent_message_receipts: Cid
+    messages: Cid
+    bls_aggregate: Signature
+    timestamp: int
+    block_sig: Signature
+    fork_signaling: int
+    parent_base_fee: str
 
 def dict_to_blockheader(data: Dict) -> BlockHeader:
     """
