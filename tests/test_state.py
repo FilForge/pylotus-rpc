@@ -116,12 +116,13 @@ def test_state_compute(setup_connector):
     assert result.root is not None
     assert len(result.trace) > 1
 
-# TODO - this one times out, find out why
-#@pytest.mark.integration
-#def test_state_circulating_supply(setup_connector):
-#    tipset = _get_chain_head(setup_connector)
-#    circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
-#    assert circulating_supply > 0
+
+@pytest.mark.integration
+def test_state_circulating_supply(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
+    assert circulating_supply > 0
+
 
 @pytest.mark.integration
 def test_state_call_returned_values(setup_connector):
