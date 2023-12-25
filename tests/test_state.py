@@ -60,9 +60,7 @@ def setup_filfox_connector():
 
 @pytest.fixture
 def setup_connector():
-    # TODO - use environment variable for host
-    # host = "http://lotus.filforge.io:1234/rpc/v0"
-    host = "https://filfox.info/rpc/v1"
+    host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
 
 
