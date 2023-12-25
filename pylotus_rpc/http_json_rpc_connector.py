@@ -105,7 +105,21 @@ class HttpJsonRpcConnector:
         return int(time.time() * 1000)
     
     def execute(self, payload: dict, debug=False) -> dict:
-        # TODO - add comments here
+        """
+        Executes a JSON RPC request using the specified payload and returns the response.
+
+        This method serves as a high-level interface to `exec_method`, handling exceptions,
+        debugging output, and response validation. It raises an ApiCallError if the request
+        fails or if the server returns a non-200 status code.
+
+        :param payload: A dictionary containing the JSON RPC request payload. The payload
+                        should include at least the 'method' name and the 'params' for the request.
+        :param debug: A boolean flag that, when set to True, enables the printing of debug
+                      information like the request payload and response.
+        :return: A dictionary containing the parsed JSON response from the server.
+        :raises: ApiCallError if there's an error in making the API call or if the response
+                 status code is not 200.
+        """
         if debug:
             print(json.dumps(payload, indent=4))
 
