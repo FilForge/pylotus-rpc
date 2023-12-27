@@ -11,7 +11,8 @@ from pylotus_rpc.methods.state import (
     _decode_params,
     _get_randomness_from_beacon,
     _list_actors,
-    _read_state
+    _read_state,
+    _list_messages,
 )
 
 from pylotus_rpc.methods.chain import (
@@ -58,11 +59,20 @@ def setup_filfox_connector():
     host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
+
 @pytest.fixture
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
 
+
+@pytest.mark.integration
+def test_list_messages(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    # test by getting all messages sent to the storage market actor
+    result = _list_messages(setup_connector, "f05", None, tipset.height, tipset=tipset)
+    assert result is not None
+    assert len(result) > 0
 
 @pytest.mark.integration
 def test_read_state(setup_connector):

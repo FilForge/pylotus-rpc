@@ -3,6 +3,7 @@ from pylotus_rpc.methods import chain
 from typing import Optional, List
 from .types.tip_set import Tipset
 from .types.message import Message
+from .types.cid import Cid
 from .http_json_rpc_connector import HttpJsonRpcConnector
 
 class LotusClient:
@@ -32,6 +33,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def list_messages(self, to_addr: str, from_addr: str, epoch: int, tipset: Optional[Tipset] = None) -> List[Cid]:
+            return state._list_messages(self.connector, to_addr, from_addr, epoch, tipset)
+        
         def read_state(self, actor_id: str, tipset: Optional[Tipset] = None):
             return state._read_state(self.connector, actor_id, tipset)
         

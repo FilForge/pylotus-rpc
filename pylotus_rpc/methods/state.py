@@ -46,6 +46,33 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _list_messages(connector: HttpJsonRpcConnector, to_addr: str, from_addr: str, epoch: int, tipset: Optional[Tipset] = None) -> List[Cid]:
+    """
+    Fetches a list of messages sent to or from a specified address up to a given chain epoch.
+
+    Args:
+        connector (HttpJsonRpcConnector): Connector object to interact with the Filecoin node.
+        to_addr (str): The target address of the messages. Can be empty to ignore this filter.
+        from_addr (str): The source address of the messages. Can be empty to ignore this filter.
+        epoch (int): The maximum chain epoch for the messages. Messages newer than this will not be included.
+        tipset (Optional[Tipset]): The tipset object. If provided, messages will be fetched at this tipset state.
+
+    Returns:
+        List[Cid]: A list of CIDs representing the messages that match the given criteria.
+    """
+    dct_params = {}
+    if to_addr:
+        dct_params["To"] = to_addr
+    if from_addr:
+        dct_params["From"] = from_addr
+    
+    payload = _make_payload("Filecoin.StateListMessages", [dct_params], tipset)
+    payload["params"].append(epoch)
+    response = connector.execute(payload, debug=True)
+    return Cid.dct_cids(response['result'])
+
+
+
 def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[Tipset] = None):
     """
     Reads the state of an actor at a specified tipset in the Filecoin network.
