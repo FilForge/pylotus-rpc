@@ -18,7 +18,7 @@ class LotusClient:
             self.connector = connector
 
         def get_chain_head(self):
-            return state._get_chain_head(self.connector)
+            return chain._get_chain_head(self.connector)
 
         def get_block(self, cid: str):
             return chain._get_block(self.connector, cid)
