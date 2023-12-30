@@ -23,7 +23,7 @@ def _make_payload(method: str, params: List):
     return payload
 
 
-def _read_obj(connector: HttpJsonRpcConnector, cid: str):
+def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
     """
     Retrieves the raw data associated with a given CID from the Filecoin blockchain.
 

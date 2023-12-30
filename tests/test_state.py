@@ -74,6 +74,7 @@ def test_list_messages(setup_connector):
     assert result is not None
     assert len(result) > 0
 
+
 @pytest.mark.integration
 def test_read_state(setup_connector):
     result = _read_state(setup_connector, "f05")

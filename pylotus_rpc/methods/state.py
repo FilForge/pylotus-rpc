@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
@@ -73,7 +73,7 @@ def _list_messages(connector: HttpJsonRpcConnector, to_addr: str, from_addr: str
 
 
 
-def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[Tipset] = None):
+def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[Tipset] = None) -> ActorState:
     """
     Reads the state of an actor at a specified tipset in the Filecoin network.
 
@@ -96,7 +96,12 @@ def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional
     return ActorState.from_dict(response['result'])
 
 
-def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int, epoch: int, entropy_base64: str, tipset: Optional[Tipset] = None):
+def _get_randomness_from_beacon(
+        connector: HttpJsonRpcConnector, 
+        domain_tag: int, 
+        epoch: int, 
+        entropy_base64: str, 
+        tipset: Optional[Tipset] = None) -> str:
     """
     Retrieves randomness from the Filecoin network's randomness beacon for a specific epoch.
 
@@ -118,7 +123,7 @@ def _get_randomness_from_beacon(connector: HttpJsonRpcConnector, domain_tag: int
     return response['result']
 
 
-def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int, params: str, tipset: Optional[Tipset] = None):
+def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int, params: str, tipset: Optional[Tipset] = None) -> dict:
     """
     Decodes the parameters of a message for a given actor and method into a human-readable format.
 
@@ -140,7 +145,12 @@ def _decode_params(connector: HttpJsonRpcConnector, actor_cid: str, method: int,
     return response.get("result", {})
 
 
-def _deal_provider_collateral_bounds(connector: HttpJsonRpcConnector, padded_piece_size : int, is_verified : bool, tipset: Optional[Tipset]):
+def _deal_provider_collateral_bounds(
+    connector: HttpJsonRpcConnector, 
+    padded_piece_size: int, 
+    is_verified: bool, 
+    tipset: Optional[Tipset]
+) -> Tuple[Optional[int], Optional[int]]:
     """
     Retrieves the minimum and maximum collateral bounds for a storage provider based on the given piece size and verification status.
 
@@ -231,7 +241,7 @@ def _circulating_supply(connector: HttpJsonRpcConnector, tipset: Optional[Tipset
     return int(data["result"])
 
 
-def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str):
+def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str) -> List[Actor]:
     """
     Retrieve a list of actors that have changed between two specified CIDs.
 
@@ -350,7 +360,7 @@ def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[
     return actor
 
 
-def _list_actors(connector, tipset):
+def _list_actors(connector, tipset) -> List[str]:
     """
     Retrieves a list of all actors in a specified tipset.
 
