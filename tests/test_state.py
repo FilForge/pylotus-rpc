@@ -13,6 +13,7 @@ from pylotus_rpc.methods.state import (
     _list_actors,
     _read_state,
     _list_messages,
+    _list_miners
 )
 
 from pylotus_rpc.methods.chain import (
@@ -64,6 +65,13 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+
+@pytest.mark.integration
+def test_list_miners(setup_connector):
+    result = _list_miners(setup_connector, tipset=None)
+    assert result is not None
+    assert len(result) > 0
 
 
 @pytest.mark.integration

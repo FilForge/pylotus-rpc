@@ -46,6 +46,35 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _list_miners(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> List[str]:
+    """
+    Retrieves a list of all miner addresses from the Filecoin network at a specified tipset.
+
+    This function sends a JSON-RPC request to the Filecoin node via the provided connector.
+    It invokes the `StateListMiners` method to fetch all miner addresses currently active
+    in the state tree of the specified tipset. The list of miners can be useful for various
+    network analyses and operations, such as inspecting miner activity or selecting miners
+    for storage deals.
+
+    Args:
+        connector (HttpJsonRpcConnector): An object to interface with the Filecoin node. It
+                                          should provide an `execute` method for sending
+                                          requests to the node.
+        tipset (Optional[Tipset]): The tipset at which to query the state. If not provided
+                                   (None), the method queries the state at the current chain head.
+                                   This parameter allows querying historical state data.
+
+    Returns:
+        List[str]: A list containing the addresses of all miners present in the specified
+                   tipset. Each address is a string representing the miner's Filecoin address.
+    """
+    payload = _make_payload("Filecoin.StateListMiners", [], tipset)
+    dct_result = connector.execute(payload)
+    lst_miners = dct_result.get("result", [])
+
+    return lst_miners
+
+
 def _list_messages(connector: HttpJsonRpcConnector, to_addr: str, from_addr: str, epoch: int, tipset: Optional[Tipset] = None) -> List[Cid]:
     """
     Fetches a list of messages sent to or from a specified address up to a given chain epoch.
