@@ -46,6 +46,70 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _market_balance(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> dict:
+    """
+    Retrieves the market balance information for a given address in the Filecoin network.
+
+    This method queries the Filecoin node to get the escrow and locked funds associated
+    with a specific address in the Filecoin storage market. The escrow balance is the total
+    funds deposited in the market actor, while the locked balance is the amount locked for
+    active deals.
+
+    Args:
+        connector: An instance of HttpJsonRpcConnector, used for communication with the
+                   Filecoin node.
+        address: A string representing the Filecoin address for which to retrieve
+                 market balance information. This should be a valid Filecoin address.
+        tipset: An optional Tipset object. If provided, the market balance is queried
+                at the state of this tipset. If not provided, the current chain head
+                is used.
+
+    Returns:
+        dict: A dictionary containing two key-value pairs:
+              - 'Escrow': An integer representing the total funds in escrow for the
+                          given address in the storage market.
+              - 'Locked': An integer representing the total funds locked in active
+                          deals for the given address.
+    """
+    payload = _make_payload("Filecoin.StateMarketBalance", [address], tipset)
+    dct_result = connector.execute(payload)
+    dct_market_balance = {}
+    dct_market_balance['Escrow'] = int(dct_result['result']['Escrow'])
+    dct_market_balance['Locked'] = int(dct_result['result']['Locked'])
+    return dct_market_balance
+
+
+def _lookup_id(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> str:
+    """
+    Retrieves the canonical ID address for a given Filecoin address.
+
+    This function communicates with a Filecoin node through the provided connector
+    to resolve the ID address corresponding to a given address. The ID address is
+    a compact numerical representation used internally by the Filecoin network.
+
+    Args:
+        connector: An instance of HttpJsonRpcConnector. This is used to facilitate
+                   communication with the Filecoin node.
+        address: A string representing the Filecoin address to be resolved. This
+                 can be in any of the standard Filecoin address formats.
+        tipset: An optional instance of Tipset. If provided, the state at this tipset
+                will be considered for resolving the address. If not provided,
+                the current chain head is used.
+
+    Returns:
+        str: The canonical ID address as a string. If the address cannot be resolved,
+             an empty string is returned.
+
+    Raises:
+        ConnectorError: If there is an issue with the RPC call to the Filecoin node.
+    """
+    payload = _make_payload("Filecoin.StateLookupID", [address], tipset)
+    dct_result = connector.execute(payload)
+    id = dct_result.get("result", "")
+
+    return id
+
+
 def _list_miners(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> List[str]:
     """
     Retrieves a list of all miner addresses from the Filecoin network at a specified tipset.

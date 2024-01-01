@@ -13,7 +13,9 @@ from pylotus_rpc.methods.state import (
     _list_actors,
     _read_state,
     _list_messages,
-    _list_miners
+    _list_miners,
+    _lookup_id,
+    _market_balance
 )
 
 from pylotus_rpc.methods.chain import (
@@ -60,12 +62,24 @@ def setup_filfox_connector():
     host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
-
 @pytest.fixture
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
 
+
+@pytest.mark.integration
+def test_market_balance(setup_connector):
+    result = _market_balance(setup_connector, "f02620", tipset=None)
+    assert result is not None
+    assert result['Escrow'] > 0
+    assert result['Locked'] > 0
+
+@pytest.mark.integration
+def test_lookup_id(setup_connector):
+    result = _lookup_id(setup_connector, "f1gdqsyh2twcmimfujjkgajqccx6v4bbywy33xpuq", tipset=None)
+    assert result is not None
+    assert result == "f02914334"
 
 @pytest.mark.integration
 def test_list_miners(setup_connector):
