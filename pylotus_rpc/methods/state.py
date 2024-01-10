@@ -46,6 +46,16 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _market_deals(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> dict:
+    """
+    Retrieves all active deals in the Filecoin storage market.
+
+    We tried to implement this method but it spikes the memory usage of our lotus node so much that it could be used to perform a DoS attack.
+    Currently, we haven't found a single node that supports this call so it's useless to implement it.
+    """
+    raise NotImplementedError("StateMarketDeals is not implemented yet")
+
+
 def _market_balance(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> dict:
     """
     Retrieves the market balance information for a given address in the Filecoin network.

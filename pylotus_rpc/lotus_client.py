@@ -38,6 +38,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def market_deals(self, tipset: Optional[Tipset] = None) -> dict:
+            return state._market_deals(self.connector, tipset)
+
         def market_balance(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._market_balance(self.connector, address, tipset)
 
