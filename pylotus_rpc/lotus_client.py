@@ -1,6 +1,6 @@
 from pylotus_rpc.methods import state
 from pylotus_rpc.methods import chain
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from .types.tip_set import Tipset
 from .types.message import Message
 from .types.cid import Cid
@@ -37,6 +37,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def market_participants(self, tipset: Optional[Tipset] = None) -> List[Dict]:
+            return state._market_participants(self.connector, tipset)
 
         def market_deals(self, tipset: Optional[Tipset] = None) -> dict:
             return state._market_deals(self.connector, tipset)

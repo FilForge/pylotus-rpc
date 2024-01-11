@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Dict
 from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.block_header import BlockHeader, dict_to_blockheader
 from ..types.cid import Cid
@@ -46,6 +46,29 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _market_participants(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> List[Dict]:
+    """
+    Retrieves a list of market participants (dealers and clients) from the Filecoin network.
+
+    This method calls the `StateMarketParticipants` Lotus RPC API to obtain information about
+    all market participants (dealers and clients) in the specified tipset. If no tipset is provided,
+    it retrieves information from the latest state.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        tipset (Optional[Tipset]): An optional Tipset object representing the state at which to query. 
+                                   If None, the latest state will be queried.
+
+    Returns:
+        List[Dict]: A list of dictionaries, where each dictionary contains details about a market participant.
+                    The details include the participant's ID and other relevant information.
+    """
+    payload = _make_payload("Filecoin.StateMarketParticipants", [], tipset)
+    data = connector.execute(payload)['result']
+    list_of_dicts = [{"id": key, "Escrow": int(value['Escrow']), "Locked": int(value['Locked'])} for key, value in data.items()]
+    return list_of_dicts
+
+    
 def _market_deals(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> dict:
     """
     Retrieves all active deals in the Filecoin storage market.

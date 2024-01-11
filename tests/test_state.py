@@ -15,7 +15,8 @@ from pylotus_rpc.methods.state import (
     _list_messages,
     _list_miners,
     _lookup_id,
-    _market_balance
+    _market_balance,
+    _market_participants
 )
 
 from pylotus_rpc.methods.chain import (
@@ -66,6 +67,13 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+
+@pytest.mark.integration
+def test_market_participants(setup_connector):
+    result = _market_participants(setup_connector, tipset=None)
+    assert result is not None
+    assert len(result) > 0
 
 
 @pytest.mark.integration
