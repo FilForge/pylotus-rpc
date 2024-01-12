@@ -6,6 +6,8 @@ from ..types.actor_state import ActorState
 from ..types.message import Message
 from ..types.tip_set import Tipset
 from ..types.actor import Actor
+from ..types.deal_proposal import DealProposal
+from ..types.deal_state import DealState
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
 
@@ -44,6 +46,32 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _storage_market_deal(connector: HttpJsonRpcConnector, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
+    """
+    Retrieves details of a storage market deal by its deal ID.
+
+    This function queries the Filecoin node for information about a specific storage market deal,
+    identified by its deal ID. It returns both the deal's proposal and its state.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector used to interact with the Filecoin node.
+        deal_id (int): The unique identifier of the storage market deal.
+        tipset (Optional[Tipset]): The tipset at which to query the deal's state. 
+                                   If None, the latest state is used.
+
+    Returns:
+        dict: A dictionary containing two keys, 'Proposal' and 'State'. 
+              'Proposal' maps to an instance of DealProposal containing the details of the deal's proposal.
+              'State' maps to an instance of DealState containing the current state of the deal.
+
+    """
+    payload = _make_payload("Filecoin.StateMarketStorageDeal", [deal_id], tipset)
+    result = connector.execute(payload)
+    deal_proposal = DealProposal.from_dict(result['result']['Proposal'])
+    deal_state = DealState.from_dict(result['result']['State'])
+    return {"Proposal": deal_proposal, "State": deal_state}
 
 
 def _market_participants(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> List[Dict]:

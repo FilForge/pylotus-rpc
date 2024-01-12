@@ -16,7 +16,8 @@ from pylotus_rpc.methods.state import (
     _list_miners,
     _lookup_id,
     _market_balance,
-    _market_participants
+    _market_participants,
+    _storage_market_deal
 )
 
 from pylotus_rpc.methods.chain import (
@@ -67,6 +68,16 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+
+@pytest.mark.integration
+def test_storage_market_deal(setup_connector):
+    # You can get a deal id to test with from https://filfox.info/en/deal
+    result = _storage_market_deal(setup_connector, 68901592, tipset=None)
+    assert result is not None
+    assert result['State'] is not None
+    assert result['Proposal'] is not None
+    assert result['Proposal'].piece_size > 0
 
 
 @pytest.mark.integration
