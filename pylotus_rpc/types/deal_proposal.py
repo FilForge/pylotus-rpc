@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from types import Cid
+from .cid import Cid
 
 @dataclass
 class DealProposal:
