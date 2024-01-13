@@ -10,6 +10,7 @@ from ..types.deal_proposal import DealProposal
 from ..types.deal_state import DealState
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
+from ..types.active_sector import ActiveSector
 
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
@@ -46,6 +47,29 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[ActiveSector]:
+    """
+    Retrieves a list of active sectors for a given miner address.
+
+    This function queries the Filecoin network to obtain a list of active sectors for a given miner address.
+    It returns a list of ActiveSector objects, each representing a sector associated with the miner.
+    The ActiveSector object includes sector details such as sector number, seal proof, sealed CID, and more.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve active sectors.
+        tipset (Optional[Tipset]): The tipset at which to query the active sectors. If None, the latest tipset is used.
+
+    Returns:
+        List[ActiveSector]: A list of ActiveSector objects, each containing detailed information about an active sector.
+    """
+    payload = _make_payload("Filecoin.StateMinerActiveSectors", [miner_address], tipset)
+    list_of_dicts = connector.execute(payload)['result']
+    list_of_active_sectors = [ActiveSector.from_dict(dct) for dct in list_of_dicts]
+
+    return list_of_active_sectors
 
 
 def _storage_market_deal(connector: HttpJsonRpcConnector, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
