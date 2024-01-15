@@ -49,6 +49,27 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _miner_available_balance(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> int:
+    """
+    Retrieves the available balance of a given miner address.
+
+    This function queries the Filecoin network to obtain the available balance of a given miner address.
+    The available balance is the amount of FIL that can be withdrawn by the miner.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve the available balance.
+        tipset (Optional[Tipset]): The tipset at which to query the available balance. If None, the latest tipset is used.
+
+    Returns:
+        int: The available balance of the miner, represented in attoFIL (1 FIL = 10^18 attoFIL).
+    """
+    payload = _make_payload("Filecoin.StateMinerAvailableBalance", [miner_address], tipset)
+    dct_data = connector.execute(payload)
+    available_balance = int(dct_data['result'])
+    return available_balance
+
+
 def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[ActiveSector]:
     """
     Retrieves a list of active sectors for a given miner address.
