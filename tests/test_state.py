@@ -19,7 +19,8 @@ from pylotus_rpc.methods.state import (
     _market_participants,
     _storage_market_deal,
     _miner_active_sectors,
-    _miner_available_balance
+    _miner_available_balance,
+    _miner_deadlines
 )
 
 from pylotus_rpc.methods.chain import (
@@ -70,6 +71,13 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_deadlines(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    result = _miner_deadlines(setup_connector, "f02244985", tipset=None)
+    assert result is not None
+    assert len(result) > 0
 
 @pytest.mark.integration
 def test_miner_available_balance(setup_connector):

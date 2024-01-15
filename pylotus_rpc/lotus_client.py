@@ -10,6 +10,7 @@ from .types.state_compute_output import StateComputeOutput
 from .types.actor_state import ActorState
 from .types.active_sector import ActiveSector
 from .types.block_header import BlockHeader
+from .types.deadline import Deadline
 from .http_json_rpc_connector import HttpJsonRpcConnector
 
 class LotusClient:
@@ -38,6 +39,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_deadlines(self, address: str, tipset: Optional[Tipset] = None) -> List[Deadline]:
+            return state._miner_deadlines(self.connector, address, tipset)
 
         def miner_available_balance(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._miner_available_balance(self.connector, address, tipset)

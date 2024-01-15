@@ -11,6 +11,7 @@ from ..types.deal_state import DealState
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
 from ..types.active_sector import ActiveSector
+from ..types.deadline import Deadline
 
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
@@ -47,6 +48,28 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_deadlines(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[Deadline]:
+    """
+    Retrieves the deadlines for a given miner address.
+
+    This function queries the Filecoin network to obtain the deadlines for a specified miner address.
+    It returns a list of Deadline objects, each representing a miner's deadline, with information such as 
+    post submissions and disputable proof count.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve deadlines.
+        tipset (Optional[Tipset]): The tipset at which to query the deadlines. If None, the latest tipset is used.
+
+    Returns:
+        List[Deadline]: A list of Deadline objects, each representing a deadline with information like post submissions and disputable proof count.
+    """
+    payload = _make_payload("Filecoin.StateMinerDeadlines", [miner_address], tipset)
+    deadlines_data = connector.execute(payload)['result']
+    lst_of_deadlines = [Deadline.from_dict(deadline_dict) for deadline_dict in deadlines_data]
+    return lst_of_deadlines
 
 
 def _miner_available_balance(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> int:
