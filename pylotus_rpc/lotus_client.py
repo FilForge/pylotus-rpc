@@ -40,6 +40,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def miner_faults(self, address: str, tipset: Optional[Tipset] = None) -> int:
+            return state._miner_faults(self.connector, address, tipset)
+
         def miner_deadlines(self, address: str, tipset: Optional[Tipset] = None) -> List[Deadline]:
             return state._miner_deadlines(self.connector, address, tipset)
 

@@ -50,6 +50,26 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _miner_faults(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[int]:
+    """
+    Retrieves a list of faulted sectors for a given miner address.
+
+    This function queries the Filecoin network to obtain a list of faulted sectors for a given miner address.
+    It returns a list of integers, each representing a sector number that has been faulted.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve faulted sectors.
+        tipset (Optional[Tipset]): The tipset at which to query the faulted sectors. If None, the latest tipset is used.
+
+    Returns:
+        List[int]: A list of integers, each representing a sector number that has been faulted.
+    """
+    payload = _make_payload("Filecoin.StateMinerFaults", [miner_address], tipset)
+    lst_of_faults = connector.execute(payload)['result']
+    return lst_of_faults
+
+
 def _miner_deadlines(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[Deadline]:
     """
     Retrieves the deadlines for a given miner address.
