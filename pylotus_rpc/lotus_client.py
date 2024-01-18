@@ -11,6 +11,7 @@ from .types.actor_state import ActorState
 from .types.active_sector import ActiveSector
 from .types.block_header import BlockHeader
 from .types.deadline import Deadline
+from .types.miner_info import MinerInfo
 from .http_json_rpc_connector import HttpJsonRpcConnector
 
 class LotusClient:
@@ -39,6 +40,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_info(self, address: str, tipset: Optional[Tipset] = None) -> MinerInfo:
+            return state._miner_info(self.connector, address, tipset)
 
         def miner_faults(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._miner_faults(self.connector, address, tipset)

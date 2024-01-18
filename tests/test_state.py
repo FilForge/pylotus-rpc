@@ -21,7 +21,8 @@ from pylotus_rpc.methods.state import (
     _miner_active_sectors,
     _miner_available_balance,
     _miner_deadlines,
-    _miner_faults
+    _miner_faults,
+    _miner_info
 )
 
 from pylotus_rpc.methods.chain import (
@@ -72,6 +73,22 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_info(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    result = _miner_info(setup_connector, "f02244985", tipset=None)
+    assert result is not None
+    assert result.owner is not None
+    assert result.worker is not None
+    assert result.peer_id is not None
+    assert result.multiaddrs is not None
+    assert result.sector_size > 0
+    assert result.window_post_partition_sectors > 0
+    assert result.beneficiary is not None
+    assert result.beneficiary_term is not None
+    assert result.beneficiary_term.quota is not None
+    assert result.beneficiary_term.used_quota is not None
 
 @pytest.mark.integration
 def test_miner_faults(setup_connector):

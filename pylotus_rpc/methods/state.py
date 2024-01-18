@@ -12,7 +12,7 @@ from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
 from ..types.active_sector import ActiveSector
 from ..types.deadline import Deadline
-
+from ..types.miner_info import MinerInfo
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
@@ -48,6 +48,31 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_info(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> MinerInfo:
+    """
+    Retrieves detailed information about a specific miner from the Filecoin network.
+
+    This function sends a request to the Filecoin node via the provided connector,
+    invoking the `StateMinerInfo` method. It fetches detailed information about the
+    specified miner, including owner, worker addresses, peer ID, sector size, and more.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve information.
+        tipset (Optional[Tipset]): The tipset at which to query the miner information. If None,
+                                  the latest tipset is used.
+
+    Returns:
+        MinerInfo: An instance of MinerInfo containing various details about the specified miner.
+                   This includes the miner's owner, worker addresses, peer ID, sector size, and other
+                   relevant information.
+    """
+    payload = _make_payload("Filecoin.StateMinerInfo", [miner_address], tipset)
+    dct_data = connector.execute(payload)
+    miner_info = MinerInfo.from_dict(dct_data['result'])
+    return miner_info
 
 
 def _miner_faults(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[int]:
