@@ -14,6 +14,13 @@ class Cid:
         return self.id
 
 
+    def to_dict(self):
+        """
+        Returns a dictionary representation of the CID for JSON serialization.
+        """
+        return {"/": self.id}
+
+
     @staticmethod
     def from_dict(dct):
         """
@@ -23,7 +30,7 @@ class Cid:
         """
         return Cid(dct.get('/'))
 
-
+    
     @staticmethod
     def dct_cids(lst_cids):
         """
