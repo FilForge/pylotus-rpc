@@ -12,6 +12,7 @@ from .types.active_sector import ActiveSector
 from .types.block_header import BlockHeader
 from .types.deadline import Deadline
 from .types.miner_info import MinerInfo
+from .types.sector_pre_commit_info import SectorPreCommitInfo
 from .http_json_rpc_connector import HttpJsonRpcConnector
 
 class LotusClient:
@@ -40,6 +41,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_initial_pledge_collateral(self, miner_address: str, sector_pre_commit_info: SectorPreCommitInfo, tipset: Optional[Tipset] = None) -> int:
+            return state._miner_initial_pledge_collateral(self.connector, miner_address, sector_pre_commit_info, tipset)
 
         def miner_info(self, address: str, tipset: Optional[Tipset] = None) -> MinerInfo:
             return state._miner_info(self.connector, address, tipset)

@@ -22,7 +22,8 @@ from pylotus_rpc.methods.state import (
     _miner_available_balance,
     _miner_deadlines,
     _miner_faults,
-    _miner_info
+    _miner_info,
+    _miner_initial_pledge_collateral
 )
 
 from pylotus_rpc.methods.chain import (
@@ -35,6 +36,7 @@ from pylotus_rpc.types.actor_state import ActorState
 from pylotus_rpc.types.state_compute_output import StateComputeOutput
 from pylotus_rpc.types.message import Message
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
+from pylotus_rpc.types.sector_pre_commit_info import SectorPreCommitInfo
 from tests.test_common import parse_fullnode_api_info
 
 
@@ -64,6 +66,27 @@ good_msg2 = Message(
     params=""  # No params needed for simple transfers
 )    
 
+# JSON string
+spci_json_str = '''
+{
+    "SealProof": 8,
+    "SectorNumber": 9,
+    "SealedCID": {
+      "/": "bafy2bzacea3wsdh6y3a36tb3skempjoxqpuyompjbmfeyf34fi3uy6uue42v4"
+    },
+    "SealRandEpoch": 10101,
+    "DealIDs": [
+      5432
+    ],
+    "Expiration": 10101,
+    "ReplaceCapacity": true,
+    "ReplaceSectorDeadline": 42,
+    "ReplaceSectorPartition": 42,
+    "ReplaceSectorNumber": 9
+}
+'''
+
+
 @pytest.fixture
 def setup_filfox_connector():
     host = "https://filfox.info/rpc/v1"
@@ -73,6 +96,14 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_initial_pledge_collateral(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    sector_pre_commit_info = SectorPreCommitInfo.from_json(spci_json_str)
+    result = _miner_initial_pledge_collateral(setup_connector, "f02244985", sector_pre_commit_info, tipset=None)
+    assert result is not None
+    assert isinstance(result, int)
 
 @pytest.mark.integration
 def test_miner_info(setup_connector):

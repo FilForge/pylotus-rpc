@@ -13,6 +13,7 @@ from ..types.invocation_result import InvocationResult
 from ..types.active_sector import ActiveSector
 from ..types.deadline import Deadline
 from ..types.miner_info import MinerInfo
+from ..types.sector_pre_commit_info import SectorPreCommitInfo
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
@@ -48,6 +49,27 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_initial_pledge_collateral(connector: HttpJsonRpcConnector, miner_address: str, sector_pre_commit_info: SectorPreCommitInfo, tipset: Optional[Tipset] = None) -> int:
+    """
+    Calculates the initial pledge collateral for a given miner and sector pre-commit info.
+
+    This function sends a request to the Filecoin network to calculate the initial pledge
+    collateral required for a sector based on its pre-commit information.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner.
+        sector_pre_commit_info (SectorPreCommitInfo): Information about the sector during its pre-commit phase.
+        tipset (Optional[Tipset]): The tipset at which to perform this query. If None, the latest tipset is used.
+
+    Returns:
+        int: The amount of initial pledge collateral required, in attoFIL.
+    """
+    payload = _make_payload("Filecoin.StateMinerInitialPledgeCollateral", [miner_address, sector_pre_commit_info.to_dict()], tipset)
+    dct_data = connector.execute(payload)
+    return int(dct_data['result'])
 
 
 def _miner_info(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> MinerInfo:
