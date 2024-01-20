@@ -14,6 +14,8 @@ from ..types.active_sector import ActiveSector
 from ..types.deadline import Deadline
 from ..types.miner_info import MinerInfo
 from ..types.sector_pre_commit_info import SectorPreCommitInfo
+from ..types.miner_partition import MinerPartition
+
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
@@ -49,6 +51,35 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_partitions(connector: HttpJsonRpcConnector, miner_address: str, deadline_index: int, tipset: Optional[Tipset] = None) -> List[MinerPartition]:
+    """
+    Retrieves the partition details for a specific miner and deadline index.
+
+    This function communicates with a Filecoin node via the provided connector to fetch 
+    partition details for a miner at a given deadline index. It returns a list of 
+    MinerPartition objects, each representing a partition.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector to facilitate
+                                          communication with the Filecoin node.
+        miner_address (str): The address of the miner for which partition details are sought.
+        deadline_index (int): The index of the deadline for which partition details are sought.
+        tipset (Optional[Tipset]): The tipset at which to query the miner partitions. If None, 
+                                  the latest tipset is used.
+
+    Returns:
+        List[MinerPartition]: A list of MinerPartition objects, each representing a partition
+                              within the specified miner's deadline.
+    """
+    payload = _make_payload("Filecoin.StateMinerPartitions", [miner_address, deadline_index], tipset)
+    dct_data = connector.execute(payload)
+    miner_partitions = []
+    for dct_partition in dct_data['result']:
+        miner_partitions.append(MinerPartition.from_dict(dct_partition))
+
+    return miner_partitions
 
 
 def _miner_initial_pledge_collateral(connector: HttpJsonRpcConnector, miner_address: str, sector_pre_commit_info: SectorPreCommitInfo, tipset: Optional[Tipset] = None) -> int:

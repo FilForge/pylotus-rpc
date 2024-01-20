@@ -23,7 +23,8 @@ from pylotus_rpc.methods.state import (
     _miner_deadlines,
     _miner_faults,
     _miner_info,
-    _miner_initial_pledge_collateral
+    _miner_initial_pledge_collateral,
+    _miner_partitions
 )
 
 from pylotus_rpc.methods.chain import (
@@ -96,6 +97,18 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_partitions(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    list_result = _miner_partitions(setup_connector, "f02244985", 0, tipset=None)
+    assert list_result is not None
+    assert len(list_result) > 0
+    assert list_result[0].all_sectors is not None
+    assert list_result[0].faulty_sectors is not None
+    assert list_result[0].recovering_sectors is not None
+    assert list_result[0].live_sectors is not None
+    assert list_result[0].active_sectors is not None
 
 @pytest.mark.integration
 def test_miner_initial_pledge_collateral(setup_connector):
