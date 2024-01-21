@@ -15,6 +15,7 @@ from ..types.deadline import Deadline
 from ..types.miner_info import MinerInfo
 from ..types.sector_pre_commit_info import SectorPreCommitInfo
 from ..types.miner_partition import MinerPartition
+from ..types.miner_power import MinerPower
 
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
@@ -51,6 +52,26 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_power(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> MinerPower:
+    """
+    Retrieves the mining power of a given miner at a specified tipset.
+
+    This function queries the Filecoin network to obtain the miner's power, including raw byte power and adjusted quality power. It also indicates if the miner has the minimum power required in the network.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve power information.
+        tipset (Optional[Tipset]): The tipset at which to query the miner's power. If None, the latest tipset is used.
+
+    Returns:
+        MinerPower: An instance of MinerPower dataclass, containing the miner's power details and whether they have the minimum required power.
+    """
+    payload = _make_payload("Filecoin.StateMinerPower", [miner_address], tipset)
+    dct_data = connector.execute(payload)
+    miner_power = MinerPower.from_dict(dct_data['result'])
+    return miner_power
 
 
 def _miner_partitions(connector: HttpJsonRpcConnector, miner_address: str, deadline_index: int, tipset: Optional[Tipset] = None) -> List[MinerPartition]:

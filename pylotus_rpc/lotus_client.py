@@ -15,6 +15,7 @@ from .types.miner_info import MinerInfo
 from .types.sector_pre_commit_info import SectorPreCommitInfo
 from .types.miner_partition import MinerPartition
 from .http_json_rpc_connector import HttpJsonRpcConnector
+from .types.miner_power import MinerPower
 
 class LotusClient:
 
@@ -42,6 +43,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_power(self, address: str, tipset: Optional[Tipset] = None) -> MinerPower:
+            return state._miner_power(self.connector, address, tipset)
 
         def miner_partitions(self, miner_address: str, deadline_index: int, tipset: Optional[Tipset] = None) -> List[MinerPartition]:
             return state._miner_partitions(self.connector, miner_address, deadline_index, tipset)
