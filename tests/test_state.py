@@ -25,7 +25,8 @@ from pylotus_rpc.methods.state import (
     _miner_info,
     _miner_initial_pledge_collateral,
     _miner_partitions,
-    _miner_power
+    _miner_power,
+    _miner_pre_commit_deposit_for_power
 )
 
 from pylotus_rpc.methods.chain import (
@@ -99,6 +100,14 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_pre_commit_deposit_for_power(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    sector_pre_commit_info = SectorPreCommitInfo.from_json(spci_json_str)
+    result = _miner_pre_commit_deposit_for_power(setup_connector, "f02244985", sector_pre_commit_info, tipset=None)
+    assert result is not None
+    assert isinstance(result, int)
 
 @pytest.mark.integration
 def test_miner_power(setup_connector):

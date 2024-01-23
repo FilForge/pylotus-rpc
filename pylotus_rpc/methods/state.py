@@ -54,6 +54,32 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _miner_pre_commit_deposit_for_power(connector: HttpJsonRpcConnector, miner_address: str, sector_pre_commit_info: SectorPreCommitInfo, tipset: Optional[Tipset] = None) -> int:
+    """
+    Calculates the PreCommit Deposit required for a given sector pre-commitment by a miner.
+
+    This function queries the Filecoin network to determine the amount of collateral a miner must
+    deposit when pre-committing a new sector. The PreCommit Deposit is a form of collateral that 
+    ensures miners follow through with their commitment.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner.
+        sector_pre_commit_info (SectorPreCommitInfo): Information about the sector being pre-committed.
+        tipset (Optional[Tipset]): The tipset at which to query. If None, the latest tipset is used.
+
+    Returns:
+        int: The amount of PreCommit Deposit required in attoFIL (1 FIL = 10^18 attoFIL).
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = _make_payload("Filecoin.StateMinerPreCommitDepositForPower", [miner_address, sector_pre_commit_info.to_dict()], tipset)
+    dct_data = connector.execute(payload)
+    return int(dct_data['result'])
+
+
+
 def _miner_power(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> MinerPower:
     """
     Retrieves the mining power of a given miner at a specified tipset.

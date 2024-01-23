@@ -44,6 +44,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def miner_pre_commit_deposit_for_power(self, sector_size: int, duration: int, tipset: Optional[Tipset] = None) -> int:
+            return state._miner_pre_commit_deposit_for_power(self.connector, sector_size, duration, tipset)
+
         def miner_power(self, address: str, tipset: Optional[Tipset] = None) -> MinerPower:
             return state._miner_power(self.connector, address, tipset)
 
