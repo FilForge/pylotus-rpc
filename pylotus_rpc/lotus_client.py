@@ -16,6 +16,7 @@ from .types.sector_pre_commit_info import SectorPreCommitInfo
 from .types.miner_partition import MinerPartition
 from .http_json_rpc_connector import HttpJsonRpcConnector
 from .types.miner_power import MinerPower
+from .types.deadline_info import DeadlineInfo
 
 class LotusClient:
 
@@ -43,6 +44,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_proving_deadline(self, address: str, tipset: Optional[Tipset] = None) -> DeadlineInfo:
+            return state._miner_proving_deadline(self.connector, address, tipset)
 
         def miner_pre_commit_deposit_for_power(self, sector_size: int, duration: int, tipset: Optional[Tipset] = None) -> int:
             return state._miner_pre_commit_deposit_for_power(self.connector, sector_size, duration, tipset)

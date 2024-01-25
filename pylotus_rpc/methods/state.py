@@ -16,6 +16,7 @@ from ..types.miner_info import MinerInfo
 from ..types.sector_pre_commit_info import SectorPreCommitInfo
 from ..types.miner_partition import MinerPartition
 from ..types.miner_power import MinerPower
+from ..types.deadline_info import DeadlineInfo
 
 
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
@@ -52,6 +53,28 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_proving_deadline(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> DeadlineInfo:
+    """
+    Retrieves the proving deadline information for a given miner.
+
+    This function queries the Filecoin network to obtain detailed information about the current
+    proving deadline for a specified miner. This includes information such as the current epoch,
+    deadline index, open and close epochs for the deadline, and more.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve proving deadline information.
+        tipset (Optional[Tipset]): The tipset at which to query the proving deadline. If None, the latest tipset is used.
+
+    Returns:
+        DeadlineInfo: An instance of DeadlineInfo containing detailed information about the miner's current proving deadline.
+    """
+    payload = _make_payload("Filecoin.StateMinerProvingDeadline", [miner_address], tipset)
+    dct_data = connector.execute(payload)
+    return DeadlineInfo.from_dict(dct_data['result'])
+
 
 
 def _miner_pre_commit_deposit_for_power(connector: HttpJsonRpcConnector, miner_address: str, sector_pre_commit_info: SectorPreCommitInfo, tipset: Optional[Tipset] = None) -> int:

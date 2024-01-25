@@ -26,7 +26,8 @@ from pylotus_rpc.methods.state import (
     _miner_initial_pledge_collateral,
     _miner_partitions,
     _miner_power,
-    _miner_pre_commit_deposit_for_power
+    _miner_pre_commit_deposit_for_power,
+    _miner_proving_deadline
 )
 
 from pylotus_rpc.methods.chain import (
@@ -42,6 +43,7 @@ from pylotus_rpc.types.message import Message
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 from pylotus_rpc.types.sector_pre_commit_info import SectorPreCommitInfo
 from tests.test_common import parse_fullnode_api_info
+from pylotus_rpc.types.deadline_info import DeadlineInfo
 
 
 good_msg = Message(
@@ -100,6 +102,25 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_miner_proving_deadline(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    result = _miner_proving_deadline(setup_connector, "f02244985", tipset=None)
+    assert result is not None
+    assert isinstance(result, DeadlineInfo)
+    assert result.current_epoch is not None
+    assert result.period_start is not None
+    assert result.index is not None
+    assert result.open is not None
+    assert result.close is not None
+    assert result.challenge is not None
+    assert result.fault_cutoff is not None
+    assert result.wpost_period_deadlines is not None
+    assert result.wpost_proving_period is not None
+    assert result.wpost_challenge_window is not None
+    assert result.wpost_challenge_lookback is not None
+    assert result.fault_declaration_cutoff is not None
 
 @pytest.mark.integration
 def test_miner_pre_commit_deposit_for_power(setup_connector):
