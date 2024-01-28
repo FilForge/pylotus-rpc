@@ -45,6 +45,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def miner_sector_allocated(self, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> bool:
+            return state._miner_sector_allocated(self.connector, miner_address, sector_number, tipset)
+
         def miner_recoveries(self, address: str, tipset: Optional[Tipset] = None) -> List[int]:
             return state._miner_recoveries(self.connector, address, tipset)
 
