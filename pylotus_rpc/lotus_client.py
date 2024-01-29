@@ -45,6 +45,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def miner_sector_count(self, miner_address: str, tipset: Optional[Tipset] = None) -> Dict:
+            return state._miner_sector_count(self.connector, miner_address, tipset)
+
         def miner_sector_allocated(self, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> bool:
             return state._miner_sector_allocated(self.connector, miner_address, sector_number, tipset)
 

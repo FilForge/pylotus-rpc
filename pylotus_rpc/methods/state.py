@@ -55,6 +55,26 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _miner_sector_count(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> Dict:
+    """
+    Retrieves the sector count for a given miner address.
+
+    This function queries the Filecoin network to obtain the sector count for a specified miner address.
+    It returns a dictionary containing the number of active and faulty sectors for the miner.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve the sector count.
+        tipset (Optional[Tipset]): The tipset at which to query the sector count. If None, the latest tipset is used.
+
+    Returns:
+        Dict: A dictionary containing the number of active and faulty sectors for the miner.
+    """
+    payload = _make_payload("Filecoin.StateMinerSectorCount", [miner_address], tipset)
+    dct_data = connector.execute(payload)
+    return dct_data['result']
+
+
 def _miner_sector_allocated(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> bool:
     """
     Checks if a sector has been allocated for sealing by a given miner.
