@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 @dataclass
-class ActiveSector:
+class Sector:
     sector_number: int
     seal_proof: int
     sealed_cid: Cid
@@ -24,9 +24,9 @@ class ActiveSector:
     simple_qa_power: bool
 
     @staticmethod
-    def from_dict(data: dict) -> 'ActiveSector':
+    def from_dict(data: dict) -> 'Sector':
         # Convert types as necessary
-        return ActiveSector(
+        return Sector(
             sector_number=data.get('SectorNumber'),
             seal_proof=data.get('SealProof'),
             sealed_cid=Cid.from_dict(data['SealedCID']),

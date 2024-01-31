@@ -8,7 +8,7 @@ from .types.invocation_result import InvocationResult
 from .types.actor import Actor
 from .types.state_compute_output import StateComputeOutput
 from .types.actor_state import ActorState
-from .types.active_sector import ActiveSector
+from .types.sector import Sector
 from .types.block_header import BlockHeader
 from .types.deadline import Deadline
 from .types.miner_info import MinerInfo
@@ -44,6 +44,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def miner_sectors(self, address: str, sector_list: List[int] = [], tipset: Optional[Tipset] = None) -> List[Sector]:
+            return state._miner_sectors(self.connector, address, sector_list, tipset)
 
         def miner_sector_count(self, miner_address: str, tipset: Optional[Tipset] = None) -> Dict:
             return state._miner_sector_count(self.connector, miner_address, tipset)
@@ -81,7 +84,7 @@ class LotusClient:
         def miner_available_balance(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._miner_available_balance(self.connector, address, tipset)
 
-        def miner_active_sectors(self, address: str, tipset: Optional[Tipset] = None) -> List[ActiveSector]:
+        def miner_active_sectors(self, address: str, tipset: Optional[Tipset] = None) -> List[Sector]:
             return state._miner_active_sectors(self.connector, address, tipset)
 
         def storage_market_deal(self, deal_id: int, tipset: Optional[Tipset] = None) -> dict:

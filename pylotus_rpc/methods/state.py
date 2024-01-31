@@ -10,7 +10,7 @@ from ..types.deal_proposal import DealProposal
 from ..types.deal_state import DealState
 from ..types.state_compute_output import StateComputeOutput
 from ..types.invocation_result import InvocationResult
-from ..types.active_sector import ActiveSector
+from ..types.sector import Sector
 from ..types.deadline import Deadline
 from ..types.miner_info import MinerInfo
 from ..types.sector_pre_commit_info import SectorPreCommitInfo
@@ -53,6 +53,30 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _miner_sectors(connector: HttpJsonRpcConnector, miner_address: str, sector_list: List[int] = [], tipset: Optional[Tipset] = None) -> List[Sector]:
+    """
+    Retrieves detailed information about a list of sectors for a given miner address.
+
+    This function queries the Filecoin network to obtain detailed information about a list of sectors for a given miner address.
+    It returns a list of Sector objects, each representing a sector associated with the miner.
+    The Sector object includes sector details such as sector number, seal proof, sealed CID, and more.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The address of the miner for which to retrieve sector details.
+        sector_list (List[int]): A list of sector numbers for which to retrieve detailed information. If empty, all sectors are retrieved.
+        tipset (Optional[Tipset]): The tipset at which to query the sector details. If None, the latest tipset is used.
+
+    Returns:
+        List[Sector]: A list of Sector objects, each containing detailed information about a sector.
+    """
+    payload = _make_payload("Filecoin.StateMinerSectors", [miner_address, sector_list], tipset)
+    list_of_dicts = connector.execute(payload)['result']
+    list_of_active_sectors = [Sector.from_dict(dct) for dct in list_of_dicts]
+
+    return list_of_active_sectors
 
 
 def _miner_sector_count(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> Dict:
@@ -321,13 +345,13 @@ def _miner_available_balance(connector: HttpJsonRpcConnector, miner_address: str
     return available_balance
 
 
-def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[ActiveSector]:
+def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[Sector]:
     """
     Retrieves a list of active sectors for a given miner address.
 
     This function queries the Filecoin network to obtain a list of active sectors for a given miner address.
-    It returns a list of ActiveSector objects, each representing a sector associated with the miner.
-    The ActiveSector object includes sector details such as sector number, seal proof, sealed CID, and more.
+    It returns a list of Sector objects, each representing a sector associated with the miner.
+    The Sector object includes sector details such as sector number, seal proof, sealed CID, and more.
 
     Args:
         connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
@@ -335,11 +359,11 @@ def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, t
         tipset (Optional[Tipset]): The tipset at which to query the active sectors. If None, the latest tipset is used.
 
     Returns:
-        List[ActiveSector]: A list of ActiveSector objects, each containing detailed information about an active sector.
+        List[Sector]: A list of Sector objects, each containing detailed information about an active sector.
     """
     payload = _make_payload("Filecoin.StateMinerActiveSectors", [miner_address], tipset)
     list_of_dicts = connector.execute(payload)['result']
-    list_of_active_sectors = [ActiveSector.from_dict(dct) for dct in list_of_dicts]
+    list_of_active_sectors = [Sector.from_dict(dct) for dct in list_of_dicts]
 
     return list_of_active_sectors
 
