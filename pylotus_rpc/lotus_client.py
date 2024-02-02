@@ -45,6 +45,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def network_name(self) -> str:
+            return state._network_name(self.connector)
+
         def miner_sectors(self, address: str, sector_list: List[int] = [], tipset: Optional[Tipset] = None) -> List[Sector]:
             return state._miner_sectors(self.connector, address, sector_list, tipset)
 

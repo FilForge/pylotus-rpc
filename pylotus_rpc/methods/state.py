@@ -55,6 +55,30 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
+def _network_name(connector: HttpJsonRpcConnector) -> str:
+    """
+    Retrieves the name of the Filecoin network.
+
+    This function sends a request to the Filecoin network to obtain the name of the network.
+    The network name is a human-readable identifier for the network, such as "mainnet" or "testnet".
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+
+    Returns:
+        str: The name of the Filecoin network.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = {
+            "jsonrpc": "2.0",
+            "method": "Filecoin.StateNetworkName"
+    }
+    dct_data = connector.execute(payload)
+    return dct_data['result']
+
+
 def _miner_sectors(connector: HttpJsonRpcConnector, miner_address: str, sector_list: List[int] = [], tipset: Optional[Tipset] = None) -> List[Sector]:
     """
     Retrieves detailed information about a list of sectors for a given miner address.

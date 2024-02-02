@@ -31,7 +31,8 @@ from pylotus_rpc.methods.state import (
     _miner_recoveries,
     _miner_sector_allocated,
     _miner_sector_count,
-    _miner_sectors
+    _miner_sectors,
+    _network_name
 )
 
 from pylotus_rpc.methods.chain import (
@@ -106,6 +107,12 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_network_name(setup_connector):
+    result = _network_name(setup_connector)
+    assert result is not None
+    assert result == "mainnet"
 
 @pytest.mark.integration
 def test_miner_sectors(setup_connector):
