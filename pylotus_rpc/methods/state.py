@@ -54,6 +54,27 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
 
     return payload
 
+def _network_version(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> int:
+    """
+    Retrieves the version of the Filecoin network protocol as of a specific tipset.
+
+    This function queries the Filecoin node to get the network's protocol version at the specified tipset.
+    If no tipset is provided, the current network version is returned.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector used to communicate with the Filecoin node.
+        tipset (Optional[Tipset]): The tipset at which to get the network version. If None, the latest network version is retrieved.
+
+    Returns:
+        int: The protocol version of the Filecoin network at the given tipset.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = _make_payload("Filecoin.StateNetworkVersion", [], tipset)
+    dct_data = connector.execute(payload)
+    return int(dct_data['result'])
+
 
 def _network_name(connector: HttpJsonRpcConnector) -> str:
     """

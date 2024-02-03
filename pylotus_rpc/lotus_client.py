@@ -45,6 +45,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def network_version(self, tipset: Optional[Tipset] = None) -> int:
+            return state._network_version(self.connector, tipset)
+
         def network_name(self) -> str:
             return state._network_name(self.connector)
 
