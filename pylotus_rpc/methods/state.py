@@ -19,6 +19,18 @@ from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
 
 
+class MessageNotFound(Exception):
+    """Exception raised when a message is not found."""
+
+    def __init__(self, cid=None, message="Message not found"):
+        self.message_id = cid
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
 def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
     Constructs a JSON-RPC payload for a given method and parameters.
@@ -34,7 +46,7 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     """
     cids = None
     if tipset:
-        cids = tipset.dct_cids()
+        cids = tipset.lst_dct_cids()
 
     # if params exists (including if it's an empty list), append the cids
     if params is not None:
@@ -53,6 +65,39 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
         }
 
     return payload
+
+
+def _state_replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] = None) -> InvocationResult:
+    """
+    Replays a message, returning the result of the message execution.
+
+    This function sends a request to the Filecoin network to replay a message, returning the result of the message execution.
+    The message is identified by its CID (Content Identifier), and the tipset parameter specifies the state at which to replay the message.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        cid (str): The CID of the message to replay.
+        tipset (Optional[Tipset]): The tipset at which to replay the message. If None, the latest tipset is used.
+
+    Returns:
+        InvocationResult: An instance of InvocationResult containing the result of the message execution.
+    """
+    tipset_key = []
+    if tipset:
+        tipset_key = tipset.lst_dct_cids()
+
+    payload = {
+        "jsonrpc": "2.0",
+        "method": "Filecoin.StateReplay",
+        "params": [tipset_key, {"/": cid}]
+    }
+    dct_data = connector.execute(payload, debug=True)
+    # raise an exception if the message can't be found / loaded
+    if 'error' in dct_data:
+        raise MessageNotFound(cid, dct_data['error']['message'])
+
+    return InvocationResult.from_dict(dct_data['result'])
+
 
 def _network_version(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> int:
     """
