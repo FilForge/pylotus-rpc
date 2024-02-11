@@ -23,6 +23,27 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _get_tip_set(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> Tipset:
+    """
+    Retrieves a Tipset from the Filecoin blockchain using its key.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve a specific
+    Tipset's information. The Tipset information is then converted into a `Tipset` object.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+        tipset_key (List[dict]): A list of dictionaries containing the CIDs of the blocks
+                                 in the Tipset.
+
+    Returns:
+        Tipset: An instance of `Tipset` representing the retrieved Tipset.
+    """
+    payload = _make_payload("Filecoin.ChainGetTipSet", [tipset_key])
+    result = connector.execute(payload)
+    return Tipset(result['result']['Height'], [Cid(cid["/"]) for cid in result['result']['Cids']], [dict_to_blockheader(dct) for dct in result['result']['Blocks']])
+
+
 def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
     """
     Retrieves the raw data associated with a given CID from the Filecoin blockchain.

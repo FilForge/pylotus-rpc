@@ -6,6 +6,7 @@ from tests.test_common import parse_fullnode_api_info
 from pylotus_rpc.types.cid import Cid
 from pylotus_rpc.methods.chain import (
     _get_chain_head,
+    _get_tip_set,
     _read_obj
 )
 
@@ -23,6 +24,12 @@ def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
 
+@pytest.mark.integration
+def test_get_tip_set(setup_connector):
+    test_tipset = _get_chain_head(setup_connector)
+    result_tipset = _get_tip_set(setup_connector, test_tipset.lst_dct_cids())
+    assert result_tipset is not None
+    assert result_tipset.height == test_tipset.height
 
 @pytest.mark.integration
 def test_read_obj(setup_connector):

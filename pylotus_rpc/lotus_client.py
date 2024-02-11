@@ -30,6 +30,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def get_tip_set(self, tipset_key: List[dict]) -> Tipset:
+            return chain._get_tip_set(self.connector, tipset_key)
+
         def get_chain_head(self) -> Tipset:
             return chain._get_chain_head(self.connector)
 
