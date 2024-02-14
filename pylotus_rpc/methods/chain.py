@@ -22,6 +22,33 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+# TODO - we don't have this tested and working yet and there isn't a clear reason why it's
+# failing.  We will come back and revisit this later.
+def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[Cid]:
+    """
+    Retrieves the messages in a block from the Filecoin blockchain using its CID.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve the messages
+    in a specific block. The messages are then converted into a list of `Cid` objects.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+        block_cid (str): The CID (Content Identifier) of the block to be retrieved.
+
+    Returns:
+        List[Cid]: A list of `Cid` objects representing the messages in the block.
+
+    Example:
+        >>> connector = HttpJsonRpcConnector('localhost', 1234, 'my_api_token')
+        >>> block_cid = "bafy2bzaced..."
+        >>> block_messages = _get_block_messages(connector, block_cid)
+        >>> print(block_messages)
+    """
+    payload = _make_payload("Filecoin.ChainGetBlockMessages", Cid.dct_cids([block_cid]))
+    result = connector.execute(payload, debug=True)
+    exit(0)
+    return [Cid(cid["/"]) for cid in result['result']['Cids']]
 
 def _get_tip_set(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> Tipset:
     """
@@ -67,7 +94,6 @@ def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
     payload = _make_payload("Filecoin.ChainReadObj", Cid.dct_cids([cid]))
     result = connector.execute(payload)
     return result['result']
-
 
 
 def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:

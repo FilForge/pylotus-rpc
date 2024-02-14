@@ -30,6 +30,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def get_block_messages(self, block_cid: str) -> List[Cid]:
+            return chain._get_block_messages(self.connector, block_cid)
+
         def get_tip_set(self, tipset_key: List[dict]) -> Tipset:
             return chain._get_tip_set(self.connector, tipset_key)
 
