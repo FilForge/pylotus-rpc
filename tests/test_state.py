@@ -33,7 +33,8 @@ from pylotus_rpc.methods.state import (
     _miner_sector_count,
     _miner_sectors,
     _network_name,
-    _network_version
+    _network_version,
+    _replay
 )
 
 from pylotus_rpc.methods.chain import (
@@ -108,6 +109,14 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_replay(setup_connector):
+    invocation_result = _replay(setup_connector, "bafy2bzaceasvnmajn6e76xgnk42fco5tkwbg56hue5xy3kgbf4kbxh3g7kzei")
+
+    assert isinstance(invocation_result, InvocationResult)
+    assert invocation_result.msg_receipt.exit_code == 0  # No error in execution
+    assert invocation_result.duration > 0  # Duration should be greater than zero for any call
 
 @pytest.mark.integration
 def test_network_version(setup_connector):

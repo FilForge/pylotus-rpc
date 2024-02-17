@@ -67,7 +67,7 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     return payload
 
 
-def _state_replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] = None) -> InvocationResult:
+def _replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] = None) -> InvocationResult:
     """
     Replays a message, returning the result of the message execution.
 
@@ -92,6 +92,7 @@ def _state_replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Ti
         "params": [tipset_key, {"/": cid}]
     }
     dct_data = connector.execute(payload, debug=True)
+
     # raise an exception if the message can't be found / loaded
     if 'error' in dct_data:
         raise MessageNotFound(cid, dct_data['error']['message'])
