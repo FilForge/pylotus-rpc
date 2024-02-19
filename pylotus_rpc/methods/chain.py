@@ -45,7 +45,7 @@ def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List
         >>> block_messages = _get_block_messages(connector, block_cid)
         >>> print(block_messages)
     """
-    payload = _make_payload("Filecoin.ChainGetBlockMessages", Cid.dct_cids([block_cid]))
+    payload = _make_payload("Filecoin.ChainGetBlockMessages", Cid.format_cids_for_json([block_cid]))
     result = connector.execute(payload, debug=True)
     exit(0)
     return [Cid(cid["/"]) for cid in result['result']['Cids']]
@@ -91,7 +91,7 @@ def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
         typically in CBOR (Concise Binary Object Representation) format and may require 
         further decoding and interpretation depending on its structure and context.
     """
-    payload = _make_payload("Filecoin.ChainReadObj", Cid.dct_cids([cid]))
+    payload = _make_payload("Filecoin.ChainReadObj", Cid.format_cids_for_json([cid]))
     result = connector.execute(payload)
     return result['result']
 
@@ -163,7 +163,7 @@ def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
     payload = {
         "jsonrpc": "2.0",
         "method": "Filecoin.ChainGetBlock",
-        "params": Cid.dct_cids([cid])
+        "params": Cid.format_cids_for_json([cid])
     }
 
     result = connector.execute(payload, debug=False)["result"]

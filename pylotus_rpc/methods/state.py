@@ -634,7 +634,7 @@ def _list_messages(connector: HttpJsonRpcConnector, to_addr: str, from_addr: str
     payload = _make_payload("Filecoin.StateListMessages", [dct_params], tipset)
     payload["params"].append(epoch)
     response = connector.execute(payload, debug=True)
-    return Cid.dct_cids(response['result'])
+    return Cid.format_cids_for_json(response['result'])
 
 
 
@@ -827,7 +827,7 @@ def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str) -> 
         actors = _changed_actors(connector_instance, "cid1_value", "cid2_value")
     
     """
-    payload = _make_payload("Filecoin.StateChangedActors", Cid.dct_cids([cid1.id, cid2.id], None))
+    payload = _make_payload("Filecoin.StateChangedActors", Cid.format_cids_for_json([cid1.id, cid2.id]))
     # execute the method, capture the result
     data = connector.execute(payload)
 

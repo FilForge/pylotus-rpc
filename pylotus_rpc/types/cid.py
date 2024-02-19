@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List, Dict
 
 @dataclass
 class Cid:
@@ -30,10 +31,21 @@ class Cid:
         """
         return Cid(dct.get('/'))
 
-    
+
     @staticmethod
-    def dct_cids(lst_cids):
+    def format_cids_for_json(lst_cids: List[str]) -> List[Dict[str, str]]:
         """
-        Returns a dictionary representation of the CIDs for JSON serialization.
+        Formats a list of CID strings for JSON serialization.
+
+        This method prepares CIDs for JSON serialization by converting each CID in the
+        list into a dictionary with a single key-value pair, where the key is '/' and
+        the value is the CID string. This format is commonly used in JSON representations
+        of Filecoin messages and objects.
+
+        Args:
+            lst_cids: A list of CID strings to be formatted.
+
+        Returns:
+            A list of dictionaries, each representing a CID in the required JSON format.
         """
         return [{"/": cid} for cid in lst_cids]
