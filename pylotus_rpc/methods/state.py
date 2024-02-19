@@ -31,7 +31,7 @@ class MessageNotFound(Exception):
         return self.message
 
 
-def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
+def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, include_tipset: bool = True) -> dict:
     """
     Constructs a JSON-RPC payload for a given method and parameters.
 
@@ -48,8 +48,9 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None):
     if tipset:
         cids = tipset.lst_dct_cids()
 
-    # if params exists (including if it's an empty list), append the cids
-    if params is not None:
+    # if params exists (including if it's an empty list), append the cids, unless
+    # we are told not too (a few routines don't accept at tipset parameter)
+    if params is not None and include_tipset:
         params.append(cids)
 
     if params: 
