@@ -16,6 +16,7 @@ class MessageReceipt:
     return_value: Any
     gas_used: int
 
+    # TODO - rename this to from_dict
     @staticmethod
     def from_json(data: Dict[str, Union[int, Any]]) -> 'MessageReceipt':
         """
