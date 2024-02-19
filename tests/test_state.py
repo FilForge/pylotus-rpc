@@ -102,12 +102,12 @@ spci_json_str = '''
 
 @pytest.fixture
 def setup_filfox_connector():
-    host = "https://filfox.info/rpc/v1"
+    host = "https://filfox.info/rpc/v0"
     return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture
 def setup_connector():
-    host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v1')
+    host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
 
 @pytest.mark.integration
