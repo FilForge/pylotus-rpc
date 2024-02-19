@@ -34,7 +34,8 @@ from pylotus_rpc.methods.state import (
     _miner_sectors,
     _network_name,
     _network_version,
-    _replay
+    _replay,
+    _search_message
 )
 
 from pylotus_rpc.methods.chain import (
@@ -51,7 +52,7 @@ from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 from pylotus_rpc.types.sector_pre_commit_info import SectorPreCommitInfo
 from tests.test_common import parse_fullnode_api_info
 from pylotus_rpc.types.deadline_info import DeadlineInfo
-
+from pylotus_rpc.types.message_lookup import MessageLookup
 
 good_msg = Message(
     version=0,  # Always 0 for now, as per Filecoin protocol
@@ -109,6 +110,16 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_search_message(setup_filfox_connector):
+    result = _search_message(setup_filfox_connector, "bafy2bzaceasvnmajn6e76xgnk42fco5tkwbg56hue5xy3kgbf4kbxh3g7kzei")
+    assert result is not None
+    assert isinstance(result, MessageLookup)
+    assert result.message_cid is not None
+    assert result.message_receipt is not None
+    assert result.tip_set is not None
+    assert result.height > 0
 
 @pytest.mark.integration
 def test_replay(setup_connector):

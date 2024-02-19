@@ -17,6 +17,7 @@ from ..types.sector_pre_commit_info import SectorPreCommitInfo
 from ..types.miner_partition import MinerPartition
 from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
+from ..types.message_lookup import MessageLookup
 
 
 class MessageNotFound(Exception):
@@ -66,6 +67,35 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
         }
 
     return payload
+
+
+def _search_message(connector: HttpJsonRpcConnector, cid: str) -> MessageLookup:
+    """
+    Searches for a message in the Filecoin blockchain by its CID and returns its execution details.
+
+    This function sends a request to a Filecoin node to search for a message by its CID.
+    If found, it returns an instance of MessageLookup containing the details of the message
+    execution, including its receipt and the tipset in which it was included.
+
+    Args:
+        connector (HttpJsonRpcConnector): An interface for making requests to a Filecoin node.
+        cid (str): The Content Identifier (CID) of the message to search for.
+
+    Returns:
+        MessageLookup: An object containing the details of the message execution, if found.
+
+    Raises:
+        MessageNotFound: If the message with the given CID cannot be found or if there's an error
+                         in retrieving the message from the Filecoin network.
+    """
+    payload = _make_payload("Filecoin.StateSearchMsg", Cid.format_cids_for_json([cid]), include_tipset=False)
+    dct_data = connector.execute(payload)
+
+    # raise an exception if the message can't be found / loaded
+    if 'error' in dct_data:
+        raise MessageNotFound(cid, dct_data['error']['message'])
+
+    return MessageLookup.from_dict(dct_data['result'])
 
 
 def _replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] = None) -> InvocationResult:

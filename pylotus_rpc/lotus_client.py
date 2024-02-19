@@ -17,6 +17,7 @@ from .types.miner_partition import MinerPartition
 from .http_json_rpc_connector import HttpJsonRpcConnector
 from .types.miner_power import MinerPower
 from .types.deadline_info import DeadlineInfo
+from .types.message_lookup import MessageLookup
 
 class LotusClient:
 
@@ -50,6 +51,9 @@ class LotusClient:
 
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def search_message(self, cid: str) -> MessageLookup:
+            return state._search_message(self.connector, cid)
 
         def replay(self, cid: str, tipset: Optional[Tipset] = None) -> InvocationResult:
             return state._replay(self.connector, cid, tipset)
