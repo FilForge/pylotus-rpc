@@ -4,7 +4,4 @@ PyLotus-RPC is a Python client library for interacting with the Lotus JSON-RPC A
 
 ## Installation
 
-You can install PyLotus-RPC using pip:
-
-```bash
-pip install pylotus-rpc
+TBD - this code isn't yet production ready.
