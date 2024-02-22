@@ -15,7 +15,7 @@ class Cid:
         return self.id
 
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, str]:
         """
         Returns a dictionary representation of the CID for JSON serialization.
         """

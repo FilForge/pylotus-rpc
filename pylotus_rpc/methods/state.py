@@ -19,7 +19,6 @@ from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
 from ..types.message_lookup import MessageLookup
 
-
 class MessageNotFound(Exception):
     """Exception raised when a message is not found."""
 
@@ -67,6 +66,39 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
         }
 
     return payload
+
+
+def _search_message_limited(connector: HttpJsonRpcConnector, cid: str, limit: int) -> MessageLookup:
+    """
+    Searches the blockchain up to a specified number of epochs in the past for a message by its CID and returns its
+    execution details if found.
+
+    This function sends a request to the Filecoin node to search for a message identified by its CID, looking back up
+    to `limit` epochs from the current head of the blockchain. If the message is found within this range, it returns
+    an instance of `MessageLookup` containing the message details, its receipt, and the tipset in which the message
+    was executed.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector used for making API requests to a Filecoin node.
+        cid (str): The Content Identifier (CID) of the message to search for.
+        limit (int): The maximum number of epochs to look back in the chain from the current head.
+
+    Returns:
+        MessageLookup: An object encapsulating the details of the message's execution, including its receipt and the
+                       tipset where it was executed, provided the message is found within the specified epoch limit.
+
+    Raises:
+        MessageNotFound: If the message cannot be found within the specified number of epochs or if an error occurs
+                         during the search.
+    """
+    payload = _make_payload("Filecoin.StateSearchMsgLimited", [Cid(cid).to_dict(), limit], include_tipset=False)
+    dct_data = connector.execute(payload)
+
+    # If an error is identified in the response, raise an exception to indicate the message couldn't be located.
+    if 'error' in dct_data:
+        raise MessageNotFound(cid, dct_data['error']['message'])
+
+    return MessageLookup.from_dict(dct_data['result'])
 
 
 def _search_message(connector: HttpJsonRpcConnector, cid: str) -> MessageLookup:

@@ -35,7 +35,8 @@ from pylotus_rpc.methods.state import (
     _network_name,
     _network_version,
     _replay,
-    _search_message
+    _search_message,
+    _search_message_limited
 )
 
 from pylotus_rpc.methods.chain import (
@@ -112,8 +113,18 @@ def setup_connector():
     return HttpJsonRpcConnector(host=host)
 
 @pytest.mark.integration
-def test_search_message(setup_filfox_connector):
-    result = _search_message(setup_filfox_connector, "bafy2bzaceasvnmajn6e76xgnk42fco5tkwbg56hue5xy3kgbf4kbxh3g7kzei")
+def test_search_message_limited(setup_connector):
+    result = _search_message_limited(setup_connector, "bafy2bzacecye7t6t6hygbudbl7kvo2owmgagd7ek2wck4f42ew6vcezxqnfv4", 3677890)
+    assert result is not None
+    assert isinstance(result, MessageLookup)
+    assert result.message_cid is not None
+    assert result.message_receipt is not None
+    assert result.tip_set is not None
+    assert result.height > 0
+
+@pytest.mark.integration
+def test_search_message(setup_connector):
+    result = _search_message(setup_connector, "bafy2bzaceasvnmajn6e76xgnk42fco5tkwbg56hue5xy3kgbf4kbxh3g7kzei")
     assert result is not None
     assert isinstance(result, MessageLookup)
     assert result.message_cid is not None
