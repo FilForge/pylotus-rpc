@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def sector_expiration(self, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+            return state._sector_expiration(self.connector, miner_address, sector_number, tipset)
+
         def search_message_limited(self, cid: str, limit: int) -> MessageLookup:
             return state._search_message_limited(self.connector, cid, limit)
 

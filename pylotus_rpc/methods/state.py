@@ -19,6 +19,18 @@ from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
 from ..types.message_lookup import MessageLookup
 
+class SectorNotFound(Exception):
+    """Exception raised when a sector is not found."""
+
+    def __init__(self, address=None, sector_number=None, message="Sector not found"):
+        self.address = address
+        self.sector_number = sector_number
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
 class MessageNotFound(Exception):
     """Exception raised when a message is not found."""
 
@@ -66,6 +78,46 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
         }
 
     return payload
+
+def _sector_expiration(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+    """
+    Retrieves expiration information for a specific sector identified by its sector number
+    for a given miner.
+
+    This method queries the Filecoin network to determine the scheduled expiration epoch
+    for a sector. It provides both the on-time expiration epoch, indicating when the sector
+    is scheduled to expire under normal circumstances, and an early expiration value which
+    is typically zero unless the sector is set to expire ahead of its on-time expiration due
+    to certain conditions like penalties or manual termination.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector object used for sending requests to the
+                                           Filecoin network via its JSON-RPC interface.
+        miner_address (str): The address of the miner to which the sector belongs.
+        sector_number (int): The number identifying the specific sector within the miner's sector set.
+        tipset (Optional[Tipset]): An optional parameter that specifies the blockchain tipset
+                                   from which to base the query. If None, the query is based on the
+                                   current chain head.
+
+    Returns:
+        Dict[str, int]: A dictionary containing the 'OnTime' and 'Early' expiration epochs for the sector.
+                        'OnTime' is the epoch at which the sector is scheduled to expire, and 'Early' is
+                        the epoch if the sector is set to expire earlier than its scheduled on-time expiration,
+                        which is usually zero under normal circumstances.
+
+    Raises:
+        SectorNotFound: If the specified sector cannot be found for the given miner address,
+                        an exception is raised indicating the sector was not found.
+    """
+    payload = _make_payload("Filecoin.StateSectorExpiration", [miner_address, sector_number], tipset)
+    dct_data = connector.execute(payload)
+
+    # Handling potential errors in response
+    if 'error' in dct_data:
+        raise SectorNotFound(miner_address, sector_number, dct_data['error']['message'])
+
+    # Assuming the response is successful, return the expiration details
+    return dct_data['result']
 
 
 def _search_message_limited(connector: HttpJsonRpcConnector, cid: str, limit: int) -> MessageLookup:

@@ -36,7 +36,8 @@ from pylotus_rpc.methods.state import (
     _network_version,
     _replay,
     _search_message,
-    _search_message_limited
+    _search_message_limited,
+    _sector_expiration
 )
 
 from pylotus_rpc.methods.chain import (
@@ -111,6 +112,24 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_sector_expiration(setup_connector):
+    # get some partitions from a miner
+    test_miner = 'f030125'
+    partitions = _miner_partitions(setup_connector, test_miner, 0)
+    # iterate through the active sectors until we get a non-zero sector (not sure why we get these at all)
+    active_sector = None
+    for partition in partitions:
+        for sector in partition.active_sectors:
+           if sector != 0:
+                active_sector = sector
+                break
+
+    result = _sector_expiration(setup_connector, test_miner, active_sector)
+    assert result is not None
+    assert result['OnTime'] is not None
+    assert result['Early'] is not None
 
 @pytest.mark.integration
 def test_search_message_limited(setup_connector):
