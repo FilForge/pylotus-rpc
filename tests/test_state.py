@@ -52,7 +52,6 @@ from pylotus_rpc.types.state_compute_output import StateComputeOutput
 from pylotus_rpc.types.message import Message
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 from pylotus_rpc.types.sector_pre_commit_info import SectorPreCommitInfo
-from tests.test_common import parse_fullnode_api_info
 from pylotus_rpc.types.deadline_info import DeadlineInfo
 from pylotus_rpc.types.message_lookup import MessageLookup
 
@@ -119,12 +118,7 @@ def test_sector_expiration(setup_connector):
     test_miner = 'f030125'
     partitions = _miner_partitions(setup_connector, test_miner, 0)
     # iterate through the active sectors until we get a non-zero sector (not sure why we get these at all)
-    active_sector = None
-    for partition in partitions:
-        for sector in partition.active_sectors:
-           if sector != 0:
-                active_sector = sector
-                break
+    active_sector = partitions[0].active_sectors[0]
 
     result = _sector_expiration(setup_connector, test_miner, active_sector)
     assert result is not None
