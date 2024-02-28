@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from typing import List
+from ..util.sector_util import decode_sectors
 
 @dataclass
 class MinerPartition:
@@ -31,9 +32,9 @@ class MinerPartition:
             MinerPartition: An instance of MinerPartition.
         """
         return MinerPartition(
-            all_sectors=dct.get("AllSectors", []),
-            faulty_sectors=dct.get("FaultySectors", []),
-            recovering_sectors=dct.get("RecoveringSectors", []),
-            live_sectors=dct.get("LiveSectors", []),
-            active_sectors=dct.get("ActiveSectors", [])
+            all_sectors=decode_sectors(dct.get("AllSectors", [])),
+            faulty_sectors=decode_sectors(dct.get("FaultySectors", [])),
+            recovering_sectors=decode_sectors(dct.get("RecoveringSectors", [])),
+            live_sectors=decode_sectors(dct.get("LiveSectors", [])),
+            active_sectors=decode_sectors(dct.get("ActiveSectors", []))
         )
