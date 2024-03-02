@@ -37,7 +37,8 @@ from pylotus_rpc.methods.state import (
     _replay,
     _search_message,
     _search_message_limited,
-    _sector_expiration
+    _sector_expiration,
+    _sector_get_info
 )
 
 from pylotus_rpc.methods.chain import (
@@ -113,11 +114,36 @@ def setup_connector():
     return HttpJsonRpcConnector(host=host)
 
 @pytest.mark.integration
+def test_sector_get_info(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    # get some partitions from a miner
+    test_miner = 'f030125'
+    partitions = _miner_partitions(setup_connector, test_miner, 0)
+    # get the first active sector we find
+    active_sector = partitions[0].active_sectors[0]
+
+    result = _sector_get_info(setup_connector, test_miner, active_sector, tipset=None)
+    assert result is not None
+    assert result.seal_proof is not None
+    assert result.sealed_cid is not None
+    assert result.sector_number is not None
+    assert result.activation > 0
+    assert result.expiration > 0
+    assert result.deal_weight is not None
+    assert result.verified_deal_weight is not None
+    assert result.initial_pledge is not None
+    assert result.expected_day_reward is not None
+    assert result.expected_storage_pledge is not None
+    assert result.replaced_sector_age is not None
+    assert result.replaced_day_reward is not None
+    assert result.simple_qa_power is not None
+
+@pytest.mark.integration
 def test_sector_expiration(setup_connector):
     # get some partitions from a miner
     test_miner = 'f030125'
     partitions = _miner_partitions(setup_connector, test_miner, 0)
-    # iterate through the active sectors until we get a non-zero sector (not sure why we get these at all)
+    # get the first active sector we find
     active_sector = partitions[0].active_sectors[0]
 
     result = _sector_expiration(setup_connector, test_miner, active_sector)

@@ -79,6 +79,38 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
 
     return payload
 
+
+def _sector_get_info(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Sector:
+    """
+    Retrieves detailed information about a specific sector identified by its sector number for a given miner address.
+
+    This function sends a JSON-RPC request to a Filecoin node through the specified connector, using the
+    'Filecoin.StateSectorGetInfo' method. It queries information about a sector belonging to a miner, optionally
+    at a specific blockchain state identified by a tipset.
+
+    Args:
+        connector (HttpJsonRpcConnector): An object responsible for managing HTTP JSON-RPC requests to a Filecoin node.
+        miner_address (str): The address of the miner whose sector information is being queried.
+        sector_number (int): The number of the sector for which information is being requested.
+        tipset (Optional[Tipset]): An optional tipset to specify the state at which to query the sector information.
+                                  If None, the latest state is used.
+
+    Returns:
+        Sector: An object containing detailed information about the sector, including its state, deals,
+                expiration, and more, depending on the Filecoin API's response structure.
+
+    Raises:
+        An exception if the request fails or if the response from the Filecoin node does not contain the
+        expected information. The exact exception will depend on the implementation of the `HttpJsonRpcConnector`
+        and the response from the Filecoin node.
+    """
+    payload = _make_payload("Filecoin.StateSectorGetInfo", [miner_address, sector_number], tipset)
+    dct_data = connector.execute(payload)
+    if 'result' not in dct_data:
+        raise ValueError("Failed to fetch sector information or sector does not exist.")
+    return Sector.from_dict(dct_data['result'])
+
+
 def _sector_expiration(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
     """
     Retrieves expiration information for a specific sector identified by its sector number
