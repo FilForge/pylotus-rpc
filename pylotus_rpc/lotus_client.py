@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def sector_partition(self, address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+            return state._sector_partition(self.connector, address, sector_number, tipset)
+
         def sector_get_info(self, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Sector:
             return state._sector_get_info(self.connector, miner_address, sector_number, tipset)
 

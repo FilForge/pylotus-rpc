@@ -80,6 +80,43 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _sector_partition(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+    """
+    Retrieves the partition information for a specific sector identified by its sector number
+    for a given miner.
+
+    This method queries the Filecoin network to determine the partition in which a sector is
+    located. It returns a dictionary containing the index of the deadline and partition in which
+    the sector is located.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector object used for sending requests to the
+                                           Filecoin network via its JSON-RPC interface.
+        miner_address (str): The address of the miner to which the sector belongs.
+        sector_number (int): The number identifying the specific sector within the miner's sector set.
+        tipset (Optional[Tipset]): An optional parameter that specifies the blockchain tipset
+                                   from which to base the query. If None, the query is based on the
+                                   current chain head.
+
+    Returns:
+        Dict[str, int]: A dictionary containing the 'Deadline' and 'Partition' indices for the sector.
+                        'Deadline' is the index of the deadline in which the sector is located, and
+                        'Partition' is the index of the partition within the deadline.
+
+    Raises:
+        SectorNotFound: If the specified sector cannot be found for the given miner address,
+                        an exception is raised indicating the sector was not found.
+    """
+    payload = _make_payload("Filecoin.StateSectorPartition", [miner_address, sector_number], tipset)
+    dct_data = connector.execute(payload)
+
+    # Handling potential errors in response
+    if 'error' in dct_data:
+        raise SectorNotFound(miner_address, sector_number, dct_data['error']['message'])
+
+    # Assuming the response is successful, return the partition details
+    return dct_data['result']
+
 def _sector_get_info(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Sector:
     """
     Retrieves detailed information about a specific sector identified by its sector number for a given miner address.

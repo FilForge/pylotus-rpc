@@ -38,7 +38,8 @@ from pylotus_rpc.methods.state import (
     _search_message,
     _search_message_limited,
     _sector_expiration,
-    _sector_get_info
+    _sector_get_info,
+    _sector_partition
 )
 
 from pylotus_rpc.methods.chain import (
@@ -112,6 +113,20 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_sector_partition(setup_connector):
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    # get some partitions from a miner
+    test_miner = 'f030125'
+    partitions = _miner_partitions(setup_connector, test_miner, 0)
+    # get the first active sector we find
+    active_sector = partitions[0].active_sectors[0]
+
+    # you can get a miner address to test with from https://filfox.info/en/ranks/power
+    result = _sector_partition(setup_connector, test_miner, active_sector, tipset=None)
+    assert result is not None
+    assert result['Deadline'] == 0
 
 @pytest.mark.integration
 def test_sector_get_info(setup_connector):
