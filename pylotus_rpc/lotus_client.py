@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def sector_pre_commit_info(self, address: str, sector_number: int, tipset: Optional[Tipset] = None) -> SectorPreCommitInfo:
+            return state._sector_pre_commit_info(self.connector, address, sector_number, tipset)
+
         def sector_partition(self, address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
             return state._sector_partition(self.connector, address, sector_number, tipset)
 

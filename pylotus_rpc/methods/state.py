@@ -19,6 +19,20 @@ from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
 from ..types.message_lookup import MessageLookup
 
+
+class SectorPreCommitInfoNotFound(Exception):
+    """Exception raised when a sector pre-commit info is not found."""
+
+    def __init__(self, address=None, sector_number=None, message="Sector pre-commit info not found"):
+        self.address = address
+        self.sector_number = sector_number
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self):
+        return self.message
+
+
 class SectorNotFound(Exception):
     """Exception raised when a sector is not found."""
 
@@ -78,6 +92,39 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
         }
 
     return payload
+
+
+def _sector_pre_commit_info(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> SectorPreCommitInfo:
+    """
+    Retrieves pre-commit information for a specified sector from a Filecoin miner.
+
+    This function queries the Filecoin blockchain to obtain details about a sector's pre-commit state,
+    including the pre-commit deposit, pre-commit info, and other relevant data. The pre-commit phase
+    is the period after a miner has committed to storing a sector but before the storage is verified
+    and accepted into the blockchain.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        miner_address (str): The Filecoin miner address from which to retrieve sector pre-commit information.
+        sector_number (int): The unique number of the sector for which to retrieve pre-commit information.
+        tipset (Optional[Tipset]): The specific tipset at which to query the data. If None, the most recent
+                                   tipset is used. This allows querying historical state at a specific blockchain height.
+
+    Returns:
+        SectorPreCommitInfo: An object containing the sector's pre-commit information, such as the seal rand epoch,
+                             deal IDs, expiration, and other relevant data.
+
+    Raises:
+        SectorPreCommitInfoNotFound: If the sector pre-commit information is not found or the query results in an error.
+                                     This exception includes the miner address, sector number, and the error message.    
+    """
+    payload = _make_payload("Filecoin.StateSectorPreCommitInfo", [miner_address, sector_number], tipset)
+    dct_data = connector.execute(payload, debug=True)
+
+    if 'error' in dct_data:
+        raise SectorPreCommitInfoNotFound(miner_address, sector_number, dct_data['error']['message'])
+
+    return SectorPreCommitInfo.from_dict(dct_data['result'])
 
 
 def _sector_partition(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> Dict[str, int]:
