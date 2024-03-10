@@ -94,6 +94,28 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _vm_circulating_supply_internal(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+    """
+    Retrieves the internal circulating supply metrics from the Filecoin VM.
+
+    This method calls the Filecoin.StateVMCirculatingSupplyInternal JSON-RPC method
+    to fetch the latest circulating supply metrics, including details like the total
+    FIL burnt, circulating, locked, mined, reserve disbursed, and vested.
+
+    Args:
+        connector (HttpJsonRpcConnector): A connector instance to make the JSON-RPC call.
+        tipset (Optional[Tipset]): An optional tipset to specify the state at a particular chain height.
+
+    Returns:
+        Dict[str, int]: A dictionary mapping each supply metric (e.g., FilBurnt, FilCirculating) to its
+        value in integer format.
+    """
+    payload = _make_payload("Filecoin.StateVMCirculatingSupplyInternal", [], tipset)
+    dct_data = connector.execute(payload)['result']
+    # Convert the values to integers and return
+    return {k: int(v) for k, v in dct_data.items()}
+
+
 def _sector_pre_commit_info(connector: HttpJsonRpcConnector, miner_address: str, sector_number: int, tipset: Optional[Tipset] = None) -> SectorPreCommitInfo:
     """
     Retrieves pre-commit information for a specified sector from a Filecoin miner.

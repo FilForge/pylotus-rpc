@@ -39,7 +39,8 @@ from pylotus_rpc.methods.state import (
     _search_message_limited,
     _sector_expiration,
     _sector_get_info,
-    _sector_partition
+    _sector_partition,
+    _vm_circulating_supply_internal
 )
 
 from pylotus_rpc.methods.chain import (
@@ -113,6 +114,16 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_vm_circulating_supply_internal(setup_connector):
+    result = _vm_circulating_supply_internal(setup_connector, tipset=None)
+    assert result is not None
+    assert result['FilVested'] > 0
+    assert result['FilMined'] > 0
+    assert result['FilBurnt'] > 0
+    assert result['FilLocked'] > 0
+    assert result['FilCirculating'] > 0
 
 @pytest.mark.integration
 def test_sector_partition(setup_connector):

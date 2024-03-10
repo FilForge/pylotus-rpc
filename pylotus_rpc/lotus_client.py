@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def vm_circulating_supply_internal(self, tipset: Optional[Tipset] = None) -> Dict[str, int]:
+            return state._vm_circulating_supply_internal(self.connector, tipset)
+
         def sector_pre_commit_info(self, address: str, sector_number: int, tipset: Optional[Tipset] = None) -> SectorPreCommitInfo:
             return state._sector_pre_commit_info(self.connector, address, sector_number, tipset)
 
