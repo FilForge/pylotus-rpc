@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def verified_client_status(self, address: str, tipset: Optional[Tipset] = None) -> int:
+            return state._verified_client_status(self.connector, address, tipset)
+
         def vm_circulating_supply_internal(self, tipset: Optional[Tipset] = None) -> Dict[str, int]:
             return state._vm_circulating_supply_internal(self.connector, tipset)
 

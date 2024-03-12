@@ -40,7 +40,8 @@ from pylotus_rpc.methods.state import (
     _sector_expiration,
     _sector_get_info,
     _sector_partition,
-    _vm_circulating_supply_internal
+    _vm_circulating_supply_internal,
+    _verified_client_status
 )
 
 from pylotus_rpc.methods.chain import (
@@ -114,6 +115,18 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_verified_client_status(setup_connector):
+    non_verified_client_id = "f047684"
+    result = _verified_client_status(setup_connector, non_verified_client_id, tipset=None)
+    assert result is not None
+    assert result == 0
+    verified_client_id = "f02828410"
+    result2 = _verified_client_status(setup_connector, verified_client_id, tipset=None)
+    assert result2 is not None
+    assert result2 > 0
+
 
 @pytest.mark.integration
 def test_vm_circulating_supply_internal(setup_connector):

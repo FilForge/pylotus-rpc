@@ -94,6 +94,36 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _verified_client_status(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> int:
+    """
+    Retrieves the DataCap allocated to a verified client within the Filecoin network.
+
+    This function sends a request to the Filecoin network to obtain the amount of DataCap
+    allocated to a verified client. DataCap is a measure of data storage space that can be
+    used in deals with storage miners, and having a verified status may grant the client
+    access to larger amounts of storage at better prices.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        address (str): The Filecoin address of the client whose DataCap status is being queried.
+        tipset (Optional[Tipset]): An optional parameter specifying the tipset at which the query should be made.
+                                   If None, the query is made against the latest state.
+
+    Returns:
+        int: The amount of DataCap (in bytes) allocated to the specified client. Returns 0 if the client is not verified or has no allocated DataCap.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = _make_payload("Filecoin.StateVerifiedClientStatus", [address], tipset)
+    dct_data = connector.execute(payload)
+
+    if dct_data['result'] is None:
+        return 0
+
+    return int(dct_data['result'])
+
+
 def _vm_circulating_supply_internal(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> Dict[str, int]:
     """
     Retrieves the internal circulating supply metrics from the Filecoin VM.
