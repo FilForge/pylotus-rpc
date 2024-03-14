@@ -94,6 +94,29 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _verified_registry_root_key(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> str:
+    """
+    Retrieves the verified registry root key from the Filecoin network.
+
+    This function sends a request to the Filecoin network to obtain the root key of the verified registry.
+    The verified registry is a data structure used to store verified client information.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        tipset (Optional[Tipset]): An optional parameter specifying the tipset at which the query should be made.
+                                   If None, the query is made against the latest state.
+
+    Returns:
+        str: The root key of the verified registry.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = _make_payload("Filecoin.StateVerifiedRegistryRootKey", [], tipset)
+    dct_data = connector.execute(payload)
+    return dct_data['result']
+
+
 def _verified_client_status(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> int:
     """
     Retrieves the DataCap allocated to a verified client within the Filecoin network.

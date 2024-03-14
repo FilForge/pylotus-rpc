@@ -41,7 +41,8 @@ from pylotus_rpc.methods.state import (
     _sector_get_info,
     _sector_partition,
     _vm_circulating_supply_internal,
-    _verified_client_status
+    _verified_client_status,
+    _verified_registry_root_key
 )
 
 from pylotus_rpc.methods.chain import (
@@ -115,6 +116,12 @@ def setup_filfox_connector():
 def setup_connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_verified_registry_root_key(setup_connector):
+    result = _verified_registry_root_key(setup_connector)
+    assert result is not None
+    assert result == 'f080'
 
 @pytest.mark.integration
 def test_verified_client_status(setup_connector):

@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def verified_registry_root_key(self, tipset: Optional[Tipset] = None) -> str:
+            return state._verified_registry_root_key(self.connector, tipset)
+
         def verified_client_status(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._verified_client_status(self.connector, address, tipset)
 
