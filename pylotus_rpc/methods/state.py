@@ -94,6 +94,39 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _verifier_status(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> int:
+    """
+    Queries the Filecoin network for the DataCap allocated to a verifier.
+
+    This function sends a request to the Filecoin network to obtain the amount of DataCap 
+    allocated to the specified verifier address. The DataCap represents the total volume of data 
+    (in bytes) that the verifier can allocate to clients for subsidized storage.
+
+    Args:
+        connector (HttpJsonRpcConnector): An object used to connect and send requests to the Filecoin network.
+        address (str): The Filecoin address of the verifier whose DataCap status is being queried.
+        tipset (Optional[Tipset]): The specific tipset at which to query the verifier's status. 
+                                   If None, the latest tipset is used.
+
+    Returns:
+        int: The amount of DataCap (in bytes) allocated to the verifier. Returns 0 if the verifier 
+             does not have any DataCap or if the address does not correspond to a recognized verifier.
+
+    Raises:
+        Exception: If there's an error in the execution of the query, potentially due to connectivity 
+                   issues or an invalid address.
+    """
+    payload = _make_payload("Filecoin.StateVerifierStatus", [address], tipset)
+    dct_data = connector.execute(payload)
+
+    # Handle case where the verifier has no allocated DataCap or the address is not a verifier
+    if dct_data['result'] is None:
+        return 0
+
+    # Convert the DataCap value to an integer and return it
+    return int(dct_data['result'])
+
+
 def _verified_registry_root_key(connector: HttpJsonRpcConnector, tipset: Optional[Tipset] = None) -> str:
     """
     Retrieves the verified registry root key from the Filecoin network.
