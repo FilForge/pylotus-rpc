@@ -94,6 +94,34 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _wait_msg(connector: HttpJsonRpcConnector, cid: str, confidence: int) -> MessageLookup:
+    """
+    Waits for a message to appear on-chain with the specified confidence.
+
+    This function sends a request to the Filecoin network to wait for a message to appear on-chain
+    with the specified confidence level. It will wait for the message to be included in a block and
+    for the specified number of additional blocks to be mined on top of it.
+
+    Args:
+        connector (HttpJsonRpcConnector): An object used to connect and send requests to the Filecoin network.
+        cid (str): The CID of the message to wait for.
+        confidence (int): The number of blocks to wait for the message to be included in.
+
+    Returns:
+        Message: The message object once it has been included on-chain with the specified confidence level.
+
+    Raises:
+        MessageNotFound: If the message is not found or if there's an error in the execution of the query.
+    """
+    payload = _make_payload("Filecoin.StateWaitMsg", [Cid(cid).to_dict(), confidence], include_tipset=False)
+    dct_data = connector.execute(payload)
+
+    if 'error' in dct_data:
+        raise MessageNotFound(cid, dct_data['error']['message'])
+
+    return MessageLookup.from_dict(dct_data['result'])
+
+
 def _verifier_status(connector: HttpJsonRpcConnector, address: str, tipset: Optional[Tipset] = None) -> int:
     """
     Queries the Filecoin network for the DataCap allocated to a verifier.

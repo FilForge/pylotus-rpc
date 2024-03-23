@@ -52,6 +52,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def wait_msg(self, cid: str, confidence: int) -> MessageLookup:
+            return state._wait_msg(self.connector, cid, confidence)
+
         def verifier_status(self, address: str, tipset: Optional[Tipset] = None) -> int:
             return state._verifier_status(self.connector, address, tipset)
 
