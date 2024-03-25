@@ -94,6 +94,35 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+def _wait_msg_limited(connector: HttpJsonRpcConnector, cid: str, confidence: int, limit: int) -> MessageLookup:
+    """
+    Waits for a message to appear on-chain within a limited number of epochs with the specified confidence level.
+
+    This function requests the Filecoin network to wait for a message to be confirmed on-chain. It waits until the message
+    is included in a block and achieves the specified confidence level, considering the number of additional blocks mined on top of it.
+    The search for the message is bounded by a limit on how many epochs to look back from the current chain head.
+
+    Args:
+        connector (HttpJsonRpcConnector): Connector for sending requests to the Filecoin network.
+        cid (str): CID of the message to wait for.
+        confidence (int): Desired confidence level, represented by the number of subsequent blocks after the message's inclusion.
+        limit (int): Maximum number of epochs to search backward from the current head of the blockchain.
+
+    Returns:
+        MessageLookup: Object containing the details of the message once it achieves the specified confidence level on-chain.
+
+    Raises:
+        MessageNotFound: If the message does not achieve the specified confidence level within the search limit or if an error occurs during execution.
+    """
+    payload = _make_payload("Filecoin.StateWaitMsgLimited", [Cid(cid).to_dict(), confidence, limit], include_tipset=False)
+    dct_data = connector.execute(payload)
+
+    if 'error' in dct_data:
+        raise MessageNotFound(cid, dct_data['error']['message'])
+
+    return MessageLookup.from_dict(dct_data['result'])
+
+
 def _wait_msg(connector: HttpJsonRpcConnector, cid: str, confidence: int) -> MessageLookup:
     """
     Waits for a message to appear on-chain with the specified confidence.
