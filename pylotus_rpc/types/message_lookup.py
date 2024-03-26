@@ -45,7 +45,7 @@ class MessageLookup:
         """
         return MessageLookup(
             message_cid=Cid.from_dict(data['Message']),
-            message_receipt=MessageReceipt.from_json(data['Receipt']),
+            message_receipt=MessageReceipt.from_dict(data['Receipt']),
             return_dec=data.get('ReturnDec'),
             tip_set=Tipset(data['Height'], [Cid(cid["/"]) for cid in data['TipSet']]),
             height=data['Height']

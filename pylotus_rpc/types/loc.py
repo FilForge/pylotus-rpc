@@ -17,7 +17,7 @@ class Loc:
     function: str
 
     @staticmethod
-    def from_json(data: Dict[str, Union[str, int]]) -> 'Loc':
+    def from_dict(data: Dict[str, Union[str, int]]) -> 'Loc':
         """
         Deserialize a dictionary (from parsed JSON) into a Loc object.
 

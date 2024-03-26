@@ -27,7 +27,7 @@ class MessageGasCost:
     total_cost: int
 
     @staticmethod
-    def from_json(data: Dict[str, Union[str, int]]) -> 'MessageGasCost':
+    def from_dict(data: Dict[str, Union[str, int]]) -> 'MessageGasCost':
         """
         Deserialize a dictionary (from parsed JSON) into a MessageGasCost object.
 

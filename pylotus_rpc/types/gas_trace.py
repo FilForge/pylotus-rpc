@@ -34,7 +34,7 @@ class GasTrace:
     callers: List[int]
 
     @staticmethod
-    def from_json(data: Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]) -> 'GasTrace':
+    def from_dict(data: Dict[str, Union[str, int, List[Dict[str, Union[str, int]]]]]) -> 'GasTrace':
         """
         Deserialize a dictionary (from parsed JSON) into a GasTrace object.
 
@@ -46,7 +46,7 @@ class GasTrace:
         """
         # Treating Location as optional; if not present, it defaults to an empty list
         location_data = data.get("Location", [])
-        locations = [Loc.from_json(loc) for loc in location_data]
+        locations = [Loc.from_dict(loc) for loc in location_data]
 
         # Treating Callers as optional; if not present or not a list, it defaults to an empty list
         callers = data.get("Callers", [])

@@ -52,7 +52,7 @@ class Message:
 
 
     @staticmethod
-    def from_json(data: Dict[str, Union[str, int]]) -> 'Message':
+    def from_dict(data: Dict[str, Union[str, int]]) -> 'Message':
         """
         Deserialize a dictionary (from parsed JSON) into a Message object.
 

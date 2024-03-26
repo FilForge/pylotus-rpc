@@ -47,10 +47,10 @@ class InvocationResult:
             result_data = data
 
         msg_cid = Cid(result_data["MsgCid"])
-        msg = Message.from_json(result_data["Msg"])
-        msg_rct = MessageReceipt.from_json(result_data["MsgRct"])
-        gas_cost = MessageGasCost.from_json(result_data["GasCost"])
-        execution_trace = ExecutionTrace.from_json(result_data["ExecutionTrace"])
+        msg = Message.from_dict(result_data["Msg"])
+        msg_rct = MessageReceipt.from_dict(result_data["MsgRct"])
+        gas_cost = MessageGasCost.from_dict(result_data["GasCost"])
+        execution_trace = ExecutionTrace.from_dict(result_data["ExecutionTrace"])
         duration = result_data["Duration"]
         error = result_data.get("Error", None)  # It's optional so we provide a default value
 
