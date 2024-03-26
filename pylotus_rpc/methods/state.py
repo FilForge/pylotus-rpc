@@ -72,7 +72,7 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     """
     cids = None
     if tipset:
-        cids = tipset.lst_dct_cids()
+        cids = tipset.get_tip_set_key()
 
     # if params exists (including if it's an empty list), append the cids, unless
     # we are told not too (a few routines don't accept at tipset parameter)
@@ -480,7 +480,7 @@ def _replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] 
     """
     tipset_key = []
     if tipset:
-        tipset_key = tipset.lst_dct_cids()
+        tipset_key = tipset.get_tip_set_key()
 
     payload = {
         "jsonrpc": "2.0",
