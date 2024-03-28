@@ -64,7 +64,7 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     Args:
         method (str): The name of the JSON-RPC method to call.
         params (List): A list of parameters to pass to the method.
-        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the latest tipset is used.
+        tipset (Optional[Tipset]): The tipset at which to call the method. If None, the la tipset is used.
 
     Returns:
         dict: A dictionary containing the JSON-RPC payload.
@@ -1139,7 +1139,7 @@ def _deal_provider_collateral_bounds(
     return (int(min_value), int(max_value)) if min_value and max_value else (None, None)
     
 
-def _state_compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
+def _compute(connector: HttpJsonRpcConnector, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
     """
     Calls the Filecoin StateCompute API to apply a set of messages on a specific tipset at a given epoch.
 
@@ -1240,7 +1240,7 @@ def _changed_actors(connector: HttpJsonRpcConnector, cid1 : str, cid2 : str) -> 
 
     return actors
     
-def _state_call(connector: HttpJsonRpcConnector, 
+def _call(connector: HttpJsonRpcConnector, 
                 message: Message, 
                 tipset: Optional[Tipset] = None) -> InvocationResult:
     """

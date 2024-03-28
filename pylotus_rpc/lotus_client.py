@@ -172,8 +172,8 @@ class LotusClient:
         def get_actor(self, actor_id: str, tipset: Optional[Tipset] = None) -> Actor:
             return state._get_actor(self.connector, actor_id, tipset)
         
-        def state_call(self, message: Message, tipset: Optional[Tipset] = None) -> InvocationResult:
-            return state._state_call(self.connector, message, tipset)
+        def call(self, message: Message, tipset: Optional[Tipset] = None) -> InvocationResult:
+            return state._call(self.connector, message, tipset)
         
         def changed_actors(self, cid1: str, cid2 : str) -> List[Actor]:
             return state._changed_actors(self.connector, cid1, cid2)
@@ -181,8 +181,8 @@ class LotusClient:
         def circulating_supply(self, tipset: Optional[Tipset] = None) -> int:
             return state._circulating_supply(self.connector, tipset)
         
-        def state_compute(self, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
-            return state._state_compute(self.connector, epoch, messages, tipset)
+        def compute(self, epoch: int, messages: List[Message], tipset: Optional[Tipset] = None) -> StateComputeOutput:
+            return state._compute(self.connector, epoch, messages, tipset)
         
         def deal_provider_collateral_bounds(
                 self, 

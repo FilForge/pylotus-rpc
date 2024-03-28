@@ -2,10 +2,10 @@ import pytest
 import os
 
 from pylotus_rpc.methods.state import (
-    _state_compute,
+    _compute,
     _get_actor,
     _account_key,
-    _state_call,
+    _call,
     _circulating_supply,
     _deal_provider_collateral_bounds,
     _decode_params,
@@ -445,7 +445,7 @@ def test_read_state(setup_connector):
 
 
 @pytest.mark.integration
-def test_state_list_actors(setup_filfox_connector):
+def test_list_actors(setup_filfox_connector):
     result = _list_actors(setup_filfox_connector, tipset=None)
     assert result is not None
     assert len(result) > 0
@@ -472,13 +472,13 @@ def test_decode_params(setup_connector):
 
 
 @pytest.mark.integration
-def test_state_compute(setup_connector):
+def test_compute(setup_connector):
     # Prepare test data
     tipset = _get_chain_head(setup_connector)
     lst_messages  = [good_msg, good_msg2]
 
     # Call the function under test
-    result = _state_compute(setup_connector, tipset.height, lst_messages, tipset=tipset)
+    result = _compute(setup_connector, tipset.height, lst_messages, tipset=tipset)
 
     # Assertions to validate the function's behavior
     assert result is not None
@@ -488,31 +488,31 @@ def test_state_compute(setup_connector):
 
 
 @pytest.mark.integration
-def test_state_circulating_supply(setup_connector):
+def test_circulating_supply(setup_connector):
     tipset = _get_chain_head(setup_connector)
     circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
     assert circulating_supply > 0
 
 
 @pytest.mark.integration
-def test_state_call_returned_values(setup_connector):
+def test_call_returned_values(setup_connector):
     tipset = _get_chain_head(setup_connector)
-    invocation_result = _state_call(setup_connector, good_msg, tipset=tipset)
+    invocation_result = _call(setup_connector, good_msg, tipset=tipset)
 
     assert isinstance(invocation_result, InvocationResult)
     assert invocation_result.msg_receipt.exit_code == 0  # No error in execution
     assert invocation_result.duration > 0  # Duration should be greater than zero for any call
 
 @pytest.mark.integration
-def test_state_call_execution_error(setup_connector):
+def test_call_execution_error(setup_connector):
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
 
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
-        _state_call(faulty_connector, good_msg, tipset=None)
+        _call(faulty_connector, good_msg, tipset=None)
 
 @pytest.mark.integration
-def test_state_call_message_error(setup_connector):
+def test_call_message_error(setup_connector):
     # Create a message that you expect will fail when executed
     bad_msg = Message(
         version=28,
@@ -527,13 +527,13 @@ def test_state_call_message_error(setup_connector):
         params=""  # No params needed for simple transfers
     )
 
-    invoc_result = _state_call(setup_connector, bad_msg, tipset=None)
+    invoc_result = _call(setup_connector, bad_msg, tipset=None)
     assert invoc_result.error  # Ensure error is returned
 
 @pytest.mark.integration
-def test_state_call_gas_charges(setup_connector):
+def test_call_gas_charges(setup_connector):
     tipset = _get_chain_head(setup_connector)
-    invocation_result = _state_call(setup_connector, good_msg, tipset=tipset)
+    invocation_result = _call(setup_connector, good_msg, tipset=tipset)
     assert invocation_result.execution_trace.gas_charges  # Ensure gas charges are returned
     for gas_charge in invocation_result.execution_trace.gas_charges:
         assert gas_charge.total_gas >= 0
