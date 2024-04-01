@@ -94,6 +94,28 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
+# Call StateAllMinerFaults
+def _all_miner_faults(connector: HttpJsonRpcConnector, lookback_epochs: int, tipset: Optional[Tipset] = None):
+    """
+    Retrieves all miner faults within a specified lookback window.
+
+    This function queries the Filecoin network to retrieve all miner faults that occurred within a specified lookback window.
+    The lookback window is defined by the number of epochs to search back from the current chain head.
+
+    Args:
+        connector (HttpJsonRpcConnector): An object used to connect and send requests to the Filecoin network.
+        lookback_epochs (int): The number of epochs to look back from the current chain head.
+        tipset (Optional[Tipset]): The specific tipset at which to query the miner faults. If None, the latest tipset is used.
+
+    Returns:
+        List[str]: A list of miner addresses that have experienced faults within the specified lookback window.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    raise NotImplementedError("Method not implemented, see: https://lotus.filecoin.io/reference/lotus/state/#stateallminerfaults")
+
+
 def _wait_msg_limited(connector: HttpJsonRpcConnector, cid: str, confidence: int, limit: int) -> MessageLookup:
     """
     Waits for a message to appear on-chain within a limited number of epochs with the specified confidence level.
@@ -1284,6 +1306,7 @@ def _account_key(connector: HttpJsonRpcConnector, address: str, tipset: Optional
     # Parse the account key
     address = Cid(dct_result["result"])
     return address
+    
     
 def _get_actor(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional[Tipset] = None) -> Actor:
     """
