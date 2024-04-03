@@ -1079,6 +1079,38 @@ def _read_state(connector: HttpJsonRpcConnector, actor_id: str, tipset: Optional
     return ActorState.from_dict(response['result'])
 
 
+def _get_randomness_from_tickets(
+        connector: HttpJsonRpcConnector, 
+        domain_tag: int, 
+        epoch: int, 
+        entropy_base64: str, 
+        tipset: Tipset) -> str:
+    """
+    Retrieves randomness for a given domain tag, epoch, and entropy from the chain's ticket chain.
+
+    This function queries the Filecoin network to obtain randomness based on the provided
+    domain tag, epoch number, and entropy. The randomness is derived from the ticket chain
+    at or before the specified epoch. This randomness is often used for various network
+    protocols including leader election and deal selection in storage and retrieval markets.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector for making API requests.
+        domain_tag (int): An identifier for the domain separation tag, categorizing the use of randomness.
+        epoch (int): The epoch number for which to retrieve the randomness.
+        entropy_base64 (str): Base64 encoded entropy string to further randomize the output.
+        tipset (Tipset): The tipset at which to query the randomness.
+
+    Returns:
+        str: A base64 encoded string representing the derived randomness.
+
+    Raises:
+        HTTPError: If the request to the Filecoin node fails.
+    """
+    payload = _make_payload("Filecoin.StateGetRandomnessFromTickets", [domain_tag, epoch, entropy_base64], tipset)
+    response = connector.execute(payload)
+    return response['result']
+
+
 def _get_randomness_from_beacon(
         connector: HttpJsonRpcConnector, 
         domain_tag: int, 

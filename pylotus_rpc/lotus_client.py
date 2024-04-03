@@ -193,7 +193,13 @@ class LotusClient:
 
         def decode_params(self, actor_id: str, method_num: int, params: str, tipset: Optional[Tipset] = None) -> dict:
             return state._decode_params(self.connector, actor_id, method_num, params, tipset)
-                                    
+
+        def get_randomness_from_tickets(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Optional[Tipset] = None) -> str:
+            # default to the chain head if not tipset was given
+           if not tipset:
+               tipset = chain._get_chain_head(self.connector)
+           return state._get_randomness_from_tickets(self.connector, domain_tag, epoch, random_bytes, tipset)
+
         def get_randomness_from_beacon(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Optional[Tipset] = None) -> str:
             return state._get_randomness_from_beacon(self.connector, domain_tag, epoch, random_bytes, tipset)
 

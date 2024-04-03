@@ -10,6 +10,7 @@ from pylotus_rpc.methods.state import (
     _deal_provider_collateral_bounds,
     _decode_params,
     _get_randomness_from_beacon,
+    _get_randomness_from_tickets,
     _list_actors,
     _read_state,
     _list_messages,
@@ -451,8 +452,17 @@ def test_list_actors(setup_filfox_connector):
     assert len(result) > 0
 
 @pytest.mark.integration
-def test_get_randomness_from_beacon(setup_filfox_connector):
-    result = _get_randomness_from_beacon(setup_filfox_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
+def test_get_randomness_from_tickets(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    result = _get_randomness_from_tickets(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=tipset)
+    assert result is not None
+    assert len(result) > 0
+    assert result == "Az/dMpZP1FcRNAnjkDKOaIeW4rPhDI+UGRu1nSqF+1A="
+
+
+@pytest.mark.integration
+def test_get_randomness_from_beacon(setup_connector):
+    result = _get_randomness_from_beacon(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
     assert result is not None
     assert len(result) > 0
     assert result == "Qg+/Ia8AQK+6Wf6rdET3tO3DYjZdDxMYAND/Mazu6Pc="
