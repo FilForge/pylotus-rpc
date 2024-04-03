@@ -306,7 +306,7 @@ def _sector_pre_commit_info(connector: HttpJsonRpcConnector, miner_address: str,
                                      This exception includes the miner address, sector number, and the error message.    
     """
     payload = _make_payload("Filecoin.StateSectorPreCommitInfo", [miner_address, sector_number], tipset)
-    dct_data = connector.execute(payload, debug=True)
+    dct_data = connector.execute(payload)
 
     if 'error' in dct_data:
         raise SectorPreCommitInfoNotFound(miner_address, sector_number, dct_data['error']['message'])
@@ -509,7 +509,7 @@ def _replay(connector: HttpJsonRpcConnector, cid: str, tipset: Optional[Tipset] 
         "method": "Filecoin.StateReplay",
         "params": [tipset_key, {"/": cid}]
     }
-    dct_data = connector.execute(payload, debug=True)
+    dct_data = connector.execute(payload)
 
     # raise an exception if the message can't be found / loaded
     if 'error' in dct_data:
@@ -1051,7 +1051,7 @@ def _list_messages(connector: HttpJsonRpcConnector, to_addr: str, from_addr: str
     
     payload = _make_payload("Filecoin.StateListMessages", [dct_params], tipset)
     payload["params"].append(epoch)
-    response = connector.execute(payload, debug=True)
+    response = connector.execute(payload)
     return Cid.format_cids_for_json(response['result'])
 
 
@@ -1134,7 +1134,7 @@ def _get_randomness_from_beacon(
         str: A base64 encoded string representing the random value obtained from the beacon.
     """
     payload = _make_payload("Filecoin.StateGetRandomnessFromBeacon", [domain_tag, epoch, entropy_base64], tipset)
-    response = connector.execute(payload, debug=True)
+    response = connector.execute(payload)
     return response['result']
 
 
@@ -1313,7 +1313,7 @@ def _call(connector: HttpJsonRpcConnector,
         ApiCallError: If there is an issue with the RPC call, an ApiCallError will be raised with the details.
     """
     payload = _make_payload("Filecoin.StateCall", [message.to_json()], tipset)
-    dct_result = connector.execute(payload, debug=True)
+    dct_result = connector.execute(payload)
     invocation_result = InvocationResult.from_dict(dct_result)
     return invocation_result
 
