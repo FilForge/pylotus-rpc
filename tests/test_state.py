@@ -18,7 +18,7 @@ from pylotus_rpc.methods.state import (
     _lookup_id,
     _market_balance,
     _market_participants,
-    _storage_market_deal,
+    _market_storage_deal,
     _miner_active_sectors,
     _miner_available_balance,
     _miner_deadlines,
@@ -390,9 +390,9 @@ def test_miner_active_sectors(setup_connector):
     assert len(result) > 0
 
 @pytest.mark.integration
-def test_storage_market_deal(setup_connector):
+def test_market_storage_deal(setup_connector):
     # You can get a deal id to test with from https://filfox.info/en/deal
-    result = _storage_market_deal(setup_connector, 68901592, tipset=None)
+    result = _market_storage_deal(setup_connector, 68901592, tipset=None)
     assert result is not None
     assert result['State'] is not None
     assert result['Proposal'] is not None

@@ -94,7 +94,6 @@ def _make_payload(method: str, params: List, tipset: Optional[Tipset] = None, in
     return payload
 
 
-# Call StateAllMinerFaults
 def _all_miner_faults(connector: HttpJsonRpcConnector, lookback_epochs: int, tipset: Optional[Tipset] = None):
     """
     Retrieves all miner faults within a specified lookback window.
@@ -877,7 +876,7 @@ def _miner_active_sectors(connector: HttpJsonRpcConnector, miner_address: str, t
     return list_of_active_sectors
 
 
-def _storage_market_deal(connector: HttpJsonRpcConnector, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
+def _market_storage_deal(connector: HttpJsonRpcConnector, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
     """
     Retrieves details of a storage market deal by its deal ID.
 

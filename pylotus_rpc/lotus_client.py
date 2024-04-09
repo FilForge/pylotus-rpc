@@ -139,8 +139,8 @@ class LotusClient:
         def miner_active_sectors(self, address: str, tipset: Optional[Tipset] = None) -> List[Sector]:
             return state._miner_active_sectors(self.connector, address, tipset)
 
-        def storage_market_deal(self, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
-            return state._storage_market_deal(self.connector, deal_id, tipset)
+        def market_storage_deal(self, deal_id: int, tipset: Optional[Tipset] = None) -> dict:
+            return state._market_storage_deal(self.connector, deal_id, tipset)
 
         def market_participants(self, tipset: Optional[Tipset] = None) -> List[Dict]:
             return state._market_participants(self.connector, tipset)
