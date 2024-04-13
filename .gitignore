@@ -5,3 +5,4 @@ pyvenv.cfg
 main.py
 **/__pycache__
 pylotus_rpc.egg-info/
+dist
