@@ -1,0 +1,31 @@
+[project]
+name = "pylotus-rpc"
+version = "0.2"
+description = "Python client for interacting with the Lotus JSON-RPC API."
+readme = "README.md"
+license = { file="LICENSE" }
+keywords = ["lotus", "filecoin", "rpc", "json-rpc", "api", "client", "python"]
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+authors = [
+  { name = "Jason Byteforgia" }
+]
+dependencies = [
+  "requests"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+
+[project.urls]
+Homepage = "https://github.com/FilForge/pylotus-rpc"
+Issues = "https://github.com/FilForge/pylotus-rpc/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["pylotus-rpc"]
