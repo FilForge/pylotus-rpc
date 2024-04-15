@@ -32,7 +32,7 @@ Before you can use the `LotusClient`, you must set up an `HttpJsonRpcConnector` 
 ## Example Initialization
 
 ```python
-from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
+from pylotus_rpc import HttpJsonRpcConnector
 
 # Example with default local host and no authentication
 connector = HttpJsonRpcConnector()
