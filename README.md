@@ -19,9 +19,42 @@ Here are the usage instructions for the `LotusClient` class and its methods in y
 
 The `LotusClient` class in Python allows interaction with a blockchain API to manage data related to blocks, transactions, and various state-related information.
 
-## Initialization
 
-First, create an instance of `HttpJsonRpcConnector` with the API endpoint URL and then initialize the `LotusClient` with this connector.
+# Initializing the HttpJsonRpcConnector
+
+Before you can use the `LotusClient`, you must set up an `HttpJsonRpcConnector` to handle the communication with the API server. Here's how you can initialize this connector:
+
+## Constructor Parameters
+- **host**: The server's hostname or IP address. The default is 'http://localhost/rpc/v0'.
+- **port**: The server's port. If not specified, it will try to use the port from the parsed host URL or default to `None`.
+- **api_token**: The API token for authentication. This should be provided if the server requires authentication.
+
+## Example Initialization
+
+```python
+from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
+
+# Example with default local host and no authentication
+connector = HttpJsonRpcConnector()
+
+# Example with specific host, port, and an API token
+connector = HttpJsonRpcConnector(
+    host='http://your_api_server_address/rpc/v0',
+    port=1234,
+    api_token='your_api_token_here'
+)
+```
+
+### Notes
+- Ensure the **host** includes the protocol (http or https) and any necessary API path.
+- The **port** should match the server configuration where the API is accessible.
+- The **api_token** is crucial for accessing APIs that require secure authentication.
+
+Once the connector is properly configured, you can use it to initialize your `LotusClient` and start making API calls to interact with the blockchain.
+
+## Initializing the LotusClient
+
+Using an instance of `HttpJsonRpcConnector` you can then initialize the `LotusClient` with this connector.
 
 ```python
 from pylotus_rpc import LotusClient, HttpJsonRpcConnector
@@ -80,9 +113,6 @@ try:
     block_info = client.Chain.get_block(cid='your_block_cid_here')
 except Exception as e:
     print(f"An error occurred: {e}")
-```
-
-
 ```
 
 
