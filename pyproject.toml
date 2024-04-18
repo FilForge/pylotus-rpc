@@ -28,4 +28,4 @@ Homepage = "https://github.com/FilForge/pylotus-rpc"
 Issues = "https://github.com/FilForge/pylotus-rpc/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["pylotus-rpc"]
+packages = ["pylotus_rpc"]
