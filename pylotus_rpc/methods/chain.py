@@ -22,6 +22,32 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+
+def _delete_obj(connector: HttpJsonRpcConnector, cid: str) -> bool:
+    """
+    Attempts to remove the local copy of an object associated with a given CID from the Filecoin node. 
+    Note that this operates on local node data and does not affect the data on the blockchain itself, which is immutable.
+
+    This function sends a request to the dedicated Filecoin node to attempt the removal of the object's local copy using its CID (Content Identifier).    
+    It is commonly used for managing node storage by clearing unneeded local data copies.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` that facilitates communication with the Filecoin node via JSON-RPC.  
+        cid (str): The CID (Content Identifier) of the object whose local copy is to be removed. CIDs serve as unique identifiers for data in the Filecoin network.
+
+    Returns:
+        bool: True if the operation to delete the local copy was reported as successful by the node, otherwise False.
+
+    """
+    payload = _make_payload("Filecoin.ChainDeleteObj", Cid.format_cids_for_json([cid]))
+    dct_result = connector.execute(payload, debug=True)
+
+    if 'error' in dct_result:
+        return False
+
+    return True
+
+
 # TODO - we don't have this tested and working yet and there isn't a clear reason why it's
 # failing.  We will come back and revisit this later.
 def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[Cid]:
