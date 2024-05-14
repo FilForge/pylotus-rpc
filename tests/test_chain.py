@@ -26,7 +26,7 @@ def block_cid():
 @pytest.mark.integration
 def test_get_tip_set(setup_connector):
     test_tipset = _get_chain_head(setup_connector)
-    result_tipset = _get_tip_set(setup_connector, test_tipset.lst_dct_cids())
+    result_tipset = _get_tip_set(setup_connector, test_tipset.get_tip_set_key())
     assert result_tipset is not None
     assert result_tipset.height == test_tipset.height
 
