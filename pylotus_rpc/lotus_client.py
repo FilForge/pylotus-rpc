@@ -34,6 +34,9 @@ class LotusClient:
         def delete_obj(self, cid: str) -> bool:
             return chain._delete_obj(self.connector, cid)
 
+        def export(self, chain_epoch: int, old_msg_skip: bool, tipset_key: str):
+            return chain._export(self.connector, chain_epoch, old_msg_skip, tipset_key)
+
         def get_block_messages(self, block_cid: str) -> List[Cid]:
             return chain._get_block_messages(self.connector, block_cid)
 

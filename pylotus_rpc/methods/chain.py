@@ -48,6 +48,25 @@ def _delete_obj(connector: HttpJsonRpcConnector, cid: str) -> bool:
     return True
 
 
+def _export(connector: HttpJsonRpcConnector, chain_epoch: int, old_msg_skip: bool, tipset_key: str):
+    """
+    WARNING: this method exists as a stub, lotus currently does not support this via RPC (AFAIK)
+
+    Export chain data from a given epoch to a given tipset key.  
+
+    This function sends a JSON-RPC request to the Filecoin network to export chain data from a given epoch to a given tipset key.
+
+    Args:
+        chain_epoch (int): The epoch from which to start exporting chain data.
+        old_msg_skip (bool): A boolean flag that indicates whether to skip old messages.
+        tipset_key (str): The tipset key to which to export chain data.
+
+    Returns:
+        dict: A dictionary containing the exported chain data.
+    """
+    raise NotImplementedError("Currently, you cannot call this API directly. It requires a buffered output channel to dump the output.")
+
+
 # TODO - we don't have this tested and working yet and there isn't a clear reason why it's
 # failing.  We will come back and revisit this later.
 def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[Cid]:
