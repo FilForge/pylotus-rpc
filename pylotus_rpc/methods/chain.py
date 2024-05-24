@@ -3,6 +3,7 @@ from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.cid import Cid
 from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader, dict_to_blockheader
+from ..types.block_messages import BlockMessages
 
 def _make_payload(method: str, params: List):
     """
@@ -67,33 +68,33 @@ def _export(connector: HttpJsonRpcConnector, chain_epoch: int, old_msg_skip: boo
     raise NotImplementedError("Currently, you cannot call this API directly. It requires a buffered output channel to dump the output.")
 
 
-# TODO - we don't have this tested and working yet and there isn't a clear reason why it's
-# failing.  We will come back and revisit this later.
-def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[Cid]:
-    """
+def _get_block_messages(connector: HttpJsonRpcConnector, block_cid: str) -> BlockMessages:
+    """  
     Retrieves the messages in a block from the Filecoin blockchain using its CID.
 
     This function sends a JSON-RPC request to the Filecoin network to retrieve the messages
-    in a specific block. The messages are then converted into a list of `Cid` objects.
+    in a specific block. It then converts the response into a `BlockMessages` object.
 
-    Args:
-        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
-                                          send the JSON-RPC request.
+    Args:  
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to  
+                                          send the JSON-RPC request.  
         block_cid (str): The CID (Content Identifier) of the block to be retrieved.
 
     Returns:
-        List[Cid]: A list of `Cid` objects representing the messages in the block.
+        BlockMessages: An instance of the `BlockMessages` class representing the messages in the block.
 
-    Example:
-        >>> connector = HttpJsonRpcConnector('localhost', 1234, 'my_api_token')
-        >>> block_cid = "bafy2bzaced..."
-        >>> block_messages = _get_block_messages(connector, block_cid)
-        >>> print(block_messages)
-    """
-    payload = _make_payload("Filecoin.ChainGetBlockMessages", Cid.format_cids_for_json([block_cid]))
-    result = connector.execute(payload, debug=True)
-    exit(0)
-    return [Cid(cid["/"]) for cid in result['result']['Cids']]
+    Raises:
+        Exception: If the JSON-RPC request fails or the response is invalid.
+    """  
+    payload = _make_payload("Filecoin.ChainGetBlockMessages", Cid.format_cids_for_json([block_cid]))  
+    response = connector.execute(payload)  
+
+    if 'result' not in response:
+        raise Exception(f"Invalid response from JSON-RPC request: {response}")
+
+    block_messages = BlockMessages.from_dict(response['result'])  
+    return block_messages
+
 
 def _get_tip_set(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> Tipset:
     """
