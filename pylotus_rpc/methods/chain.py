@@ -2,7 +2,7 @@ from typing import List
 from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.cid import Cid
 from ..types.tip_set import Tipset
-from ..types.block_header import BlockHeader, dict_to_blockheader
+from ..types.block_header import BlockHeader
 from ..types.block_messages import BlockMessages
 
 def _make_payload(method: str, params: List):
@@ -22,6 +22,26 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _get_genesis(connector: HttpJsonRpcConnector) -> Tipset:
+    """
+    Retrieves the genesis block of the Filecoin blockchain.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve the genesis block.
+    The genesis block is the first block in the blockchain and serves as the starting point for the chain.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+
+    Returns:
+        Tipset: An instance of `Tipset` representing the genesis block of the blockchain.
+    """
+    payload = _make_payload("Filecoin.ChainGetGenesis", None)
+    data = connector.execute(payload, debug=True)
+    genesis_tipset = Tipset.from_dict(data['result'])
+    return genesis_tipset
 
 
 def _delete_obj(connector: HttpJsonRpcConnector, cid: str) -> bool:
@@ -114,7 +134,7 @@ def _get_tip_set(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> Tip
     """
     payload = _make_payload("Filecoin.ChainGetTipSet", [tipset_key])
     result = connector.execute(payload)
-    return Tipset(result['result']['Height'], [Cid(cid["/"]) for cid in result['result']['Cids']], [dict_to_blockheader(dct) for dct in result['result']['Blocks']])
+    return Tipset.from_dict(result['result'])
 
 
 def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
@@ -167,16 +187,7 @@ def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
     # JSON-RPC payload for requesting the chain head
     payload = _make_payload("Filecoin.ChainHead", None)
     dct_result = connector.execute(payload)
-
-    # Parse the CIDs
-    lst_cids = [Cid(cid["/"]) for cid in dct_result["result"]["Cids"]]
-
-    # Parse block headers into BlockHeader objects
-    lst_block_headers = [dict_to_blockheader(dct) for dct in dct_result["result"]["Blocks"]]
-    height = dct_result["result"]["Height"]
-
-    # construct and return a Tipset        
-    return Tipset(height, lst_cids, lst_block_headers)
+    return Tipset.from_dict(dct_result["result"])
 
 
 def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
@@ -213,4 +224,4 @@ def _get_block(connector: HttpJsonRpcConnector, cid: str) -> BlockHeader:
     }
 
     result = connector.execute(payload, debug=False)["result"]
-    return dict_to_blockheader(result)
+    return BlockHeader.from_dict(result)

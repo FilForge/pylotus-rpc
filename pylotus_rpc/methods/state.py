@@ -1,6 +1,6 @@
 from typing import Optional, List, Tuple, Dict
 from ..http_json_rpc_connector import HttpJsonRpcConnector
-from ..types.block_header import BlockHeader, dict_to_blockheader
+from ..types.block_header import BlockHeader
 from ..types.cid import Cid
 from ..types.actor_state import ActorState
 from ..types.message import Message

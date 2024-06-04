@@ -34,7 +34,7 @@ class Tipset:
         :param data: Dictionary containing Tipset details.
         :return: An instance of the Tipset class.
         """
-        cids = [Cid.from_dict for cid in data["Cids"]]
+        cids = [Cid.from_dict(cid) for cid in data["Cids"]]
         blocks = [BlockHeader.from_dict(block) for block in data["Blocks"]]
         height = data["Height"]
         return Tipset(data["Height"], cids, blocks)

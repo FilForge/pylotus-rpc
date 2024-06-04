@@ -23,7 +23,7 @@ class Cid:
 
 
     @staticmethod
-    def from_dict(dct):
+    def from_dict(dct) -> 'Cid':
         """
         Returns a Cid object from a dictionary representation.
 
