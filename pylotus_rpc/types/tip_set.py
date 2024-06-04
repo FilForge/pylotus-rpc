@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 from .cid import Cid
 from .block_header import BlockHeader
 
@@ -24,3 +24,17 @@ class Tipset:
         Returns a dictionary representation of the Tipset's CIDs for JSON serialization.
         """
         return [{"/": cid.id} for cid in self.cids]
+
+
+    @staticmethod
+    def from_dict(data: Dict) -> 'Tipset':
+        """
+        Converts a dictionary representation of a Tipset to a Tipset object.
+
+        :param data: Dictionary containing Tipset details.
+        :return: An instance of the Tipset class.
+        """
+        cids = [Cid.from_dict for cid in data["Cids"]]
+        blocks = [BlockHeader.from_dict(block) for block in data["Blocks"]]
+        height = data["Height"]
+        return Tipset(data["Height"], cids, blocks)
