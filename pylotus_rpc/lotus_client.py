@@ -31,6 +31,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def get_genesis(self) -> Tipset:
+            return chain._get_genesis(self.connector)
+
         def delete_obj(self, cid: str) -> bool:
             return chain._delete_obj(self.connector, cid)
 

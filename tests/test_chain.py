@@ -1,14 +1,15 @@
 import pytest
 from pylotus_rpc.methods.chain import _get_block
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
-from pylotus_rpc.types.block_header import BlockHeader, dict_to_blockheader
+from pylotus_rpc.types.block_header import BlockHeader
 from pylotus_rpc.types.cid import Cid
 
 from pylotus_rpc.methods.chain import (
     _get_chain_head,
     _get_tip_set,
     _read_obj,
-    _get_block_messages
+    _get_block_messages,
+    _get_genesis
 )
 
 from pylotus_rpc.methods.state import (
@@ -24,6 +25,13 @@ def setup_connector():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_get_genesis(setup_connector):
+    tipset_genesis = _get_genesis(setup_connector)
+    assert tipset_genesis is not None
+    assert tipset_genesis.height == 0
 
 
 @pytest.mark.integration
