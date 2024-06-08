@@ -18,6 +18,7 @@ from .http_json_rpc_connector import HttpJsonRpcConnector
 from .types.miner_power import MinerPower
 from .types.deadline_info import DeadlineInfo
 from .types.message_lookup import MessageLookup
+from .types.block_messages import BlockMessages
 
 class LotusClient:
 
@@ -40,7 +41,7 @@ class LotusClient:
         def export(self, chain_epoch: int, old_msg_skip: bool, tipset_key: str):
             return chain._export(self.connector, chain_epoch, old_msg_skip, tipset_key)
 
-        def get_block_messages(self, block_cid: str) -> List[Cid]:
+        def get_block_messages(self, block_cid: str) -> BlockMessages:
             return chain._get_block_messages(self.connector, block_cid)
 
         def get_tip_set(self, tipset_key: List[dict]) -> Tipset:
