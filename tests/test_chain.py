@@ -9,7 +9,8 @@ from pylotus_rpc.methods.chain import (
     _get_tip_set,
     _read_obj,
     _get_block_messages,
-    _get_genesis
+    _get_genesis,
+    _get_message
 )
 
 from pylotus_rpc.methods.state import (
@@ -25,6 +26,22 @@ def setup_connector():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_get_message(setup_connector):
+    # get the tipset
+    test_tipset = _get_chain_head(setup_connector)
+    # get the cid of the first block in the tipset
+    first_block_cid = test_tipset.cids[0]
+    # get all the messages for that block
+    block_messages = _get_block_messages(setup_connector, first_block_cid.id)
+    # redundant, but for testing, get the first message from get_message
+    message_cid = block_messages.cids[0].id
+    message = _get_message(setup_connector, message_cid.id)
+    assert message is not None
+    assert message.from_addr is not None
+    assert message.to_addr is not None
 
 
 @pytest.mark.integration

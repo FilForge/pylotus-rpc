@@ -4,6 +4,7 @@ from ..types.cid import Cid
 from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader
 from ..types.block_messages import BlockMessages
+from ..types.message import Message
 
 def _make_payload(method: str, params: List):
     """
@@ -22,6 +23,26 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _get_message(connector: HttpJsonRpcConnector, cid: str) -> Message:
+    """
+    Retrieves a message from the Filecoin blockchain using its CID.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve a specific
+    message. The message information is then converted into a `Message` object.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+        cid (str): The CID (Content Identifier) of the message to be retrieved.
+
+    Returns:
+        Message: An instance of `Message` representing the retrieved message.
+    """
+    payload = _make_payload("Filecoin.ChainGetMessage", Cid.format_cids_for_json([cid]))
+    result = connector.execute(payload)
+    return Message.from_dict(result['result'])
 
 
 def _get_genesis(connector: HttpJsonRpcConnector) -> Tipset:
