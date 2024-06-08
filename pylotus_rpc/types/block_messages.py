@@ -33,5 +33,5 @@ class BlockMessages:
         return BlockMessages(
             bls_messages=[Message.from_dict(msg) for msg in data['BlsMessages']],
             secpk_messages=[SignedMessage.from_dict(msg) for msg in data['SecpkMessages']],
-            cids=[Cid(cid) for cid in data['Cids']]
+            cids=[Cid(Cid.from_dict(cid)) for cid in data['Cids']]
         )
