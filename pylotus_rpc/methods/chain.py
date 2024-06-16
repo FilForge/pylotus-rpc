@@ -43,12 +43,11 @@ def _get_messages_in_tipset(connector: HttpJsonRpcConnector, tipset_key: List[di
     """
     payload = _make_payload("Filecoin.ChainGetMessagesInTipset", [tipset_key])
     result = connector.execute(payload)
-    Messages = []
-    for elt in result['result']:
-        if "Messsage" in elt:
-            Messages.append(Message.from_dict(elt["Message"]))
+    messages = []
+    for dct in result['result']:
+        messages.append(Message.from_dict(dct['Message']))
 
-    return Messages
+    return messages
 
 
 def _get_message(connector: HttpJsonRpcConnector, cid: str) -> Message:
