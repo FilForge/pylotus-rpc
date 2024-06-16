@@ -10,7 +10,8 @@ from pylotus_rpc.methods.chain import (
     _read_obj,
     _get_block_messages,
     _get_genesis,
-    _get_message
+    _get_message,
+    _get_messages_in_tipset
 )
 
 from pylotus_rpc.methods.state import (
@@ -27,6 +28,12 @@ def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
 
+@pytest.mark.integration
+def test_get_messages_in_tipset(setup_connector):
+    test_tipset = _get_chain_head(setup_connector)
+    messages = _get_messages_in_tipset(setup_connector, test_tipset.get_tip_set_key())
+    assert messages is not None
+    assert len(messages) > 0
 
 @pytest.mark.integration
 def test_get_message(setup_connector):
