@@ -38,3 +38,12 @@ class Tipset:
         blocks = [BlockHeader.from_dict(block) for block in data["Blocks"]]
         height = data["Height"]
         return Tipset(data["Height"], cids, blocks)
+
+
+    @staticmethod
+    def build_tip_set_key(cids: List[str]) -> List[dict]:
+        """
+        Returns a dictionary representation of the Tipset's CIDs for JSON serialization.
+        """
+        return [{"/": cid.id} for cid in cids]
+
