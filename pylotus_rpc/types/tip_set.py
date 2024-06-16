@@ -19,6 +19,7 @@ class Tipset:
     cids: List[Cid] = field(default_factory=list)
     blocks: List[BlockHeader] = field(default_factory=list)
 
+
     def get_tip_set_key(self) -> List[dict]:
         """
         Returns a dictionary representation of the Tipset's CIDs for JSON serialization.

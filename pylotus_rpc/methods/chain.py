@@ -25,6 +25,32 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _get_messages_in_tipset(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> List[Message]:
+    """
+    Retrieves messages in a Tipset from the Filecoin blockchain using its key.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve the messages
+    in a specific Tipset. The messages are then converted into a list of `Message` objects.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+        tipset_key (List[dict]): A list of dictionaries containing the CIDs of the blocks
+                                 in the Tipset.
+
+    Returns:
+        List[Message]: A list of `Message` objects representing the messages in the Tipset.
+    """
+    payload = _make_payload("Filecoin.ChainGetMessagesInTipset", [tipset_key])
+    result = connector.execute(payload)
+    Messages = []
+    for elt in result['result']:
+        if "Messsage" in elt:
+            Messages.append(Message.from_dict(elt["Message"]))
+
+    return Messages
+
+
 def _get_message(connector: HttpJsonRpcConnector, cid: str) -> Message:
     """
     Retrieves a message from the Filecoin blockchain using its CID.
