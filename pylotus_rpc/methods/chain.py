@@ -25,6 +25,31 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _get_node(connector: HttpJsonRpcConnector, node_path_selector: str) -> dict:
+    """
+    Fetches specific node data from the Filecoin blockchain using the ChainGetNode RPC method.
+
+    This function sends a request to the Filecoin blockchain node to retrieve data at a specified path.
+    The path is defined by the `node_path_selector` parameter. It utilizes the `HttpJsonRpcConnector` 
+    to execute the RPC call.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of HttpJsonRpcConnector to communicate with the Filecoin node.
+        node_path_selector (str): The path selector string specifying the node's data to be retrieved.
+
+    Returns:
+        dict: The data retrieved from the specified node, as a dictionary.
+
+    Raises:
+        KeyError: If the 'result' key is not found in the response.
+        ConnectionError: If there is a problem with the RPC connection.
+    """
+    payload = _make_payload("Filecoin.ChainGetNode", [node_path_selector])
+    response = connector.execute(payload)
+    node_data = response['result']
+    return node_data
+
+
 def _get_messages_in_tipset(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> List[Message]:
     """
     Retrieves messages in a Tipset from the Filecoin blockchain using its key.

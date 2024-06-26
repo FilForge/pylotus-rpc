@@ -11,11 +11,13 @@ from pylotus_rpc.methods.chain import (
     _get_block_messages,
     _get_genesis,
     _get_message,
-    _get_messages_in_tipset
+    _get_messages_in_tipset,
+    _get_node
 )
 
 from pylotus_rpc.methods.state import (
-    _read_state
+    _read_state,
+    _get_actor
 )
 
 @pytest.fixture
@@ -27,6 +29,16 @@ def setup_connector():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_get_node(setup_connector):
+    test_tipset = _get_chain_head(setup_connector)
+    test_actor = _get_actor(setup_connector, "f05", tipset=test_tipset)
+    node_path_selector = f"{test_actor.head.id}/6"
+    dct_node_data = _get_node(setup_connector, node_path_selector=node_path_selector)
+    assert dct_node_data is not None
+
 
 @pytest.mark.integration
 def test_get_messages_in_tipset(setup_connector):
