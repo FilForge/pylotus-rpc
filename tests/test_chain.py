@@ -12,7 +12,8 @@ from pylotus_rpc.methods.chain import (
     _get_genesis,
     _get_message,
     _get_messages_in_tipset,
-    _get_node
+    _get_node,
+    _get_parent_messages
 )
 
 from pylotus_rpc.methods.state import (
@@ -25,10 +26,19 @@ def setup_connector():
     host = "https://filfox.info/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
+
 @pytest.fixture(scope="module")
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_get_parent_messages(setup_connector):
+    test_tipset = _get_chain_head(setup_connector)
+    parent_messages = _get_parent_messages(setup_connector, test_tipset.cids[0].id)
+    assert parent_messages is not None
+    assert len(parent_messages) > 0
 
 
 @pytest.mark.integration

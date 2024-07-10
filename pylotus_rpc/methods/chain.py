@@ -5,6 +5,7 @@ from ..types.tip_set import Tipset
 from ..types.block_header import BlockHeader
 from ..types.block_messages import BlockMessages
 from ..types.message import Message
+from ..types.wrapped_message import WrappedMessage
 
 def _make_payload(method: str, params: List):
     """
@@ -23,6 +24,35 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _get_parent_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[WrappedMessage]:
+    """
+    Retrieves the parent messages of a Filecoin block using the given CID.
+
+    This function leverages the Filecoin JSON-RPC API to fetch the parent 
+    messages associated with a specified block CID. Each parent message is 
+    wrapped with its corresponding CID.
+
+    Parameters:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` to 
+            communicate with the Filecoin node.
+        block_cid (str): The CID of the block whose parent messages are to be fetched.
+
+    Returns:
+        List[WrappedMessage]: A list of `WrappedMessage` instances, each containing a parent 
+        message and its corresponding CID.
+    """
+    payload = _make_payload("Filecoin.ChainGetParentMessages", Cid.format_cids_for_json([block_cid]))
+    response = connector.execute(payload)
+    wrapped_messages = []
+
+    for dct in response['result']:
+        message = Message.from_dict(dct['Message'])
+        cid = Cid.from_dict(dct['Cid'])
+        wrapped_messages.append(WrappedMessage(message, cid))
+
+    return wrapped_messages
 
 
 def _get_node(connector: HttpJsonRpcConnector, node_path_selector: str) -> dict:
