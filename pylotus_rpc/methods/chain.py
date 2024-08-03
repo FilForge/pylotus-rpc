@@ -6,6 +6,7 @@ from ..types.block_header import BlockHeader
 from ..types.block_messages import BlockMessages
 from ..types.message import Message
 from ..types.wrapped_message import WrappedMessage
+from ..types.message_receipt import MessageReceipt
 
 def _make_payload(method: str, params: List):
     """
@@ -25,6 +26,31 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+
+def _get_parent_receipts(connector: HttpJsonRpcConnector, block_cid: str) -> List[MessageReceipt]:
+    """
+    Retrieves the parent receipts of a Filecoin block using the given CID.
+
+    This function leverages the Filecoin JSON-RPC API to fetch the parent 
+    receipts associated with a specified block CID. 
+
+    Parameters:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` to 
+            communicate with the Filecoin node.
+        block_cid (str): The CID of the block whose parent receipts are to be fetched.
+
+    Returns:
+        List[MessageReceipt]: A list of `MessageReceipt` instances
+    """
+    payload = _make_payload("Filecoin.ChainGetParentReceipts", Cid.format_cids_for_json([block_cid]))
+    response = connector.execute(payload)
+    receipts = []
+
+    for dct_message_receipt in response['result']:
+        receipt = MessageReceipt.from_dict(dct_message_receipt)
+        receipts.append(receipt)
+
+    return receipts
 
 def _get_parent_messages(connector: HttpJsonRpcConnector, block_cid: str) -> List[WrappedMessage]:
     """

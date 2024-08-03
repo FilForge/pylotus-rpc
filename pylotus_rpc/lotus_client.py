@@ -20,6 +20,8 @@ from .types.deadline_info import DeadlineInfo
 from .types.message_lookup import MessageLookup
 from .types.block_messages import BlockMessages
 from .types.wrapped_message import WrappedMessage
+from .types.message_receipt import MessageReceipt
+
 
 class LotusClient:
 
@@ -32,6 +34,9 @@ class LotusClient:
         
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
+
+        def get_parent_receipts(self, block_cid: str) -> List[MessageReceipt]:
+            return chain._get_parent_receipts(self.connector, block_cid)
 
         def get_parent_messages(self, block_cid: str) -> List[WrappedMessage]:
             return chain._get_parent_messages(self.connector, block_cid)
