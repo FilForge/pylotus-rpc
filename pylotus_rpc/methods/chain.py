@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict, Optional
 from ..http_json_rpc_connector import HttpJsonRpcConnector
 from ..types.cid import Cid
 from ..types.tip_set import Tipset
@@ -25,6 +25,54 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _get_tipset_by_height(connector: HttpJsonRpcConnector, height: int, tipset_key: List[dict] = None) -> Tipset:
+    """
+    Retrieve the TipSet at a specific height from the Filecoin blockchain.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to use for the API call.
+        height (int): The specific height for which to retrieve the TipSet.
+        tipset_key (List[dict], optional): The key of the TipSet to consider if you want the TipSet at the height
+                                           X considering the state from this TipSet. Defaults to None.
+
+    Returns:
+        Tipset: The TipSet object at the specified height.
+    """
+    payload = _make_payload("Filecoin.ChainGetTipSetByHeight", [height, tipset_key])
+    result = connector.execute(payload)
+    return Tipset.from_dict(result['result'])
+
+
+def _get_path(connector: HttpJsonRpcConnector, start_tipset_key: List[dict], end_tipset_key: List[dict]) -> Dict:
+    """
+    Retrieves the path between two tipsets in the Filecoin blockchain.
+
+    This function sends a JSON-RPC request to the Filecoin network to retrieve the path between two tipsets.
+    The path is represented as a list of tipsets and messages.
+
+    Args:
+        connector (HttpJsonRpcConnector): An instance of `HttpJsonRpcConnector` used to
+                                          send the JSON-RPC request.
+        start_tipset_key (List[dict]): A list of dictionaries containing the CIDs of the blocks
+                                       in the starting tipset.
+        end_tipset_key (List[dict]): A list of dictionaries containing the CIDs of the blocks
+                                     in the ending tipset.
+
+    Returns:
+        Dict: A dictionary containing the path between the two tipsets.
+
+    Raises:
+        Exception: If the JSON-RPC request fails or the response is invalid.
+    """
+    payload = _make_payload("Filecoin.ChainGetPath", [start_tipset_key, end_tipset_key])
+    response = connector.execute(payload, debug=True)
+
+    if 'result' not in response:
+        raise Exception(f"Invalid response from JSON-RPC request: {response}")
+
+    return response['result']
 
 
 def _get_parent_receipts(connector: HttpJsonRpcConnector, block_cid: str) -> List[MessageReceipt]:
