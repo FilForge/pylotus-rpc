@@ -15,7 +15,8 @@ from pylotus_rpc.methods.chain import (
     _get_node,
     _get_parent_messages,
     _get_parent_receipts,
-    _get_tipset_by_height
+    _get_tipset_by_height,
+    _get_path
 )
 
 from pylotus_rpc.methods.state import (
@@ -33,6 +34,15 @@ def setup_connector():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+
+@pytest.mark.integration
+def test_get_path(setup_connector):
+    end_tipset = _get_chain_head(setup_connector)
+    start_tipset = _get_tipset_by_height(setup_connector, end_tipset.height - 3)
+    lst_head_changes = _get_path(setup_connector, start_tipset.get_tip_set_key(), end_tipset.get_tip_set_key())
+    assert lst_head_changes is not None
+    assert len(lst_head_changes) == 3
 
 
 @pytest.mark.integration

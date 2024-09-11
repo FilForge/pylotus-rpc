@@ -21,6 +21,7 @@ from .types.message_lookup import MessageLookup
 from .types.block_messages import BlockMessages
 from .types.wrapped_message import WrappedMessage
 from .types.message_receipt import MessageReceipt
+from .types.head_change import HeadChange
 
 
 class LotusClient:
@@ -38,8 +39,8 @@ class LotusClient:
         def get_tipset_by_height(self, height: int, tipset_key: List[dict] = None) -> Tipset:
             return chain._get_tipset_by_height(self.connector, height, tipset_key)
 
-        def get_path(self, start_tipeset_key: List[dict], end_tipset_key: List[dict]) -> Dict:
-            return chain._get_path(self.connector, start_tipeset_key, end_tipset_key)
+        def get_path(self, start_tipset_key: List[dict], end_tipset_key: List[dict]) -> List[HeadChange]:
+            return chain._get_path(self.connector, start_tipset_key, end_tipset_key)
 
         def get_parent_receipts(self, block_cid: str) -> List[MessageReceipt]:
             return chain._get_parent_receipts(self.connector, block_cid)

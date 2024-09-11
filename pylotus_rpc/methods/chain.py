@@ -7,6 +7,7 @@ from ..types.block_messages import BlockMessages
 from ..types.message import Message
 from ..types.wrapped_message import WrappedMessage
 from ..types.message_receipt import MessageReceipt
+from ..types.head_change import HeadChange
 
 def _make_payload(method: str, params: List):
     """
@@ -27,7 +28,7 @@ def _make_payload(method: str, params: List):
     return payload
 
 
-def _get_tipset_by_height(connector: HttpJsonRpcConnector, height: int, tipset_key: List[dict] = None) -> Tipset:
+def _get_tipset_by_height(connector: HttpJsonRpcConnector, height: int, tipset_key: List[dict] = None) -> List[HeadChange]:
     """
     Retrieve the TipSet at a specific height from the Filecoin blockchain.
 
@@ -67,12 +68,17 @@ def _get_path(connector: HttpJsonRpcConnector, start_tipset_key: List[dict], end
         Exception: If the JSON-RPC request fails or the response is invalid.
     """
     payload = _make_payload("Filecoin.ChainGetPath", [start_tipset_key, end_tipset_key])
-    response = connector.execute(payload, debug=True)
+    response = connector.execute(payload)
 
     if 'result' not in response:
         raise Exception(f"Invalid response from JSON-RPC request: {response}")
 
-    return response['result']
+    head_changes = []
+    for dct_headchange in response['result']:
+        head_change = HeadChange.from_dict(dct_headchange)
+        head_changes.append(head_change)
+
+    return head_changes
 
 
 def _get_parent_receipts(connector: HttpJsonRpcConnector, block_cid: str) -> List[MessageReceipt]:
