@@ -36,6 +36,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def get_randomness_from_beacon(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Optional[Tipset] = None) -> str:
+            return chain._get_randomness_from_beacon(self.connector, domain_tag, epoch, random_bytes, tipset)
+
         def get_tipset_by_height(self, height: int, tipset_key: List[dict] = None) -> Tipset:
             return chain._get_tipset_by_height(self.connector, height, tipset_key)
 

@@ -16,7 +16,8 @@ from pylotus_rpc.methods.chain import (
     _get_parent_messages,
     _get_parent_receipts,
     _get_tipset_by_height,
-    _get_path
+    _get_path,
+    _get_randomness_from_beacon
 )
 
 from pylotus_rpc.methods.state import (
@@ -26,15 +27,25 @@ from pylotus_rpc.methods.state import (
 
 @pytest.fixture
 def setup_connector():
-    host = "https://filfox.info/rpc/v1"
+    host = "https://filfox.info/rpc/v0"
     return HttpJsonRpcConnector(host=host)
 
+@pytest.fixture
+def setup_connector_v1():
+    host = "https://filfox.info/rpc/v1"
+    return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture(scope="module")
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
 
+@pytest.mark.integration
+def test_get_randomness_from_beacon(setup_connector):
+    result = _get_randomness_from_beacon(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=None)
+    assert result is not None
+    assert len(result) > 0
+    assert result == "Qg+/Ia8AQK+6Wf6rdET3tO3DYjZdDxMYAND/Mazu6Pc="
 
 @pytest.mark.integration
 def test_get_path(setup_connector):
