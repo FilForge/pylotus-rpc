@@ -28,6 +28,35 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _get_randomness_from_tickets(
+        connector: HttpJsonRpcConnector, 
+        domain_tag: int, 
+        epoch: int, 
+        entropy_base64: str, 
+        tipset: Tipset) -> str:
+    """
+    Retrieves randomness from the Filecoin tickets for a specific epoch.
+
+    This function sends a request to the Filecoin network to get randomness from the tickets
+    for a given epoch, domain tag, and entropy. It's used in various parts of the Filecoin
+    protocol that require verifiable randomness.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector to send the JSON-RPC request.
+        domain_tag (int): An integer representing the domain separation tag.
+        epoch (int): The epoch for which to retrieve the randomness.
+        entropy_base64 (str): Additional entropy as a base64-encoded string.
+        tipset (Tipset): The tipset to use as a reference.
+
+    Returns:
+        str: A string representing the retrieved randomness.
+    """
+    tipset_key = tipset.get_tip_set_key() if tipset else None
+    payload = _make_payload("Filecoin.ChainGetRandomnessFromTickets", [tipset_key, domain_tag, epoch, entropy_base64])
+    response = connector.execute(payload)
+    return response['result']
+
+
 def _get_randomness_from_beacon(
         connector: HttpJsonRpcConnector, 
         domain_tag: int, 

@@ -17,7 +17,8 @@ from pylotus_rpc.methods.chain import (
     _get_parent_receipts,
     _get_tipset_by_height,
     _get_path,
-    _get_randomness_from_beacon
+    _get_randomness_from_beacon,
+    _get_randomness_from_tickets
 )
 
 from pylotus_rpc.methods.state import (
@@ -39,6 +40,15 @@ def setup_connector_v1():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+@pytest.mark.integration
+def test_get_randomness_from_tickets(setup_connector):
+    tipset = _get_chain_head(setup_connector)
+    result = _get_randomness_from_tickets(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=tipset)
+    assert result is not None
+    assert len(result) > 0
+    assert result == "Az/dMpZP1FcRNAnjkDKOaIeW4rPhDI+UGRu1nSqF+1A="
+
 
 @pytest.mark.integration
 def test_get_randomness_from_beacon(setup_connector):
