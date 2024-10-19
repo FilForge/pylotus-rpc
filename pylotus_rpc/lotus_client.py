@@ -36,6 +36,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def has_obj(self, cid: str) -> bool:
+            return chain._has_obj(self.connector, cid)
+
         def get_randomness_from_tickets(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Tipset) -> str:
             return chain._get_randomness_from_tickets(self.connector, domain_tag, epoch, random_bytes, tipset)
 

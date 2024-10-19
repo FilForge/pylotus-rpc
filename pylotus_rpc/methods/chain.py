@@ -28,6 +28,30 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _has_obj(connector: HttpJsonRpcConnector, cid: str) -> bool:
+    """
+    Determines whether a specific object exists in the Filecoin node's local storage.
+
+    This method sends a JSON-RPC request to the Filecoin node to check if the object
+    identified by the given CID (Content Identifier) is present in the node's local storage.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector used to communicate with the Filecoin node via JSON-RPC.
+        cid (str): The Content Identifier (CID) of the object to verify.
+
+    Returns:
+        bool: 
+            - `True` if the object exists in the local storage.
+            - `False` if the object does not exist.
+
+    Raises:
+        ApiCallError: If the JSON-RPC request fails due to network issues or invalid responses.
+    """
+    payload = _make_payload("Filecoin.ChainHasObj", Cid.format_cids_for_json([cid]))
+    response = connector.execute(payload)
+    return response['result']
+
+
 def _get_randomness_from_tickets(
         connector: HttpJsonRpcConnector, 
         domain_tag: int, 
