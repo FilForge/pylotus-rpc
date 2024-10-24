@@ -28,6 +28,24 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _chain_notify(connector: HttpJsonRpcConnector) -> Dict:
+    """
+    This function is intended to notify about changes in the blockchain. However, it is not
+    currently implemented because it requires a buffered output channel to dump the output.  Calling this
+    method on a lotus RPC node will return a 500 error.
+
+    Args:
+        connector (HttpJsonRpcConnector): The connector used to communicate with the Filecoin node via JSON-RPC.
+
+    Returns:
+        Dict: A dictionary representing the notification about changes in the blockchain.
+
+    Raises:
+        NotImplementedError: Always raised because this function is not implemented.
+    """
+    raise NotImplementedError("Currently, you cannot call this API directly. It requires a buffered output channel to dump the output.")
+
+
 def _has_obj(connector: HttpJsonRpcConnector, cid: str) -> bool:
     """
     Determines whether a specific object exists in the Filecoin node's local storage.
