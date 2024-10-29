@@ -28,6 +28,33 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _set_head(connector: HttpJsonRpcConnector, head: Tipset) -> None:
+    """
+    Set the Head of the Blockchain.
+
+    Updates the current head of the Filecoin blockchain to the specified `Tipset`. This method
+    constructs a JSON-RPC payload using the `Filecoin.ChainSetHead` method with the provided
+    `Tipset` key and executes it through the given `HttpJsonRpcConnector`.
+
+    Args:
+        connector (HttpJsonRpcConnector):
+            The connector used to communicate with the Filecoin node via JSON-RPC. It handles
+            the serialization of requests and deserialization of responses.
+
+        head (Tipset):
+            The `Tipset` object representing the new head of the blockchain. The `Tipset` contains
+            the necessary information (such as block CIDs) to identify the specific state of the chain.
+
+    Notes:
+        - Ensure that the `Tipset` provided is valid and corresponds to an existing state in
+          the blockchain to prevent inconsistencies.
+        - This operation is critical and should be performed with caution, as setting an
+          incorrect head can lead to chain reorganization or other unintended consequences.
+    """
+    payload = _make_payload("Filecoin.ChainSetHead", [head.get_tip_set_key()])
+    connector.execute(payload)
+
+
 def _chain_notify(connector: HttpJsonRpcConnector) -> Dict:
     """
     This function is intended to notify about changes in the blockchain. However, it is not
