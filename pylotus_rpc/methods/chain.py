@@ -28,6 +28,41 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _stat_obj(connector: HttpJsonRpcConnector, obj: Cid, base: Optional[Cid] = None) -> Dict:
+    """
+    Retrieve the status of a specific object within the Filecoin blockchain.
+
+    This method sends a JSON-RPC request to the Filecoin node to obtain the current status
+    of the object identified by the provided Content Identifier (CID) (`obj`). Optionally,
+    a base CID (`base`) can be specified to reference a particular point in the blockchain,
+    providing context for the status retrieval.
+
+    Args:
+        connector (HttpJsonRpcConnector):
+            The connector used to communicate with the Filecoin node via JSON-RPC. It
+            manages the serialization of requests and deserialization of responses.
+
+        obj (Cid):
+            The Content Identifier (CID) of the object whose status is being retrieved.
+
+        base (Optional[Cid], optional):
+            An optional base CID to provide context or a reference point for the status retrieval.
+            If provided, the status will be relative to this base CID.
+
+    Returns:
+        Dict:
+            A dictionary containing the status information of the specified object. The structure
+            of the dictionary aligns with the response from the `Filecoin.ChainStatObj` JSON-RPC method,
+            typically including details such as the object's existence, size, links, and other metadata.
+    """
+    if base:
+        payload = _make_payload("Filecoin.ChainStatObj", [obj.to_dict(), base.to_dict()])
+    else:
+        payload = _make_payload("Filecoin.ChainStatObj", [obj.to_dict(), None])
+    response = connector.execute(payload)
+    return response['result']
+
+
 def _set_head(connector: HttpJsonRpcConnector, head: Tipset) -> None:
     """
     Set the Head of the Blockchain.
@@ -55,7 +90,7 @@ def _set_head(connector: HttpJsonRpcConnector, head: Tipset) -> None:
     connector.execute(payload)
 
 
-def _chain_notify(connector: HttpJsonRpcConnector) -> Dict:
+def _notify(connector: HttpJsonRpcConnector) -> Dict:
     """
     This function is intended to notify about changes in the blockchain. However, it is not
     currently implemented because it requires a buffered output channel to dump the output.  Calling this

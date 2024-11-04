@@ -36,10 +36,13 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def stat_obj(self, obj: Cid, base: Cid = None) -> Dict:
+            return chain._stat_obj(self.connector, obj, base)
+
         def set_head(self, head: Tipset) -> None:
             return chain._set_head(self.connector, head)
 
-        def chain_notify(self) -> Dict:
+        def notify(self) -> Dict:
             return chain._chain_notify(self.connector)
 
         def has_obj(self, cid: str) -> bool:
