@@ -28,6 +28,32 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _tip_set_weight(connector: HttpJsonRpcConnector, tipset_key: List[dict]) -> int:
+    """
+    Calculate the weight of a specified tipset in the Filecoin blockchain.
+
+    This function constructs a JSON-RPC payload using the "Filecoin.ChainTipSetWeight" method with the provided
+    `tipset_key`, sends the request through the given `connector`, and returns the weight of the tipset as an integer.
+
+    Args:
+        connector (HttpJsonRpcConnector):
+            The connector used to communicate with the Filecoin node via JSON-RPC. It handles the serialization
+            of requests and deserialization of responses.
+
+        tipset_key (List[dict]):
+            A list of dictionaries representing the CIDs of the blocks in the tipset. This key uniquely identifies
+            the tipset whose weight is to be calculated.
+
+    Returns:
+        int:
+            The weight of the specified tipset. The weight is an integer value that can be used to determine
+            the relative power or priority of the tipset within the blockchain.
+    """
+    payload = _make_payload("Filecoin.ChainTipSetWeight", [tipset_key])
+    response = connector.execute(payload)
+    return int(response['result'])
+
+
 def _stat_obj(connector: HttpJsonRpcConnector, obj: Cid, base: Optional[Cid] = None) -> Dict:
     """
     Retrieve the status of a specific object within the Filecoin blockchain.

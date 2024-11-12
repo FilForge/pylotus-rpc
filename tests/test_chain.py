@@ -19,7 +19,8 @@ from pylotus_rpc.methods.chain import (
     _get_path,
     _get_randomness_from_beacon,
     _get_randomness_from_tickets,
-    _has_obj
+    _has_obj,
+    _tip_set_weight
 )
 
 from pylotus_rpc.methods.state import (
@@ -41,6 +42,13 @@ def setup_connector_v1():
 def block_cid():
     # Use a known block CID for testing purposes. Replace this with an actual CID.
     return "bafy2bzacecljxqjgcw2ebuoo2se4hl7vck33civl5k6cuwj434fat7sh6oo3a"
+
+@pytest.mark.integration
+def test_tip_set_weight(setup_connector):
+    tipset_key = _get_chain_head(setup_connector).get_tip_set_key()
+    result = _tip_set_weight(setup_connector, tipset_key)
+    assert result is not None
+    assert result > 0
 
 @pytest.mark.integration
 def test_has_obj(setup_connector):

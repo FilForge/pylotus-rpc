@@ -36,6 +36,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def tip_set_weight(self, tipset_key: List[dict]) -> int:
+            return chain._tip_set_weight(self.connector, tipset_key)
+
         def stat_obj(self, obj: Cid, base: Cid = None) -> Dict:
             return chain._stat_obj(self.connector, obj, base)
 
