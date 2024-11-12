@@ -30,12 +30,12 @@ from pylotus_rpc.methods.state import (
 
 @pytest.fixture
 def setup_connector():
-    host = "https://filfox.info/rpc/v0"
+    host = "https://filfox.io/rpc/v0"
     return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture
 def setup_connector_v1():
-    host = "https://filfox.info/rpc/v1"
+    host = "https://filfox.io/rpc/v1"
     return HttpJsonRpcConnector(host=host)
 
 @pytest.fixture(scope="module")
