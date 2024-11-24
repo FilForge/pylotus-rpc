@@ -5,7 +5,7 @@ from pylotus_rpc.types.block_header import BlockHeader
 from pylotus_rpc.types.cid import Cid
 
 from pylotus_rpc.methods.chain import (
-    _get_chain_head,
+    _head,
     _get_tip_set,
     _read_obj,
     _get_block_messages,
@@ -45,7 +45,7 @@ def block_cid():
 
 @pytest.mark.integration
 def test_tip_set_weight(setup_connector):
-    tipset_key = _get_chain_head(setup_connector).get_tip_set_key()
+    tipset_key = _head(setup_connector).get_tip_set_key()
     result = _tip_set_weight(setup_connector, tipset_key)
     assert result is not None
     assert result > 0
@@ -57,7 +57,7 @@ def test_has_obj(setup_connector):
 
 @pytest.mark.integration
 def test_get_randomness_from_tickets(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     result = _get_randomness_from_tickets(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=tipset)
     assert result is not None
     assert len(result) > 0
@@ -73,7 +73,7 @@ def test_get_randomness_from_beacon(setup_connector):
 
 @pytest.mark.integration
 def test_get_path(setup_connector):
-    end_tipset = _get_chain_head(setup_connector)
+    end_tipset = _head(setup_connector)
     start_tipset = _get_tipset_by_height(setup_connector, end_tipset.height - 3)
     lst_head_changes = _get_path(setup_connector, start_tipset.get_tip_set_key(), end_tipset.get_tip_set_key())
     assert lst_head_changes is not None
@@ -89,7 +89,7 @@ def test_get_tipset_by_height(setup_connector):
 
 @pytest.mark.integration
 def test_get_parent_receipts(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     parent_receipts = _get_parent_receipts(setup_connector, test_tipset.cids[0].id)
     assert parent_receipts is not None
     assert len(parent_receipts) > 0
@@ -97,7 +97,7 @@ def test_get_parent_receipts(setup_connector):
 
 @pytest.mark.integration
 def test_get_parent_messages(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     parent_messages = _get_parent_messages(setup_connector, test_tipset.cids[0].id)
     assert parent_messages is not None
     assert len(parent_messages) > 0
@@ -105,7 +105,7 @@ def test_get_parent_messages(setup_connector):
 
 @pytest.mark.integration
 def test_get_node(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     test_actor = _get_actor(setup_connector, "f05", tipset=test_tipset)
     node_path_selector = f"{test_actor.head.id}/6"
     dct_node_data = _get_node(setup_connector, node_path_selector=node_path_selector)
@@ -114,7 +114,7 @@ def test_get_node(setup_connector):
 
 @pytest.mark.integration
 def test_get_messages_in_tipset(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     messages = _get_messages_in_tipset(setup_connector, test_tipset.get_tip_set_key())
     assert messages is not None
     assert len(messages) > 0
@@ -122,7 +122,7 @@ def test_get_messages_in_tipset(setup_connector):
 @pytest.mark.integration
 def test_get_message(setup_connector):
     # get the tipset
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     # get the cid of the first block in the tipset
     first_block_cid = test_tipset.cids[0]
     # get all the messages for that block
@@ -144,7 +144,7 @@ def test_get_genesis(setup_connector):
 
 @pytest.mark.integration
 def test_get_block_messages(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     first_block_cid = test_tipset.cids[0]
     block_messages = _get_block_messages(setup_connector, first_block_cid.id)
     assert block_messages is not None
@@ -154,7 +154,7 @@ def test_get_block_messages(setup_connector):
 
 @pytest.mark.integration
 def test_get_tip_set(setup_connector):
-    test_tipset = _get_chain_head(setup_connector)
+    test_tipset = _head(setup_connector)
     result_tipset = _get_tip_set(setup_connector, test_tipset.get_tip_set_key())
     assert result_tipset is not None
     assert result_tipset.height == test_tipset.height
@@ -168,17 +168,17 @@ def test_read_obj(setup_connector):
     assert cbor_obj is not None
 
 @pytest.mark.integration
-def test_get_chain_head_failure():
+def test_head_failure():
     # Let's use wrong port or token to force an error
     faulty_connector = HttpJsonRpcConnector('localhost', 9999, 'INVALID_TOKEN')
     
     with pytest.raises(HttpJsonRpcConnector.ApiCallError):
-        _get_chain_head(faulty_connector)
+        _head(faulty_connector)
 
 
 @pytest.mark.integration
-def test_get_chain_head_success(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+def test_head_success(setup_connector):
+    tipset = _head(setup_connector)
     
     # Basic checks to see if the returned object is correctly formed
     assert isinstance(tipset.height, int)

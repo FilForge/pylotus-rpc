@@ -93,8 +93,8 @@ class LotusClient:
         def get_tip_set(self, tipset_key: List[dict]) -> Tipset:
             return chain._get_tip_set(self.connector, tipset_key)
 
-        def get_chain_head(self) -> Tipset:
-            return chain._get_chain_head(self.connector)
+        def head(self) -> Tipset:
+            return chain._head(self.connector)
 
         def get_block(self, cid: str) -> BlockHeader:
             return chain._get_block(self.connector, cid)

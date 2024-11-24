@@ -532,7 +532,7 @@ def _read_obj(connector: HttpJsonRpcConnector, cid: str) -> str:
     return result['result']
 
 
-def _get_chain_head(connector: HttpJsonRpcConnector) -> Tipset:
+def _head(connector: HttpJsonRpcConnector) -> Tipset:
     """
     Retrieves the latest chain head from a Filecoin Lotus node.
 
