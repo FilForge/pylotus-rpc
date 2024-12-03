@@ -1,6 +1,6 @@
 [project]
 name = "pylotus-rpc"
-version = "0.4"
+version = "0.5"
 description = "Python client for interacting with the Lotus JSON-RPC API."
 readme = "README.md"
 license = { file="LICENSE" }
