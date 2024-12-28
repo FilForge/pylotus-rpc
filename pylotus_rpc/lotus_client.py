@@ -1,5 +1,6 @@
 from pylotus_rpc.methods import state
 from pylotus_rpc.methods import chain
+from pylotus_rpc.methods import net
 from typing import Optional, List, Tuple, Dict
 from .types.tip_set import Tipset
 from .types.message import Message
@@ -22,7 +23,7 @@ from .types.block_messages import BlockMessages
 from .types.wrapped_message import WrappedMessage
 from .types.message_receipt import MessageReceipt
 from .types.head_change import HeadChange
-
+from .types.address_info import AddressInfo
 
 class LotusClient:
 
@@ -30,6 +31,15 @@ class LotusClient:
         self.connector = connector
         self.State = self.State(connector)
         self.Chain = self.Chain(connector)
+        self.Net = self.Net(connector)
+
+    class Net:
+
+        def __init__(self, connector: HttpJsonRpcConnector):
+            self.connector = connector
+
+        def addrs_listen(self) -> AddressInfo:
+            return net._addrs_listen(self.connector)
 
     class Chain:
         
