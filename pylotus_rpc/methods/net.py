@@ -30,12 +30,20 @@ def _peers(connector: HttpJsonRpcConnector) -> List[AddressInfo]:
     return [AddressInfo.from_dict(peer) for peer in dct_response['result']]
 
 
-def _agent_version(connector: HttpJsonRpcConnector) -> str:
+def _agent_version(connector: HttpJsonRpcConnector, peer_id: str) -> str:
     """
     Retrieves the version of the Lotus agent.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The identifier of the peer whose agent version is being requested.
+
+    Returns:
+        str: The version string of the Lotus agent.
+
     """
-    payload = _make_payload("Filecoin.NetAgentVersion", [])
-    dct_response = connector.execute(payload, debug=True)
+    payload = _make_payload("Filecoin.NetAgentVersion", [peer_id])
+    dct_response = connector.execute(payload)
     return dct_response['result']
 
 

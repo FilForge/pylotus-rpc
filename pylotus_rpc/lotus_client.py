@@ -41,8 +41,8 @@ class LotusClient:
         def addrs_listen(self) -> AddressInfo:
             return net._addrs_listen(self.connector)
 
-        def agent_version(self) -> str:
-            return net._agent_version(self.connector)
+        def agent_version(self, peer_id: str) -> str:
+            return net._agent_version(self.connector, peer_id)
 
         def peers(self) -> List[AddressInfo]:
             return net._peers(self.connector)
