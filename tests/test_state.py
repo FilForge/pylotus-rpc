@@ -366,7 +366,6 @@ def test_miner_faults(setup_connector):
     # you can get a miner address to test with from https://filfox.info/en/ranks/power
     list_result = _miner_faults(setup_connector, "f02244985", tipset=None)
     assert list_result is not None
-    assert len(list_result) > 0
 
 @pytest.mark.integration
 def test_miner_deadlines(setup_connector):

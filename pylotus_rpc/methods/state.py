@@ -18,7 +18,7 @@ from ..types.miner_partition import MinerPartition
 from ..types.miner_power import MinerPower
 from ..types.deadline_info import DeadlineInfo
 from ..types.message_lookup import MessageLookup
-
+from ..util import sector_util
 
 class SectorPreCommitInfoNotFound(Exception):
     """Exception raised when a sector pre-commit info is not found."""
@@ -807,7 +807,8 @@ def _miner_faults(connector: HttpJsonRpcConnector, miner_address: str, tipset: O
     """
     payload = _make_payload("Filecoin.StateMinerFaults", [miner_address], tipset)
     lst_of_faults = connector.execute(payload)['result']
-    return lst_of_faults
+    return sector_util.decode_sectors(lst_of_faults)
+
 
 
 def _miner_deadlines(connector: HttpJsonRpcConnector, miner_address: str, tipset: Optional[Tipset] = None) -> List[Deadline]:
