@@ -270,7 +270,7 @@ class LotusClient:
         def get_randomness_from_tickets(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Optional[Tipset] = None) -> str:
             # default to the chain head if not tipset was given
            if not tipset:
-               tipset = chain._get_chain_head(self.connector)
+               tipset = chain._head(self.connector)
            return state._get_randomness_from_tickets(self.connector, domain_tag, epoch, random_bytes, tipset)
 
         def get_randomness_from_beacon(self, domain_tag: int, epoch: int, random_bytes: str, tipset: Optional[Tipset] = None) -> str:

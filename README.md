@@ -75,7 +75,7 @@ block_messages = client.Chain.get_block_messages(block_cid='your_block_cid_here'
 tipset = client.Chain.get_tip_set(tipset_key=[{'/': 'your_tipset_key_here'}])
 
 # Fetch the chain head
-chain_head = client.Chain.get_chain_head()
+chain_head = client.Chain.head()
 
 # Get specific block information
 block_info = client.Chain.get_block(cid='your_block_cid_here')

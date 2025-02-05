@@ -547,12 +547,6 @@ def _head(connector: HttpJsonRpcConnector) -> Tipset:
 
     Raises:
         ApiCallError: If the RPC call fails, an ApiCallError is raised containing the error details.
-
-    Examples:
-        >>> current_chain_head = _get_chain_head(connector)
-        >>> print(current_chain_head.height)
-        >>> for header in current_chain_head.block_headers:
-        ...     print(header.miner)
     """
     # JSON-RPC payload for requesting the chain head
     payload = _make_payload("Filecoin.ChainHead", None)

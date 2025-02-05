@@ -49,7 +49,7 @@ from pylotus_rpc.methods.state import (
 )
 
 from pylotus_rpc.methods.chain import (
-    _get_chain_head
+    _head
 )
 
 from pylotus_rpc.types.invocation_result import InvocationResult
@@ -428,7 +428,7 @@ def test_list_miners(setup_connector):
 
 @pytest.mark.integration
 def test_list_messages(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     # test by getting all messages sent to the storage market actor
     result = _list_messages(setup_connector, "f05", None, tipset.height, tipset=tipset)
     assert result is not None
@@ -453,7 +453,7 @@ def test_list_actors(setup_filfox_connector):
 
 @pytest.mark.integration
 def test_get_randomness_from_tickets(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     result = _get_randomness_from_tickets(setup_connector, 2, 10101, "Ynl0ZSBhcnJheQ==", tipset=tipset)
     assert result is not None
     assert len(result) > 0
@@ -484,7 +484,7 @@ def test_decode_params(setup_connector):
 @pytest.mark.integration
 def test_compute(setup_connector):
     # Prepare test data
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     lst_messages  = [good_msg, good_msg2]
 
     # Call the function under test
@@ -499,14 +499,14 @@ def test_compute(setup_connector):
 
 @pytest.mark.integration
 def test_circulating_supply(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     circulating_supply = _circulating_supply(setup_connector, tipset=tipset)
     assert circulating_supply > 0
 
 
 @pytest.mark.integration
 def test_call_returned_values(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     invocation_result = _call(setup_connector, good_msg, tipset=tipset)
 
     assert isinstance(invocation_result, InvocationResult)
@@ -542,7 +542,7 @@ def test_call_message_error(setup_connector):
 
 @pytest.mark.integration
 def test_call_gas_charges(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     invocation_result = _call(setup_connector, good_msg, tipset=tipset)
     assert invocation_result.execution_trace.gas_charges  # Ensure gas charges are returned
     for gas_charge in invocation_result.execution_trace.gas_charges:
@@ -552,7 +552,7 @@ def test_call_gas_charges(setup_connector):
 
 @pytest.mark.integration
 def test_get_account_key_success_with_tipset(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     address = _account_key(setup_connector, "f047684", tipset=tipset)
     
     # Basic checks to see if the returned object is correctly formed
@@ -561,7 +561,7 @@ def test_get_account_key_success_with_tipset(setup_connector):
 
 @pytest.mark.integration
 def test_get_account_key_success(setup_connector):
-    tipset = _get_chain_head(setup_connector)
+    tipset = _head(setup_connector)
     address = _account_key(setup_connector, "f047684", tipset=None)
     
     # Basic checks to see if the returned object is correctly formed
