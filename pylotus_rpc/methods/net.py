@@ -1,6 +1,7 @@
 from ..http_json_rpc_connector import HttpJsonRpcConnector
 from typing import List
 from ..types.address_info import AddressInfo
+from ..types.nat_info import NatInfo
 
 def _make_payload(method: str, params: List):
     """
@@ -19,6 +20,19 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _auto_nat_status(connector: HttpJsonRpcConnector) -> NatInfo:
+    """
+    Retrieves the auto NAT status of the Lotus node.
+
+    Returns:
+        NatInfo: An object containing the NAT status information including
+                reachability status and public addresses.
+    """
+    payload = _make_payload("Filecoin.NetAutoNatStatus", [])
+    dct_response = connector.execute(payload)
+    return NatInfo.from_dict(dct_response['result'])
 
 
 def _peers(connector: HttpJsonRpcConnector) -> List[AddressInfo]:

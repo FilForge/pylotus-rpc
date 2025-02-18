@@ -24,6 +24,7 @@ from .types.wrapped_message import WrappedMessage
 from .types.message_receipt import MessageReceipt
 from .types.head_change import HeadChange
 from .types.address_info import AddressInfo
+from .types.nat_info import NatInfo
 
 class LotusClient:
 
@@ -46,6 +47,9 @@ class LotusClient:
 
         def peers(self) -> List[AddressInfo]:
             return net._peers(self.connector)
+
+        def auto_nat_status(self) -> NatInfo:
+            return net._auto_nat_status(self.connector)
 
 
     class Chain:
