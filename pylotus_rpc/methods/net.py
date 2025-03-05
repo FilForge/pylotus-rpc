@@ -1,5 +1,5 @@
 from ..http_json_rpc_connector import HttpJsonRpcConnector
-from typing import List
+from typing import List, Dict
 from ..types.address_info import AddressInfo
 from ..types.nat_info import NatInfo
 
@@ -20,6 +20,18 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _bandwidth_stats(connector: HttpJsonRpcConnector) -> Dict:
+    """
+    Retrieves the bandwidth statistics of the Lotus node.
+
+    Returns:
+        Dict: A dictionary containing the bandwidth statistics.
+    """
+    payload = _make_payload("Filecoin.NetBandwidthStats", [])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
 
 
 def _auto_nat_status(connector: HttpJsonRpcConnector) -> NatInfo:

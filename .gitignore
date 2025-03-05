@@ -1,9 +1,2 @@
-bin/
-lib/
-pyvenv.cfg
-.vscode
-main.py
-**/__pycache__
-pylotus_rpc.egg-info/
-dist
-build_publish.sh
+# Created by venv; see https://docs.python.org/3/library/venv.html
+*

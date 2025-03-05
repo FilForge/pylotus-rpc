@@ -48,6 +48,9 @@ class LotusClient:
         def peers(self) -> List[AddressInfo]:
             return net._peers(self.connector)
 
+        def bandwidth_stats(self) -> Dict:
+            return net._bandwidth_stats(self.connector)
+
         def auto_nat_status(self) -> NatInfo:
             return net._auto_nat_status(self.connector)
 
