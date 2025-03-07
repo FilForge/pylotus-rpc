@@ -54,6 +54,8 @@ class LotusClient:
         def auto_nat_status(self) -> NatInfo:
             return net._auto_nat_status(self.connector)
 
+        def bandwidth_stats_by_peer(self) -> Dict:
+            return net._bandwidth_stats_by_peer(self.connector)
 
     class Chain:
         

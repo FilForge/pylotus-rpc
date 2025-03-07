@@ -22,6 +22,18 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _bandwidth_stats_by_peer(connector: HttpJsonRpcConnector) -> Dict:
+    """
+    Retrieves the bandwidth statistics of the Lotus node by peer.
+
+    Returns:
+        Dict: A dictionary containing the bandwidth statistics by peer.
+    """
+    payload = _make_payload("Filecoin.NetBandwidthStatsByPeer", [])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
+
+
 def _bandwidth_stats(connector: HttpJsonRpcConnector) -> Dict:
     """
     Retrieves the bandwidth statistics of the Lotus node.
