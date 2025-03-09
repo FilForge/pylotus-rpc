@@ -57,6 +57,9 @@ class LotusClient:
         def bandwidth_stats_by_peer(self) -> Dict:
             return net._bandwidth_stats_by_peer(self.connector)
 
+        def bandwidth_stats_by_protocol(self) -> Dict:
+            return net._bandwidth_stats_by_protocol(self.connector)
+
     class Chain:
         
         def __init__(self, connector: HttpJsonRpcConnector):
