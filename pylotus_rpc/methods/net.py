@@ -21,6 +21,32 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+# Implement Filecoin.NetBlockAdd
+def _block_add(connector: HttpJsonRpcConnector, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
+    """
+    Blocks communication with specific peers, IP addresses, or IP subnets.
+    
+    Note: This method requires admin privileges on the Lotus server.
+    
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peers (List[str], optional): List of peer IDs to block.
+        ip_addrs (List[str], optional): List of IP addresses to block.
+        ip_subnets (List[str], optional): List of IP subnets to block.
+        
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    block_params = {
+        "Peers": peers or [],
+        "IPAddrs": ip_addrs or [],
+        "IPSubnets": ip_subnets or []
+    }
+
+    payload = _make_payload("Filecoin.NetBlockAdd", [block_params])
+    dct_response = connector.execute(payload)
+    return dct_response.get('result', False)
+
 
 def _bandwidth_stats_by_protocol(connector: HttpJsonRpcConnector) -> Dict:
     """

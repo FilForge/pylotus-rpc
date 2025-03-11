@@ -39,6 +39,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def block_add(self, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
+            return net._block_add(self.connector, peers, ip_addrs, ip_subnets)
+
         def addrs_listen(self) -> AddressInfo:
             return net._addrs_listen(self.connector)
 
