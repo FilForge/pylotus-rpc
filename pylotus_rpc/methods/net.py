@@ -21,6 +21,30 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+# implement Filecoin.NetBlockList
+def _block_list(connector: HttpJsonRpcConnector) -> Dict:
+    """
+    Retrieves the list of blocked peers, IP addresses, and IP subnets from the Lotus node.
+
+    This function queries the Lotus node for all entities that have been blocked from
+    communicating with the node. The blocks may have been added using the _block_add method.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+
+    Returns:
+        Dict: A dictionary containing lists of blocked entities with the following structure:
+            {
+                "Peers": [str],       # List of blocked peer IDs
+                "IPAddrs": [str],     # List of blocked IP addresses
+                "IPSubnets": [str]    # List of blocked IP subnets
+            }
+    """
+    payload = _make_payload("Filecoin.NetBlockList", [])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
+
+
 # Implement Filecoin.NetBlockAdd
 def _block_add(connector: HttpJsonRpcConnector, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
     """

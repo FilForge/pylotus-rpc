@@ -1,13 +1,28 @@
 import pytest
 import os
 
-from pylotus_rpc.methods.net import _addrs_listen, _peers, _agent_version, _auto_nat_status, _bandwidth_stats, _bandwidth_stats_by_peer, _bandwidth_stats_by_protocol
+from pylotus_rpc.methods.net import (
+    _addrs_listen,
+    _agent_version,
+    _auto_nat_status,
+    _bandwidth_stats,
+    _bandwidth_stats_by_peer,
+    _bandwidth_stats_by_protocol,
+    _block_list,
+    _peers,
+)
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 
 @pytest.fixture
 def connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_block_list(connector):
+    result = _block_list(connector)
+    assert result is not None
+    assert len(result) > 0
 
 @pytest.mark.integration
 def test_bandwidth_stats_by_protocol(connector):
