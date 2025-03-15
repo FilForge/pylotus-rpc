@@ -21,7 +21,33 @@ def _make_payload(method: str, params: List):
 
     return payload
 
-# implement Filecoin.NetBlockList
+
+def _block_remove(connector: HttpJsonRpcConnector, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
+    """
+    Removes entries from the blocklist, allowing communication with previously blocked peers, IP addresses, or IP subnets.
+
+    Note: This method requires admin privileges on the Lotus server.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peers (List[str], optional): List of peer IDs to remove from the block list.
+        ip_addrs (List[str], optional): List of IP addresses to remove from the block list.
+        ip_subnets (List[str], optional): List of IP subnets to remove from the block list.
+        
+    Returns:
+        bool: True if the operation was successful, False otherwise.
+    """
+    block_params = {
+        "Peers": peers or [],
+        "IPAddrs": ip_addrs or [],
+        "IPSubnets": ip_subnets or []
+    }
+
+    payload = _make_payload("Filecoin.NetBlockRemove", [block_params])
+    dct_response = connector.execute(payload)
+    return dct_response.get('result', False)
+
+
 def _block_list(connector: HttpJsonRpcConnector) -> Dict:
     """
     Retrieves the list of blocked peers, IP addresses, and IP subnets from the Lotus node.
