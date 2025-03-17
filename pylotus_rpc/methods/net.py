@@ -181,4 +181,31 @@ def _addrs_listen(connector: HttpJsonRpcConnector) -> AddressInfo:
     dct_response = connector.execute(payload)
     address_info = AddressInfo.from_dict(dct_response['result'])
     return address_info
+
+
+def _connect(connector: HttpJsonRpcConnector, peer_id: str, addrs: List[str]) -> bool:
+    """
+    Establishes a connection to a specified peer.
+
+    This method attempts to connect the Lotus node to a peer using their ID and multiaddresses.
+    If successful, the peer will be added to the node's peer list and communication
+    can be established.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The ID of the peer to connect to.
+        addrs (List[str]): A list of multiaddresses associated with the peer.
+
+    Returns:
+        bool: True if the connection was successful, False otherwise.
+    """
+    peer_info = {
+        "ID": peer_id,
+        "Addrs": addrs
+    }
+
+    payload = _make_payload("Filecoin.NetConnect", [peer_info])
+    dct_response = connector.execute(payload)
+
+    return "error" not in dct_response
     
