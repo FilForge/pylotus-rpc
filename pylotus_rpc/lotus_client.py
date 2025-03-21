@@ -42,6 +42,9 @@ class LotusClient:
         def connect(self, peer_id: str, addrs: List[str]) -> bool:
             return net._connect(self.connector, peer_id, addrs)
 
+        def connectedness(self, peer_id: str) -> Dict:
+            return net._connectedness(self.connector, peer_id)
+
         def block_remove(self, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
             return net._block_remove(self.connector, peers, ip_addrs, ip_subnets)
 

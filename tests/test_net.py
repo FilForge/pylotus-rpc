@@ -10,7 +10,9 @@ from pylotus_rpc.methods.net import (
     _bandwidth_stats_by_protocol,
     _block_list,
     _peers,
+    _connectedness
 )
+
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 
 @pytest.fixture
@@ -68,3 +70,10 @@ def test_peers(connector):
     result = _peers(connector)
     assert result is not None
     assert len(result) > 0
+
+@pytest.mark.integration
+def test_connectedness(connector):
+    peers = _peers(connector)
+    result = _connectedness(connector, peers[0].peer_id)
+    assert result is not None
+    assert result == True

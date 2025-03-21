@@ -22,6 +22,22 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _connectedness(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
+    """
+    Retrieves the connectedness status of a specific peer.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The ID of the peer to check connectedness for.
+
+    Returns:
+        Dict: A dictionary containing the connectedness status of the peer.
+    """
+    payload = _make_payload("Filecoin.NetConnectedness", [peer_id])
+    dct_response = connector.execute(payload)
+    return dct_response['result'] == 1
+
+
 def _block_remove(connector: HttpJsonRpcConnector, peers: List[str] = None, ip_addrs: List[str] = None, ip_subnets: List[str] = None) -> bool:
     """
     Removes entries from the blocklist, allowing communication with previously blocked peers, IP addresses, or IP subnets.
