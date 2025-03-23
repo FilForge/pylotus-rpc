@@ -22,6 +22,22 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _disconnect(connector: HttpJsonRpcConnector, peer_id: str) -> bool:
+    """
+    Disconnects from a specified peer.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The ID of the peer to disconnect from.
+
+    Returns:
+        bool: True if the disconnection was successful, False otherwise.
+    """
+    payload = _make_payload("Filecoin.NetDisconnect", [peer_id])
+    dct_response = connector.execute(payload)
+    return dct_response.get('result', False)
+
+
 def _connectedness(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
     """
     Retrieves the connectedness status of a specific peer.
