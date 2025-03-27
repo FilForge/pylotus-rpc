@@ -39,6 +39,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def find_peer(self, peer_id: str) -> Dict:
+            return net._find_peer(self.connector, peer_id)
+
         def connect(self, peer_id: str, addrs: List[str]) -> bool:
             return net._connect(self.connector, peer_id, addrs)
 

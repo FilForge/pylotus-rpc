@@ -22,6 +22,16 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+# implemment filecoin.netFindPeer
+def _find_peer(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
+    """
+    Finds a peer in the network.
+    """
+    payload = _make_payload("Filecoin.NetFindPeer", [peer_id])
+    dct_response = connector.execute(payload)
+    return dct_response.get('result', False)
+
+
 def _disconnect(connector: HttpJsonRpcConnector, peer_id: str) -> bool:
     """
     Disconnects from a specified peer.
