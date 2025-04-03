@@ -22,7 +22,30 @@ def _make_payload(method: str, params: List):
     return payload
 
 
-# implemment filecoin.netFindPeer
+def _limit(connector: HttpJsonRpcConnector, limit: int) -> Dict:
+    """
+    Get or set resource limits for a scope.
+    
+    This function allows setting or retrieving resource limits for different scopes in the Lotus node.
+    The scope can be one of the following:
+    - system        -- reports the system aggregate resource usage
+    - transient     -- reports the transient resource usage
+    - svc:<service> -- reports the resource usage of a specific service
+    - proto:<proto> -- reports the resource usage of a specific protocol
+    - peer:<peer>   -- reports the resource usage of a specific peer
+    
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        limit (int): The resource limit to set for the specified scope.
+        
+    Returns:
+        Dict: A dictionary containing the result of the operation, typically the current limits.
+    """
+    payload = _make_payload("Filecoin.NetLimit", [limit])
+    dct_response = connector.execute(payload)
+    return dct_response.get('result')
+
+
 def _find_peer(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
     """
     Finds a peer in the network.

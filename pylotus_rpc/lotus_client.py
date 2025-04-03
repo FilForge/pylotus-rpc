@@ -42,6 +42,9 @@ class LotusClient:
         def find_peer(self, peer_id: str) -> Dict:
             return net._find_peer(self.connector, peer_id)
 
+        def limit(self, limit: int) -> Dict:
+            return net._limit(self.connector, limit)
+
         def connect(self, peer_id: str, addrs: List[str]) -> bool:
             return net._connect(self.connector, peer_id, addrs)
 

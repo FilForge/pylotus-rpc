@@ -11,7 +11,8 @@ from pylotus_rpc.methods.net import (
     _block_list,
     _peers,
     _connectedness,
-    _find_peer
+    _find_peer,
+    _limit
 )
 
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
@@ -20,6 +21,12 @@ from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 def connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+@pytest.mark.integration
+def test_limit(connector):
+    result = _limit(connector, "system")
+    assert result is not None
+    assert result['Memory'] > 0
 
 @pytest.mark.integration
 def test_block_list(connector):
