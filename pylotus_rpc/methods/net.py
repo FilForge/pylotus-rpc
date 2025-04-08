@@ -21,6 +21,21 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+def _peer_info(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
+    """
+    Retrieves detailed information about a specific peer.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The ID of the peer to retrieve information for.
+
+    Returns:
+        Dict: A dictionary containing detailed information about the peer.
+    """
+    payload = _make_payload("Filecoin.NetPeerInfo", [peer_id])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
+
 
 def _limit(connector: HttpJsonRpcConnector, limit: int) -> Dict:
     """
