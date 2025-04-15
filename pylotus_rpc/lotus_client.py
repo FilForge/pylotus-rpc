@@ -39,6 +39,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def ping(self, peer_id: str) -> int:
+            return net._ping(self.connector, peer_id)
+
         def peer_info(self, peer_id: str) -> Dict:
             return net._peer_info(self.connector, peer_id)
 

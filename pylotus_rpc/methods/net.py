@@ -21,6 +21,20 @@ def _make_payload(method: str, params: List):
 
     return payload
 
+
+def _ping(connector: HttpJsonRpcConnector, peer_id: str) -> int:
+    """
+    Pings a specific peer and returns the latency in nanoseconds.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_id (str): The ID of the peer to ping.
+    """
+    payload = _make_payload("Filecoin.NetPing", [peer_id])
+    dct_response = connector.execute(payload)
+    return int(dct_response['result'])
+
+
 def _peer_info(connector: HttpJsonRpcConnector, peer_id: str) -> Dict:
     """
     Retrieves detailed information about a specific peer.
