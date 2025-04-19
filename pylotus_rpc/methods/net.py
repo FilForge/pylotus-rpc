@@ -1,5 +1,5 @@
 from ..http_json_rpc_connector import HttpJsonRpcConnector
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from ..types.address_info import AddressInfo
 from ..types.nat_info import NatInfo
 
@@ -20,6 +20,31 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _protect_add(connector: HttpJsonRpcConnector, peer_ids: List[str]) -> Tuple[bool, str]:
+    """
+    Adds specified peers to a protected set within the Filecoin network, preventing them from being disconnected.
+    
+    This method is crucial for maintaining stable and reliable connections, especially for storage providers
+    and other critical nodes. By protecting these peers, it ensures that essential network interactions,
+    such as data storage and retrieval operations, are not interrupted.
+    
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_ids (List[str]): List of peer IDs to add to the protected set.
+        
+    Returns:
+        Tuple[bool, str]: A tuple containing:
+            - bool: True if the operation was successful, False otherwise
+            - str: Success message or error message if the operation failed
+    """
+    payload = _make_payload("Filecoin.NetProtectAdd", [peer_ids])
+    dct_response = connector.execute(payload)
+    if 'error' in dct_response:
+        return False, dct_response['error']['message']
+    else:
+        return True, "Success"
 
 
 def _ping(connector: HttpJsonRpcConnector, peer_id: str) -> int:
