@@ -39,6 +39,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def protect_list(self) -> List[str]:
+            return net._protect_list(self.connector)
+
         def protect_add(self, peer_ids: List[str]) -> Dict:
             return net._protect_add(self.connector, peer_ids)
 

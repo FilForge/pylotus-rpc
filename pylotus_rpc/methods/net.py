@@ -22,6 +22,26 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _protect_list(connector: HttpJsonRpcConnector) -> List[str]:
+    """
+    Retrieves the list of protected peers from the Lotus node.
+
+    This method queries the Lotus node to get a list of peer IDs that are currently
+    protected from being disconnected. Protected peers are typically those that are
+    critical for the node's operation, such as storage providers or other essential
+    network participants.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+
+    Returns:
+        List[str]: A list of peer IDs that are currently protected from disconnection.
+    """
+    payload = _make_payload("Filecoin.NetProtectList", [])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
+
+
 def _protect_add(connector: HttpJsonRpcConnector, peer_ids: List[str]) -> Tuple[bool, str]:
     """
     Adds specified peers to a protected set within the Filecoin network, preventing them from being disconnected.
