@@ -42,7 +42,10 @@ class LotusClient:
         def protect_list(self) -> List[str]:
             return net._protect_list(self.connector)
 
-        def protect_add(self, peer_ids: List[str]) -> Dict:
+        def protect_remove(self, peer_ids: List[str]) -> Tuple[bool, str]:
+            return net._protect_remove(self.connector, peer_ids)
+
+        def protect_add(self, peer_ids: List[str]) -> Tuple[bool, str]:
             return net._protect_add(self.connector, peer_ids)
 
         def ping(self, peer_id: str) -> int:

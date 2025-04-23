@@ -41,6 +41,28 @@ def _protect_list(connector: HttpJsonRpcConnector) -> List[str]:
     dct_response = connector.execute(payload)
     return dct_response['result']
 
+def _protect_remove(connector: HttpJsonRpcConnector, peer_ids: List[str]) -> Tuple[bool, str]:
+    """
+    Removes specified peers from a protected set within the Filecoin network, allowing them to be disconnected.
+    
+    This method is useful for managing the protected peers list, allowing for dynamic updates to the set of protected nodes.    
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        peer_ids (List[str]): List of peer IDs to remove from the protected set.
+
+    Returns:
+        Tuple[bool, str]: A tuple containing:
+            - bool: True if the operation was successful, False otherwise
+            - str: Success message or error message if the operation failed
+    """
+    payload = _make_payload("Filecoin.NetProtectRemove", [peer_ids])
+    dct_response = connector.execute(payload)
+    if 'error' in dct_response:
+        return False, dct_response['error']['message']
+    else:
+        return True, "Success"
+
 
 def _protect_add(connector: HttpJsonRpcConnector, peer_ids: List[str]) -> Tuple[bool, str]:
     """
