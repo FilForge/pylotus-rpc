@@ -39,6 +39,9 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def pubsub_scores(self) -> Dict:
+            return net._pubsub_scores(self.connector)
+
         def protect_list(self) -> List[str]:
             return net._protect_list(self.connector)
 

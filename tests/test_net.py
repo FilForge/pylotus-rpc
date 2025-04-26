@@ -14,7 +14,8 @@ from pylotus_rpc.methods.net import (
     _find_peer,
     _limit,
     _peer_info,
-    _ping
+    _ping,
+    _pubsub_scores
 )
 
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
@@ -23,6 +24,14 @@ from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
 def connector():
     host = os.environ.get('LOTUS_GATEWAY', 'https://filfox.info/rpc/v0')
     return HttpJsonRpcConnector(host=host)
+
+
+@pytest.mark.integration
+def test_pubsub_scores(connector):
+    result = _pubsub_scores(connector)
+    assert result is not None
+    assert len(result) > 0
+
 
 @pytest.mark.integration
 def test_ping(connector):

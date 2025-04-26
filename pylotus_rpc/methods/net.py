@@ -22,6 +22,30 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+# NetPubsubScores
+def _pubsub_scores(connector: HttpJsonRpcConnector) -> Dict:
+    """
+    Retrieves the pubsub scores of the Lotus node.
+    
+    Returns:
+        Dict: A dictionary containing pubsub scores for each peer. Each peer entry contains:
+            - ID (str): The peer ID
+            - Score (Dict): A dictionary containing score metrics:
+                - AppSpecificScore (float): Application-specific score
+                - BehaviourPenalty (float): Penalty for misbehavior
+                - IPColocationFactor (float): Factor for IP colocation
+                - Score (float): Overall score
+                - Topics (Dict): Optional dictionary of topic-specific metrics for each topic:
+                    - FirstMessageDeliveries (float): Score for first message deliveries
+                    - InvalidMessageDeliveries (float): Penalty for invalid message deliveries
+                    - MeshMessageDeliveries (float): Score for mesh message deliveries
+                    - TimeInMesh (float): Score for time spent in mesh
+    """
+    payload = _make_payload("Filecoin.NetPubsubScores", [])
+    dct_response = connector.execute(payload)
+    return dct_response['result']
+
+
 def _protect_list(connector: HttpJsonRpcConnector) -> List[str]:
     """
     Retrieves the list of protected peers from the Lotus node.
