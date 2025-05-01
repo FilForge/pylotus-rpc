@@ -26,6 +26,8 @@ def connector():
     return HttpJsonRpcConnector(host=host)
 
 
+
+
 @pytest.mark.integration
 def test_pubsub_scores(connector):
     result = _pubsub_scores(connector)

@@ -22,6 +22,69 @@ def _make_payload(method: str, params: List):
     return payload
 
 
+def _set_limit(
+    connector: HttpJsonRpcConnector,
+    service: str,
+    limits: Dict[str, int]
+) -> Tuple[bool, str]:
+    """
+    Sets network resource limits for a specified service on a Filecoin node.
+    
+    This method configures limits on resources such as memory, streams, connections, and file descriptors
+    to optimize node performance and prevent resource exhaustion. It is crucial for maintaining stability
+    in the Filecoin network, especially for storage providers and critical nodes.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        service (str): The service or component to which the limits apply.
+        limits (Dict[str, int]): Dictionary of resource limits to set. Valid keys are:
+            - "Memory": Maximum memory allocation for network operations (in bytes)
+            - "Streams": Total number of active streams (connections)
+            - "StreamsInbound": Maximum number of incoming streams
+            - "StreamsOutbound": Maximum number of outgoing streams
+            - "Conns": Total number of connections
+            - "ConnsInbound": Maximum number of incoming connections
+            - "ConnsOutbound": Maximum number of outgoing connections
+            - "FD": Maximum number of file descriptors
+
+    Returns:
+        Tuple[bool, str]: A tuple containing:
+            - bool: True if the operation was successful, False otherwise.
+            - str: Success message or error message if the operation failed.
+
+    Example:
+        >>> # Set only memory and streams limits
+        >>> limits = {
+        ...     "Memory": 1024 * 1024 * 1024,  # 1GB
+        ...     "Streams": 100
+        ... }
+        >>> _set_limit(connector, "service1", limits)
+        
+        >>> # Set all possible limits
+        >>> limits = {
+        ...     "Memory": 2048 * 1024 * 1024,  # 2GB
+        ...     "Streams": 200,
+        ...     "StreamsInbound": 100,
+        ...     "StreamsOutbound": 100,
+        ...     "Conns": 500,
+        ...     "ConnsInbound": 250,
+        ...     "ConnsOutbound": 250,
+        ...     "FD": 1000
+        ... }
+        >>> _set_limit(connector, "service2", limits)
+    """
+    if not limits:
+        return False, "No limits specified"
+
+    payload = _make_payload("Filecoin.NetSetLimit", [service, limits])
+    dct_response = connector.execute(payload)
+    if 'error' in dct_response:
+        return False, dct_response['error']['message']
+    else:
+        return True, "Success"
+
+
+
 # NetPubsubScores
 def _pubsub_scores(connector: HttpJsonRpcConnector) -> Dict:
     """

@@ -39,6 +39,10 @@ class LotusClient:
         def __init__(self, connector: HttpJsonRpcConnector):
             self.connector = connector
 
+        def set_limit(self, service: str, limits: Dict[str, int]) -> bool:
+            success, _ = net._set_limit(self.connector, service, limits)
+            return success
+
         def pubsub_scores(self) -> Dict:
             return net._pubsub_scores(self.connector)
 
