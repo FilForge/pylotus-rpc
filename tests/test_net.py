@@ -15,7 +15,8 @@ from pylotus_rpc.methods.net import (
     _limit,
     _peer_info,
     _ping,
-    _pubsub_scores
+    _pubsub_scores,
+    _stat
 )
 
 from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
@@ -26,6 +27,11 @@ def connector():
     return HttpJsonRpcConnector(host=host)
 
 
+@pytest.mark.integration
+def test_stat(connector):
+    result = _stat(connector, "system")
+    assert result is not None
+    assert result['System']['Memory'] > 0
 
 
 @pytest.mark.integration

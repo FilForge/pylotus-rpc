@@ -3,6 +3,9 @@ from typing import List, Dict, Tuple
 from ..types.address_info import AddressInfo
 from ..types.nat_info import NatInfo
 
+ApiCallError = HttpJsonRpcConnector.ApiCallError
+
+
 def _make_payload(method: str, params: List):
     """
     Internal utility method to generate a JSON-RPC payload for a given method and parameters.
@@ -20,6 +23,32 @@ def _make_payload(method: str, params: List):
         }
 
     return payload
+
+
+def _stat(connector: HttpJsonRpcConnector, scope: str) -> Dict:
+    """
+    Retrieves network statistics for a specific scope from the Lotus node.
+    
+    This method provides detailed network statistics including bandwidth usage, connection counts,
+    and other network-related metrics for the specified scope.
+
+    Args:
+        connector (HttpJsonRpcConnector): The JSON-RPC connector to communicate with the Lotus node.
+        scope (str): The scope for which to retrieve network statistics.
+
+    Returns:
+        Dict: A dictionary containing statistics for the specified scope
+
+    Raises:
+        ApiCallError: If the RPC call fails or returns an error.
+    """
+    payload = _make_payload("Filecoin.NetStat", [scope])
+    dct_response = connector.execute(payload)
+
+    if 'error' in dct_response:
+        raise ApiCallError("Filecoin.NetStat", dct_response['error']['code'], dct_response['error']['message'])
+    else:
+        return dct_response['result']
 
 
 def _set_limit(
