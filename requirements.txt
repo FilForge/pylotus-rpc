@@ -1,2 +1,5 @@
+# development dependencies
 pytest
 requests
+build
+twine
