@@ -1,7 +1,7 @@
 [project]
 name = "pylotus-rpc"
-version = "0.5"
-description = "Python client for interacting with the Lotus JSON-RPC API."
+version = "3.0"
+description = "A comprehensive Python client library for the Lotus JSON-RPC API, enabling type-safe interaction with Filecoin blockchain nodes. Provides access to chain data, state queries, miner operations, and network management with a clean 3-layer architecture."
 readme = "README.md"
 license = { file="LICENSE" }
 keywords = ["lotus", "filecoin", "rpc", "json-rpc", "api", "client", "python"]
