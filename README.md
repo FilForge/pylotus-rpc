@@ -1,120 +1,140 @@
 # PyLotus-RPC
 
-PyLotus-RPC is a Python client library for interacting with the Lotus JSON-RPC API. It provides a convenient way to communicate with a Lotus node from your Python applications.
+PyLotus-RPC is a Python client library for interacting with the Lotus JSON-RPC API. It provides a convenient way to communicate with Filecoin nodes from your Python applications.
 
-This codebase is still a WIP, all of the Filecoin.StateXXXX, Filecoin.ChainXXX calls have been implemented. Others are being added over time.
+This codebase is still a WIP. All Filecoin.StateXXXX, Filecoin.ChainXXX, and Filecoin.NetXXX calls have been implemented. Other methods are being added over time.
 
 <a href="https://filecoin.drips.network/app/projects/github/FilForge/pylotus-rpc" target="_blank"><img src="https://filecoin.drips.network/api/embed/project/https%3A%2F%2Fgithub.com%2FFilForge%2Fpylotus-rpc/support.png?background=light&style=github&text=project&stat=none" alt="Support pylotus-rpc on drips.network" height="20"></a>
 
 ## Installation
 
-Installation from PyPi
-
 ```shell
 pip install pylotus-rpc
 ```
 
-Here are the usage instructions for the `LotusClient` class and its methods in your Python code, which interacts with an API for blockchain data management:
+## Quick Start
 
-# LotusClient Usage Instructions
+The `LotusClient` provides access to Filecoin blockchain data through Chain, State, and Net APIs. All methods require an `HttpJsonRpcConnector` for communication with Lotus nodes.
 
-The `LotusClient` class in Python allows interaction with a blockchain API to manage data related to blocks, transactions, and various state-related information.
-
-
-# Initializing the HttpJsonRpcConnector
-
-Before you can use the `LotusClient`, you must set up an `HttpJsonRpcConnector` to handle the communication with the API server. Here's how you can initialize this connector:
-
-## Constructor Parameters
-- **host**: The server's hostname or IP address. The default is 'http://localhost/rpc/v0'.
-- **port**: The server's port. If not specified, it will try to use the port from the parsed host URL or default to `None`.
-- **api_token**: The API token for authentication. This should be provided if the server requires authentication.
-
-## Example Initialization
-
-```python
-from pylotus_rpc import HttpJsonRpcConnector
-
-# Example with default local host and no authentication
-connector = HttpJsonRpcConnector()
-
-# Example with specific host, port, and an API token
-connector = HttpJsonRpcConnector(
-    host='http://your_api_server_address/rpc/v0',
-    port=1234,
-    api_token='your_api_token_here'
-)
-```
-
-### Notes
-- Ensure the **host** includes the protocol (http or https) and any necessary API path.
-- The **port** should match the server configuration where the API is accessible.
-- The **api_token** is crucial for accessing APIs that require secure authentication.
-
-Once the connector is properly configured, you can use it to initialize your `LotusClient` and start making API calls to interact with the blockchain.
-
-## Initializing the LotusClient
-
-Using an instance of `HttpJsonRpcConnector` you can then initialize the `LotusClient` with this connector.
+### Basic Setup
 
 ```python
 from pylotus_rpc import LotusClient, HttpJsonRpcConnector
 
-connector = HttpJsonRpcConnector(api_url='https://api.example.com')
+# Connect to a public Filecoin node
+connector = HttpJsonRpcConnector(host='https://api.node.glif.io/rpc/v0')
+client = LotusClient(connector)
+
+# Or connect to your local Lotus node with authentication
+connector = HttpJsonRpcConnector(
+    host='http://localhost:1234/rpc/v0',
+    api_token='your_lotus_api_token'
+)
 client = LotusClient(connector)
 ```
 
-## Using Chain Methods
+## Chain Methods
 
-You can fetch block messages, tipsets, and other block-related data using the `Chain` class.
+Access blockchain data including blocks, tipsets, and messages.
 
 ```python
-# Fetch block messages by CID
-block_messages = client.Chain.get_block_messages(block_cid='your_block_cid_here')
-
-# Get specific tipset
-tipset = client.Chain.get_tip_set(tipset_key=[{'/': 'your_tipset_key_here'}])
-
-# Fetch the chain head
+# Get the current chain head
 chain_head = client.Chain.head()
+print(f"Current height: {chain_head.height}")
 
-# Get specific block information
-block_info = client.Chain.get_block(cid='your_block_cid_here')
+# Get a specific block by CID
+block_cid = "bafy2bzacedkoa5xstphncs3da4d6kpbdvbxlg5zkfgxsxhpbcsfmzfhtm7v3y"
+block = client.Chain.get_block(cid=block_cid)
 
-# Read object data by CID
-object_data = client.Chain.read_obj(cid='your_block_cid_here')
+# Get messages in a block
+block_messages = client.Chain.get_block_messages(block_cid=block_cid)
+
+# Get a tipset by keys
+tipset_key = [{'/': block_cid}]
+tipset = client.Chain.get_tip_set(tipset_key=tipset_key)
+
+# Read raw object data
+object_data = client.Chain.read_obj(cid=block_cid)
 ```
 
-## Using State Methods
+## State Methods
 
-The `State` class provides methods to access detailed node, sector, and state information.
+Query Filecoin network state including miner information, deals, and verifiers.
 
 ```python
-# Wait for a message with specified CID, confidence, and limit
-message_lookup = client.State.wait_msg_limited(cid='your_cid_here', confidence=3, limit=100)
+# Get miner power and information
+miner_address = "f01000"
+miner_power = client.State.miner_power(address=miner_address)
+miner_info = client.State.miner_info(address=miner_address)
 
-# Fetch the status of a verifier in the blockchain
-verifier_status = client.State.verifier_status(address='your_verifier_address_here')
+# Get active sectors for a miner
+active_sectors = client.State.miner_active_sectors(address=miner_address)
 
-# Get miner power details
-miner_power = client.State.miner_power(address='your_miner_address_here')
+# Wait for message confirmation
+message_cid = "bafy2bzacedq..."
+message_lookup = client.State.wait_msg_limited(
+    cid=message_cid, 
+    confidence=3, 
+    limit=100
+)
 
-# List all active sectors for a miner
-active_sectors = client.State.miner_active_sectors(address='your_miner_address_here')
+# Check verifier status
+verifier_address = "f1..."
+verifier_status = client.State.verifier_status(address=verifier_address)
+
+# Get network version and genesis info
+network_version = client.State.network_version()
+genesis = client.Chain.get_genesis()
 ```
 
-Each of these methods interacts with the blockchain to retrieve or manage data based on your specific needs.
+## Network Methods
+
+Monitor and manage network connections, bandwidth, and peer information.
+
+```python
+# Get network statistics
+stats = client.Net.stat(scope="system")
+print(f"Total bandwidth in: {stats['TotalIn']}")
+
+# Get address information
+addr_info = client.Net.addrs_listen()
+print(f"Listening addresses: {addr_info}")
+
+# Check NAT status
+nat_info = client.Net.auto_nat_status()
+
+# Set network limits (requires write permissions)
+limits = {
+    "Memory": 1024 * 1024 * 1024,  # 1GB
+    "Streams": 100
+}
+success = client.Net.set_limit("libp2p", limits)
+```
 
 ## Error Handling
 
-Always handle potential exceptions from network issues or data errors:
+Handle API errors using the specific `ApiCallError` exception:
 
 ```python
+from pylotus_rpc.http_json_rpc_connector import HttpJsonRpcConnector
+
+ApiCallError = HttpJsonRpcConnector.ApiCallError
+
 try:
-    block_info = client.Chain.get_block(cid='your_block_cid_here')
+    block_info = client.Chain.get_block(cid="invalid_cid")
+except ApiCallError as e:
+    print(f"API call failed: {e.method} - {e.message} (code: {e.code})")
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"Unexpected error: {e}")
 ```
+
+## Filecoin Concepts
+
+- **CID**: Content Identifier, a unique hash identifying blocks, messages, and data
+- **Tipset**: A set of blocks at the same height in the blockchain
+- **Miner**: Storage provider in the Filecoin network
+- **Sector**: Unit of storage committed by miners
+- **Message**: Transactions and state changes in Filecoin
 
 ## License:
 
